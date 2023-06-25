@@ -1,0 +1,43 @@
+version: "3.8"
+
+services:
+  mongo:
+    container_name: mongodb
+    image: mongo
+    ports:
+      - 27017:27017
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: password
+    volumes:
+      - mongo-data:/data/db
+
+  node:
+    container_name: node
+    image: node:latest
+    volumes:
+      - ./server:/usr/local/app
+    environment:
+      - DATABASE_URL=postgres://root:password@database:5432/app
+      - JWT_SECRET=jmqlskdfjmlqsdkf
+    working_dir: /usr/local/app
+    ports:
+      - 127.0.0.1:3000:3000
+    command: npm run start
+
+  database:
+    container_name: postgres
+    image: postgres
+    volumes:
+      - postgre-data:/var/lib/postgresql/data/
+    ports:
+      - 5432:5432 #port on host:port in container
+    restart: always
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: app
+
+volumes:
+  mongo-data: {}
+  postgre-data: {}

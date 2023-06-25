@@ -1,0 +1,73 @@
+GET http://localhost:3000/
+
+###
+GET  http://localhost:3000/template/test/test
+X-api-key: 1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZnVsbE5hbWUiOiJudWxsIG51bGwiLCJpYXQiOjE2ODc3MzAxOTUsImV4cCI6MTY4NzczMzc5NX0.MIYau-pETaeGCH3eVeOEeZBBxIfWGQjkHJv2Jh_mGlE
+
+### 
+POST http://localhost:3000/ HTTP/1.1
+Content-Type: application/json
+
+{
+    "name": "John Doe",
+    "email": "t@t.com"
+}
+
+###
+GET http://localhost:3000/users
+X-api-key: 13
+###
+GET http://localhost:3000/users/1685116695797
+
+###
+POST http://localhost:3000/users
+Content-Type: application/json
+
+{
+    "name": "John Doe",
+    "email": "t@tt.com"
+}
+### 
+PUT http://localhost:3000/users/1685116695797
+Content-Type: application/json
+
+{
+    "name": "John Doe",
+    "email": "repalce@tt.com"
+}
+
+### 
+PATCH http://localhost:3000/users/1685116695797
+Content-Type: application/json
+
+{
+    "name": "John Do path",
+    "email": "patchqsdft@tt.com"
+}
+
+### 
+DELETE  http://localhost:3000/users/1685117275072
+
+############
+### Auth ###
+############
+
+###
+POST http://localhost:3000/register
+Content-Type: application/json
+
+{
+    "name": "John Doe",
+    "email": "t@test123546.com",
+    "password": "123456"
+}
+
+###
+POST http://localhost:3000/login
+Content-Type: application/json
+
+{
+    "email": "t@test123546.com",
+    "password": "123456"
+}
