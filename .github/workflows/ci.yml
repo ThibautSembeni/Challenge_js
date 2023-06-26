@@ -24,8 +24,7 @@ jobs:
           node-version: 20
 
       - name: Install dependencies
-        working-directory: server
-        run: npm install
+        run: cd server && npm install
 
   start-db:
     needs: [setup]
