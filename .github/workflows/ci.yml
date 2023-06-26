@@ -29,6 +29,7 @@ jobs:
           npm install
 
   start-db:
+    needs: [setup]
     runs-on: ubuntu-latest
 
     env:
