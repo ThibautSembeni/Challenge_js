@@ -24,9 +24,8 @@ jobs:
           node-version: 20
 
       - name: Install dependencies
-        run: |
-          cd server
-          npm install
+        working-directory: server
+        run: npm install
 
   start-db:
     needs: [setup]
@@ -51,9 +50,8 @@ jobs:
 
     steps:
       - name: Run Sequelize migrations
-        run: |
-          cd server
-          JWT_SECRET=$JWT_SECRET DATABASE_URL=postgres://$POSTGRES_USER:$POSTGRES_PASSWORD@localhost:5432/$POSTGRES_DB npm run d:s:u
+        working-directory: server
+        run: JWT_SECRET=$JWT_SECRET DATABASE_URL=postgres://$POSTGRES_USER:$POSTGRES_PASSWORD@localhost:5432/$POSTGRES_DB npm run d:s:u
 
   run-tests:
     needs: [setup, start-db]
@@ -61,6 +59,5 @@ jobs:
 
     steps:
       - name: Run tests
-        run: |
-          cd server
-          JWT_SECRET=$JWT_SECRET DATABASE_URL=postgres://$POSTGRES_USER:$POSTGRES_PASSWORD@localhost:5432/$POSTGRES_DB npm run test
+        working-directory: server
+        run: JWT_SECRET=$JWT_SECRET DATABASE_URL=postgres://$POSTGRES_USER:$POSTGRES_PASSWORD@localhost:5432/$POSTGRES_DB npm run test
