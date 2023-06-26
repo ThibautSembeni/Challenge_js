@@ -4,7 +4,7 @@ import HelloWorld from './components/HelloWorld.vue'
 </script>
 
 <template>
-  <header>
+<!--  <header>
     <img alt="Vue logo" class="logo" src="@/assets/logo.svg" width="125" height="125" />
 
     <div class="wrapper">
@@ -15,12 +15,12 @@ import HelloWorld from './components/HelloWorld.vue'
         <RouterLink to="/about">About</RouterLink>
       </nav>
     </div>
-  </header>
+  </header>-->
 
   <RouterView />
 </template>
 
-<style scoped>
+<!--<style scoped>
 header {
   line-height: 1.5;
   max-height: 100vh;
@@ -39,7 +39,7 @@ nav {
 }
 
 nav a.router-link-exact-active {
-  color: var(--color-text);
+  color: var(&#45;&#45;color-text);
 }
 
 nav a.router-link-exact-active:hover {
@@ -49,7 +49,7 @@ nav a.router-link-exact-active:hover {
 nav a {
   display: inline-block;
   padding: 0 1rem;
-  border-left: 1px solid var(--color-border);
+  border-left: 1px solid var(&#45;&#45;color-border);
 }
 
 nav a:first-of-type {
@@ -60,7 +60,7 @@ nav a:first-of-type {
   header {
     display: flex;
     place-items: center;
-    padding-right: calc(var(--section-gap) / 2);
+    padding-right: calc(var(&#45;&#45;section-gap) / 2);
   }
 
   .logo {
@@ -82,4 +82,4 @@ nav a:first-of-type {
     margin-top: 1rem;
   }
 }
-</style>
+</style>-->
