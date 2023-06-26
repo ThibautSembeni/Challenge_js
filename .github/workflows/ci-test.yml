@@ -51,7 +51,6 @@ jobs:
     steps:
       - name: Run Sequelize migrations
         run: ls
-        working-directory: server
         env:
           JWT_SECRET: ${{ secrets.JWT_SECRET }}
           DATABASE_URL: postgres://${{ secrets.POSTGRES_USER }}:${{ secrets.POSTGRES_PASSWORD }}@localhost:5432/${{ secrets.POSTGRES_DB }}

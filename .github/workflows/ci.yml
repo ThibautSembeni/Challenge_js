@@ -50,7 +50,7 @@ jobs:
 
     steps:
       - name: Run Sequelize migrations
-        run: ls && cd server && ls
+        run: ls
 
   run-tests:
     needs: [setup, start-db]
