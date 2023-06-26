@@ -12,19 +12,6 @@ services:
     volumes:
       - mongo-data:/data/db
 
-  node:
-    container_name: node
-    image: node:latest
-    volumes:
-      - ./server:/usr/local/app
-    environment:
-      DATABASE_URL: ${DATABASE_URL:-postgres://root:password@database:5432/app}
-      JWT_SECRET: ${JWT_SECRET:-jmqlskdfjmlqsdkf}
-    working_dir: /usr/local/app
-    ports:
-      - 127.0.0.1:3000:3000
-    command: npm run start
-
   database:
     container_name: postgres
     image: postgres
