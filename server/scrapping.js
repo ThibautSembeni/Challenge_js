@@ -1,5 +1,3 @@
-require('dotenv').config();
-
 const scrappingApiKey = process.env.SCRAPPING_API_KEY;
 
 const getScrappingExchangeRates = async () => {
