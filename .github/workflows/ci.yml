@@ -11,23 +11,7 @@ on:
       - develop
 
 jobs:
-  setup:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v2
-        with:
-          node-version: 20
-
-      - name: Install dependencies
-        run: cd server && npm install
-
-  start-db:
-    needs: [setup]
+  test:
     runs-on: ubuntu-latest
 
     env:
@@ -51,17 +35,20 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        run: |
+          cd server
+          npm install
       - name: Run Sequelize migrations
-        run: cd server && JWT_SECRET=$JWT_SECRET DATABASE_URL=postgres://$POSTGRES_USER:$POSTGRES_PASSWORD@localhost:5432/$POSTGRES_DB npm run d:s:u
-
-  run-tests:
-    needs: [setup, start-db]
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
+        run: |
+          cd server
+          JWT_SECRET=$JWT_SECRET DATABASE_URL=postgres://$POSTGRES_USER:$POSTGRES_PASSWORD@localhost:5432/$POSTGRES_DB npm run d:s:u
       - name: Run tests
-        working-directory: server
-        run: JWT_SECRET=$JWT_SECRET DATABASE_URL=postgres://$POSTGRES_USER:$POSTGRES_PASSWORD@localhost:5432/$POSTGRES_DB npm run test
+        run: |
+          cd server
+          JWT_SECRET=$JWT_SECRET DATABASE_URL=postgres://$POSTGRES_USER:$POSTGRES_PASSWORD@localhost:5432/$POSTGRES_DB npm run test
