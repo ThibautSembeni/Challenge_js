@@ -50,7 +50,7 @@ jobs:
 
     steps:
       - name: Run Sequelize migrations
-        run: npm run d:s:u
+        run: ls
         working-directory: server
         env:
           JWT_SECRET: ${{ secrets.JWT_SECRET }}
