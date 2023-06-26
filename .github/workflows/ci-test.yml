@@ -50,7 +50,7 @@ jobs:
 
     steps:
       - name: Run Sequelize migrations
-        run: ls
+        run: npm run d:s:u
         env:
           JWT_SECRET: ${{ secrets.JWT_SECRET }}
           DATABASE_URL: postgres://${{ secrets.POSTGRES_USER }}:${{ secrets.POSTGRES_PASSWORD }}@localhost:5432/${{ secrets.POSTGRES_DB }}
