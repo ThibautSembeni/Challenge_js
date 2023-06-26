@@ -29,6 +29,7 @@ jobs:
           POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
         ports:
           - 5432:5432
+        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 3
 
     steps:
       - name: Checkout code
@@ -44,16 +45,6 @@ jobs:
           cd server
           npm install
 
-      - name: Start PostgreSQL database
-        run: docker-compose -f docker-compose.test.yml up -d
-
-      - name: Wait for database to start
-        run: |
-          while ! pg_isready -h localhost -U $POSTGRES_USER; do
-            echo "Waiting for database to start..."
-            sleep 2
-          done
-
       - name: Run Sequelize migrations
         run: |
           cd server
@@ -63,6 +54,3 @@ jobs:
         run: |
           cd server
           JWT_SECRET=$JWT_SECRET DATABASE_URL=postgres://$POSTGRES_USER:$POSTGRES_PASSWORD@localhost:5432/$POSTGRES_DB npm run test
-
-      - name: Stop Docker Compose services
-        run: docker-compose down
