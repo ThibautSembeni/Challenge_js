@@ -11,7 +11,24 @@ on:
       - develop
 
 jobs:
-  test:
+  setup:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        run: |
+          cd server
+          npm install
+
+  start-db:
     runs-on: ubuntu-latest
 
     env:
@@ -32,25 +49,17 @@ jobs:
         options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 3
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v2
-        with:
-          node-version: 20
-
-      - name: Install dependencies
-        run: |
-          cd server
-          npm install
-
       - name: Run Sequelize migrations
         run: |
           cd server
           JWT_SECRET=$JWT_SECRET DATABASE_URL=postgres://$POSTGRES_USER:$POSTGRES_PASSWORD@localhost:5432/$POSTGRES_DB npm run d:s:u
 
+  run-tests:
+    needs: [setup, start-db]
+    runs-on: ubuntu-latest
+
       - name: Run tests
         run: |
           cd server
           JWT_SECRET=$JWT_SECRET DATABASE_URL=postgres://$POSTGRES_USER:$POSTGRES_PASSWORD@localhost:5432/$POSTGRES_DB npm run test
+
