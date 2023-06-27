@@ -4,9 +4,11 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node --watch server.js",
-    "watch": "node --watch server.js",
-    "d:s:u": "node migration.js"
+    "start": "node --watch index.js",
+    "watch": "node --watch index.js",
+    "d:s:u": "node migration.js",
+    "test:dev": "jest --verbose ./tests --watch --detectOpenHandles",
+    "test": "jest --verbose ./tests --detectOpenHandles"
   },
   "keywords": [],
   "author": "",
@@ -19,5 +21,9 @@
     "node-mailjet": "^6.0.2",
     "pg": "^8.11.0",
     "sequelize": "^6.32.1"
+  },
+  "devDependencies": {
+    "jest": "^29.5.0",
+    "supertest": "^6.3.3"
   }
 }
