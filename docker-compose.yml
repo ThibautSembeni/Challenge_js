@@ -24,6 +24,8 @@ services:
     ports:
       - 127.0.0.1:3000:3000
     command: npm run start
+    env_file:
+      - web-variables.env
 
   database:
     container_name: postgres
