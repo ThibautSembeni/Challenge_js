@@ -4,8 +4,8 @@ const mailjet = Mailjet.apiConnect(
     process.env.MAILJET_SK
 );
 
-module.exports = function sendAccountValidationEmail(user, confirmation_link) {
-    const {name, email} = user
+module.exports = async function sendAccountValidationEmail(user, confirmation_link) {
+    const { name, email } = user;
     if (!email) throw new Error("Erreur : champ 'email' non défini");
     if (!confirmation_link) throw new Error("Erreur : champ 'confirmation_link' non défini");
 
@@ -33,22 +33,24 @@ module.exports = function sendAccountValidationEmail(user, confirmation_link) {
                 TemplateLanguage: true,
             }
         ]
+    };
+
+    try {
+        await _sendEmail(data);
+        console.log("E-mail envoyé avec succès");
+        return true;
+    } catch (err) {
+        console.log(err.statusCode + " " + err.statusText);
+        throw err;
     }
-    return _sendEmail(data);
-}
+};
 
-function _sendEmail(data) {
-    const request = mailjet
-        .post('send', {version: 'v3.1'})
-        .request(data);
-
-    return request
-        .then(() => {
-            console.log("E-mail envoyé avec succès");
-            return true
-        })
-        .catch((err) => {
-            console.log(err.statusCode + " " + err.statusText);
-            throw err;
-        });
+async function _sendEmail(data) {
+    try {
+        await mailjet
+            .post('send', { version: 'v3.1' })
+            .request(data);
+    } catch (err) {
+        throw err;
+    }
 }
