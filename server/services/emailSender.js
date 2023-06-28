@@ -1,7 +1,7 @@
 const Mailjet = require('node-mailjet');
 const mailjet = Mailjet.apiConnect(
-    '43ab1a6caaa30c840a481ddf1645f3dd',
-    '1165034d6ac67bd7345ef9aad61b1035',
+    process.env.MAILJET_PK,
+    process.env.MAILJET_SK
 );
 
 module.exports = function sendAccountValidationEmail(user, confirmation_link) {
@@ -43,9 +43,9 @@ function _sendEmail(data) {
         .request(data);
 
     return request
-        .then((result) => {
+        .then(() => {
             console.log("E-mail envoyé avec succès");
-            return result;
+            return true
         })
         .catch((err) => {
             console.log(err.statusCode + " " + err.statusText);
