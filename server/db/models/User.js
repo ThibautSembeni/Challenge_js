@@ -1,12 +1,14 @@
 module.exports = (connection) => {
     const { DataTypes, Model } = require('sequelize');
     const bcrypt = require('bcryptjs');
-    const Cart = () => require('./Cart')(connection);
-    const Credential = () => require('./Credential')(connection);
-    const Transaction = () => require('./Transaction')(connection);
-    const Operation = () => require('./Operation')(connection);
 
     class User extends Model {
+        static associate(models) {
+            User.hasMany(models.Credential, { foreignKey: 'user_id', as: 'credentials' });
+            User.hasMany(models.Transaction, { foreignKey: 'user_id', as: 'transactions' });
+            User.hasMany(models.Cart, { foreignKey: 'user_id', as: 'carts' });
+        }
+
         isPasswordValid(password) {
             return bcrypt.compare(password, this.password);
         }
@@ -145,11 +147,6 @@ module.exports = (connection) => {
             allowNull: false,
         },
     }, { sequelize: connection, tableName: 'users' });
-
-    User.hasMany(Credential, { foreignKey: 'user_id', as: 'credentials' });
-    User.hasMany(Transaction, { foreignKey: 'user_id', as: 'transactions' });
-    User.hasMany(Operation, { foreignKey: 'user_id', as: 'operations' });
-    User.hasMany(Cart, { foreignKey: 'user_id', as: 'carts' });
 
     function updatePassword(user) {
         return bcrypt.genSalt(10).then((salt) => bcrypt.hash(user.password, salt).then((hash) => { user.password = hash; }))

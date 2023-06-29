@@ -1,9 +1,12 @@
 module.exports = (connection) => {
     const { DataTypes, Model } = require('sequelize');
     const bcrypt = require('bcryptjs');
-    const User = () => require('./User')(connection);
 
-    class Credential extends Model {}
+    class Credential extends Model {
+        static associate(models) {
+            Credential.belongsTo(models.User, { foreignKey: 'user_id', as: 'user' });
+        }
+    }
 
     Credential.init({
         id: {
@@ -31,8 +34,6 @@ module.exports = (connection) => {
         },
     
     }, { sequelize: connection, tableName: 'credentials' });
-
-    Credential.belongsTo(User, { foreignKey: 'user_id', as: 'users' });
 
     function generateToken() {
         const salt = bcrypt.genSaltSync(10);

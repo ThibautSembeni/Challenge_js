@@ -1,10 +1,13 @@
 module.exports = (connection) => {
     const { DataTypes, Model } = require('sequelize');
-    const User = () => require('./User')(connection);
-    const Operation = () => require('./Operation')(connection);
-    const Notification = () => require('./Notification')(connection);
 
-    class Transaction extends Model {}
+    class Transaction extends Model {
+        static associate(models) {
+            Transaction.belongsTo(models.User, { foreignKey: 'user_id', as: 'user' });
+            Transaction.hasMany(models.Operation, { foreignKey: 'transaction_id', as: 'operations' });
+            Transaction.hasMany(models.Notification, { foreignKey: 'transaction_id', as: 'notifications' });
+        }
+    }
 
     Transaction.init({
         id: {
@@ -88,10 +91,6 @@ module.exports = (connection) => {
             allowNull: false,
         },
     }, { sequelize: connection, tableName: 'transactions' });
-
-    Transaction.belongsTo(User, { foreignKey: 'user_id', as: 'users' });
-    Transaction.hasMany(Operation, { foreignKey: 'transaction_id', as: 'operations' });
-    Transaction.hasMany(Notification, { foreignKey: 'transaction_id', as: 'notifications' });
 
     return Transaction;
 };

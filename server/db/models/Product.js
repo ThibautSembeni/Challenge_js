@@ -1,8 +1,11 @@
 module.exports = (connection) => {
     const { DataTypes, Model } = require('sequelize');
-    const Cart = () => require('./Cart')(connection);
 
-    class Product extends Model {}
+    class Product extends Model {
+        static associate(models) {
+            Product.belongsTo(models.Cart, { foreignKey: 'cart_id', as: 'cart' });
+        }
+    }
 
     Product.init({
         id: {
@@ -43,8 +46,6 @@ module.exports = (connection) => {
             allowNull: false,
         },
     }, { sequelize: connection, tableName: 'products' });
-
-    Product.belongsTo(Cart, { foreignKey: 'cart_id', as: 'carts' });
 
     return Product;
 };

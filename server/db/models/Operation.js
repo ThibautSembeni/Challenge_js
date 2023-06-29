@@ -1,8 +1,11 @@
 module.exports = (connection) => {
     const { DataTypes, Model } = require('sequelize');
-    const Transaction = () => require('./Transaction')(connection);
     
-    class Operation extends Model {}
+    class Operation extends Model {
+        static associate(models) {
+            Operation.belongsTo(models.Transaction, { foreignKey: 'transaction_id', as: 'transaction' });
+        }
+    }
 
     Operation.init({
         id: {
@@ -51,8 +54,6 @@ module.exports = (connection) => {
             allowNull: false,
         },
     }, { sequelize: connection, tableName: 'operations' });
-
-    Operation.belongsTo(Transaction, { foreignKey: 'transaction_id', as: 'transactions' });
 
     return Operation;
 };

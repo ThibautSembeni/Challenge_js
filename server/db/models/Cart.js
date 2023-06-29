@@ -1,9 +1,12 @@
 module.exports = (connection) => {
     const { DataTypes, Model } = require('sequelize');
-    const User = () => require('./User')(connection);
-    const Product = () => require('./Product')(connection);
 
-    class Cart extends Model {}
+    class Cart extends Model {
+        static associate(models) {
+            Cart.belongsTo(models.User, { foreignKey: 'user_id', as: 'user' });
+            Cart.hasMany(models.Product, { foreignKey: 'cart_id', as: 'products' });
+        }
+    }
 
     Cart.init({
         id: {
@@ -32,8 +35,5 @@ module.exports = (connection) => {
         },
     }, { sequelize: connection, tableName: 'carts' });
 
-    Cart.belongsTo(User, { foreignKey: 'user_id', as: 'users' });
-    Cart.hasMany(Product, { foreignKey: 'product_id', as: 'products' });
-
     return Cart;
-}
+};
