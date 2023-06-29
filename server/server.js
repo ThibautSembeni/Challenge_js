@@ -24,7 +24,7 @@ app.use("/template", TemplateRouter);
 app.use("/users", checkAuth, UserRouter);
 
 app.get("/", (req, res) => {
-  res.send("Hello World");
+  res.status(200).json({ message: "Hello World!" });
 });
 
 app.post("/", (req, res) => {
