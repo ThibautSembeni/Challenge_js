@@ -9,4 +9,10 @@ files.forEach(file => {
     db[model.name] = model;
 });
 
+Object.keys(db).forEach(modelName => {
+    if(db[modelName].associate) {
+        db[modelName].associate(db);
+    }
+});
+
 module.exports = db;
