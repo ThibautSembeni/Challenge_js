@@ -7,8 +7,6 @@ COPY package*.json ./
 
 RUN npm install
 
-RUN npm install -g pm2
-
 ENV NODE_ENV=production
 
 ENV JWT_SECRET=$JWT_SECRET
@@ -19,4 +17,4 @@ COPY . .
 
 EXPOSE 3000
 
-CMD ["pm2-runtime", "start", "index.js"]
+CMD ["npm", "run", "start"]
