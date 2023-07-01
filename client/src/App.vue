@@ -2,7 +2,6 @@
 import { RouterLink, RouterView } from 'vue-router'
 import HelloWorld from './components/HelloWorld.vue'
 
-console.log(import.meta.env)
 fetch(`${import.meta.env.VITE_API_URL}`)
   .then((res) => res.json())
   .then((data) => console.log(data))
