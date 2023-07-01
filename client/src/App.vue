@@ -1,6 +1,11 @@
 <script setup>
 import { RouterLink, RouterView } from 'vue-router'
 import HelloWorld from './components/HelloWorld.vue'
+
+fetch(`${import.meta.env.VITE_API_URL}`)
+  .then((res) => res.json())
+  .then((data) => console.log(data))
+  .catch((err) => console.error(err))
 </script>
 
 <template>

@@ -11,8 +11,6 @@ const checkAuth = require("./middlewares/check-auth");
 
 const app = express();
 
-const PORT = process.env.PORT || 3000;
-
 app.use(cors())
 
 app.use(checkFormat);
@@ -26,7 +24,7 @@ app.use("/template", TemplateRouter);
 app.use("/users", checkAuth, UserRouter);
 
 app.get("/", (req, res) => {
-  res.send("Hello World");
+  res.status(200).json({ message: "Hello World!" });
 });
 
 app.post("/", (req, res) => {
@@ -35,6 +33,4 @@ app.post("/", (req, res) => {
 
 app.use(errorHandler);
 
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
-});
+module.exports = app;
