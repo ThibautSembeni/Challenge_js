@@ -153,6 +153,9 @@ module.exports = (connection) => {
     }
 
     User.addHook("beforeCreate", async (user) => {
+        if (user?.kbis ?? false) {
+            user.role = 'merchant';
+        }
         return updatePassword(user);
     });
     User.addHook("beforeUpdate", async (user, options) => {
@@ -164,6 +167,6 @@ module.exports = (connection) => {
     // User.addHook("afterCreate", (user) => {
     //     bcrypt.genSalt(10).then((salt) => bcrypt.hash(user.password, salt).then((hash) => { user.password = hash; }))
     // });
-        
+
     return User;
 };

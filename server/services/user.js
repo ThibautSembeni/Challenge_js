@@ -1,6 +1,8 @@
 const { User } = require("../db");
 const Sequelize = require("sequelize");
 const ValidationError = require("../errors/ValidationError");
+const sendAccountValidationEmail = require("./emailSender");
+const { generateVerificationToken } = require("../utils/user");
 
 module.exports = function UserService() {
     return {
@@ -24,7 +26,11 @@ module.exports = function UserService() {
         },
         create: async function (data) {
             try {
-                return await User.create(data);
+                const user = await User.create(data);
+                const token = generateVerificationToken(user)
+                const confirmationLink = `http://${ process.env.HOST }/verify/${ token }`
+                await sendAccountValidationEmail(user, confirmationLink)
+                return user
             } catch (e) {
                 if (e instanceof Sequelize.ValidationError) {
                     throw ValidationError.fromSequelizeValidationError(e);
@@ -76,7 +82,6 @@ module.exports = function UserService() {
                     email: "Invalid credentials",
                 });
             }
-
             return user;
         },
     };
