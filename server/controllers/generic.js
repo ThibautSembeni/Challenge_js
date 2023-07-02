@@ -8,7 +8,6 @@ module.exports = function genericController(Service, options = {}) {
             } catch (error) {
                 res.status(500).json(error);
             }
-
         },
         getOne: async (req, res) => {
             const { id } = req.params;
@@ -46,7 +45,7 @@ module.exports = function genericController(Service, options = {}) {
                 if (created) res.status(201).json(result);
                 else res.json(result);
             } catch (error) {
-                if (error.name === 'ValidationError') {
+                if (error.constructor.name === 'ValidationError') {
                     res.status(422).json(error.errors);
                 } else {
                     res.status(500).json(error);
@@ -61,7 +60,7 @@ module.exports = function genericController(Service, options = {}) {
                 if (result) res.json(result);
                 else res.sendStatus(404);
             } catch (error) {
-                if (error.name === 'ValidationError') {
+                if (error.constructor.name === 'ValidationError') {
                     res.status(422).json(error.errors);
                 } else {
                     res.status(500).json(error);

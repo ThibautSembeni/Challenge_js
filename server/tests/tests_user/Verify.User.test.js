@@ -53,7 +53,7 @@ describe('Test register verify account', () => {
         const verificationResponse = await fetch(`${verificationUrl}/${jwtToken}`);
         const verificationData = await verificationResponse.json()
         expect(verificationResponse.status).toBe(200);
-        expect(verificationData.email).toBe(registrationData.email);
+        expect(verificationData.user_id).toBe(registerData.id);
     });
 
     it('Verify status user before verification process', async () => {

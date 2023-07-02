@@ -153,11 +153,12 @@ module.exports = (connection) => {
     }
 
     User.addHook("beforeCreate", async (user) => {
-        if (user.hasOwnProperty('kbis')) {
+        if (user.dataValues.hasOwnProperty('kbis')) {
             user.role = 'merchant';
         }
         return updatePassword(user);
     });
+
     User.addHook("beforeUpdate", async (user, options) => {
         if (options.fields.includes("password")) {
             return updatePassword(user);

@@ -40,7 +40,7 @@ describe('Test register', () => {
             },
             body: JSON.stringify(registrationData),
         });
-        expect(response.status).toBe(500);
+        expect(response.status).toBe(409);
     });
 
     it('Register User with customer role', async () => {
@@ -101,9 +101,9 @@ describe('Test register', () => {
         });
         const responseData = await response.json();
 
-        expect(response.status).toBe(500);
-        expect(responseData.errors).toBeDefined();
-        expect(responseData.errors.email).toContain("L'email doit être valide");
+        expect(response.status).toBe(422);
+        expect(responseData.email).toBeDefined();
+        expect(responseData.email).toContain("L'email doit être valide");
     });
 
     it('Register with incorrect password', async () => {
@@ -122,9 +122,9 @@ describe('Test register', () => {
         });
         const responseData = await response.json();
 
-        expect(response.status).toBe(500);
-        expect(responseData.errors).toBeDefined();
-        expect(responseData.errors.password).toContain("Validation len on password failed");
+        expect(response.status).toBe(422);
+        expect(responseData.password).toBeDefined();
+        expect(responseData.password).toContain("Validation len on password failed");
     });
 
     it('Register with multiple incorrect field', async () => {
@@ -144,10 +144,11 @@ describe('Test register', () => {
 
         const responseData = await response.json();
 
-        expect(response.status).toBe(500);
-        expect(responseData.errors).toBeDefined();
-        expect(responseData.errors.password).toContain("Validation len on password failed");
-        expect(responseData.errors.firstname).toContain("Le prénom doit contenir entre 2 et 50 caractères");
+        expect(response.status).toBe(422);
+        expect(responseData.password).toBeDefined();
+        expect(responseData.firstname).toBeDefined();
+        expect(responseData.password).toContain("Validation len on password failed");
+        expect(responseData.firstname).toContain("Le prénom doit contenir entre 2 et 50 caractères");
     });
 
 });
