@@ -1,6 +1,6 @@
-const jwt = require("jsonwebtoken");
 const { getUserFromJWTToken, generateVerificationToken } = require("../utils/user");
 const { User, Credential } = require("../db");
+
 module.exports = function SecurityController(UserService) {
     return {
         login: async (req, res, next) => {
@@ -18,21 +18,22 @@ module.exports = function SecurityController(UserService) {
                 const { token } = req.params;
                 const encodedUser = getUserFromJWTToken(token);
                 const id = parseInt(encodedUser.id, 10);
-
                 const updatedUser = await UserService.update({ id }, { status: true });
                 if (updatedUser.length === 0) {
                     return res.sendStatus(404);
                 }
-
                 const user = updatedUser[0];
                 if (user.role === 'merchant') {
                     const credentials = await Credential.create({ user_id: user.id });
                     return res.status(200).json(credentials);
                 }
-
                 return res.status(200).json(user);
-            } catch (e) {
-                next(e);
+            } catch (error) {
+                if (error.name === 'ValidationError') {
+                    res.status(422).json(error.errors);
+                } else {
+                    res.status(500).json(error);
+                }
             }
         },
 

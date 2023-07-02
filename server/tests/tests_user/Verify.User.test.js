@@ -3,8 +3,7 @@ const request = require("supertest");
 const app = require("../../server");
 const db = require("../../db/index");
 
-const HOST = 'http://localhost'
-const PORT = '3000'
+const API_URL = 'http://localhost:3000'
 
 
 describe('Test register verify account', () => {
@@ -41,7 +40,7 @@ describe('Test register verify account', () => {
 
         const verificationResponse = await request(app).get(`${verificationUrl}/${jwtToken}`);
         expect(verificationResponse.status).toBe(200);
-        // expect(verificationResponse.body.email).toBe(registrationData.email);
+        expect(verificationResponse.body.user_id).toBe(registerData.id);
     });
 
     test('Verify status user before verification process', async () => {
