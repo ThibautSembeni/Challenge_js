@@ -29,7 +29,7 @@ module.exports = function genericController(Service, options = {}) {
                 if (error.constructor.name === 'ValidationError') {
                     res.status(422).json(error.errors);
                 }
-                else if (error.constructor.name === 'UniqueConstraintError'){
+                else if (error.constructor.name === 'UniqueConstraintError') {
                     res.status(409).json(error.errors);
                 }
                 else {

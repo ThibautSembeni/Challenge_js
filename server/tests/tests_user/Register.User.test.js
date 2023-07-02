@@ -29,7 +29,7 @@ describe('Test register', () => {
         }
         const response = await request(app).post(target).send(registrationData);
 
-        expect(response.status).toBe(500);
+        expect(response.status).toBe(409);
     });
 
     test('Register User with customer role', async () => {
@@ -71,9 +71,9 @@ describe('Test register', () => {
 
         const response = await request(app).post(target).send(registrationData);
 
-        expect(response.status).toBe(500);
-        expect(response.body.errors).toBeDefined();
-        expect(response.body.errors.email).toContain("L'email doit être valide");
+        expect(response.status).toBe(422);
+        expect(response.body.email).toBeDefined();
+        expect(response.body.email).toContain("L'email doit être valide");
     });
 
     test('Register with incorrect password', async () => {
@@ -85,9 +85,9 @@ describe('Test register', () => {
         }
         const response = await request(app).post(target).send(registrationData);
 
-        expect(response.status).toBe(500);
-        expect(response.body.errors).toBeDefined();
-        expect(response.body.errors.password).toContain("Validation len on password failed");
+        expect(response.status).toBe(422);
+        expect(response.body.password).toBeDefined();
+        expect(response.body.password).toContain("Validation len on password failed");
     });
 
     test('Register with multiple incorrect field', async () => {
@@ -99,10 +99,10 @@ describe('Test register', () => {
         }
         const response = await request(app).post(target).send(registrationData);
 
-        expect(response.status).toBe(500);
-        expect(response.body.errors).toBeDefined();
-        expect(response.body.errors.password).toContain("Validation len on password failed");
-        expect(response.body.errors.firstname).toContain("Le prénom doit contenir entre 2 et 50 caractères");
+        expect(response.status).toBe(422);
+        expect(response.body).toBeDefined();
+        expect(response.body.password).toContain("Validation len on password failed");
+        expect(response.body.firstname).toContain("Le prénom doit contenir entre 2 et 50 caractères");
     });
 
     afterAll(() => {

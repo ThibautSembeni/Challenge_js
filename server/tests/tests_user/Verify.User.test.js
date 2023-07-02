@@ -40,7 +40,7 @@ describe('Test register verify account', () => {
 
         const verificationResponse = await request(app).get(`${verificationUrl}/${jwtToken}`);
         expect(verificationResponse.status).toBe(200);
-        expect(verificationResponse.body.user_id).toBe(registerData.id);
+        expect(verificationResponse.body.user_id).toBe(registerResponse.body.id);
     });
 
     test('Verify status user before verification process', async () => {
