@@ -19,6 +19,8 @@ jobs:
       POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
       POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
       JWT_SECRET: ${{ secrets.JWT_SECRET }}
+      MAILJET_PK: ${{ secrets.MAILJET_PK }}
+      MAILJET_SK: ${{ secrets.MAILJET_SK }}
 
     services:
       postgres:
@@ -51,4 +53,4 @@ jobs:
       - name: Run tests
         run: |
           cd server
-          JWT_SECRET=$JWT_SECRET DATABASE_URL=postgres://$POSTGRES_USER:$POSTGRES_PASSWORD@localhost:5432/$POSTGRES_DB npm run test
+          MAILJET_PK=$MAILJET_PK MAILJET_SK=$MAILJET_SK JWT_SECRET=$JWT_SECRET DATABASE_URL=postgres://$POSTGRES_USER:$POSTGRES_PASSWORD@localhost:5432/$POSTGRES_DB npm run test
