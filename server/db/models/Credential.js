@@ -36,7 +36,6 @@ module.exports = (connection) => {
             defaultValue: DataTypes.NOW,
             allowNull: false,
         },
-
     }, { sequelize: connection, tableName: 'credentials' });
 
     function generateToken() {
