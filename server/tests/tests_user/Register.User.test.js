@@ -1,10 +1,8 @@
-const HOST = 'http://localhost'
-const PORT = '3000'
-
+const API_URL = 'http://localhost:3000'
 
 describe('Test register', () => {
     const target_url = 'register'
-    const url = `${HOST}:${PORT}/${target_url}`
+    const url = `${API_URL}/${target_url}`
 
     it('Register User', async () => {
         const registrationData = {
