@@ -163,9 +163,11 @@ module.exports = (connection) => {
             return updatePassword(user);
         }
     });
+
     // Pour le projet et la synchro avec mongo 
     // User.addHook("afterCreate", (user) => {
     //     bcrypt.genSalt(10).then((salt) => bcrypt.hash(user.password, salt).then((hash) => { user.password = hash; }))
     // });
+
     return User;
 };

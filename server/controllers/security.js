@@ -1,5 +1,5 @@
 const jwt = require("jsonwebtoken");
-const { getUserFromJWTToken } = require("../utils/user");
+const { getUserFromJWTToken, generateVerificationToken } = require("../utils/user");
 const { User, Credential } = require("../db");
 module.exports = function SecurityController(UserService) {
     return {
@@ -7,13 +7,7 @@ module.exports = function SecurityController(UserService) {
             try {
                 const { email, password } = req.body;
                 const user = await UserService.login(email, password);
-                const token = jwt.sign(
-                    { id: user.id, fullName: user.lastname + " " + user.firstname },
-                    process.env.JWT_SECRET,
-                    {
-                        expiresIn: "1h",
-                    }
-                );
+                const token = generateVerificationToken(user);
                 res.json({ token });
             } catch (err) {
                 next(err);

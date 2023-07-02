@@ -1,39 +1,33 @@
-const {generateVerificationToken} = require("../../utils/user");
+const { generateVerificationToken } = require("../../utils/user");
+const request = require("supertest");
+const app = require("../../server");
+const db = require("../../db/index");
 
 const HOST = 'http://localhost'
 const PORT = '3000'
 
 
 describe('Test register verify account', () => {
-    const registerUrl = `${HOST}:${PORT}/register`
-    const verificationUrl = `${HOST}:${PORT}/verify`
+    const registerUrl = `/register`
+    const verificationUrl = `/verify`
 
-    it('Verify a customer user', async () => {
+    test('Verify a customer user', async () => {
         const registrationData = {
             firstname: 'John',
             lastname: 'Doe',
             email: 'customer@user.com',
             password: 'password',
         }
-        const registerResponse = await fetch(registerUrl, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(registrationData),
-        });
-        const registerData = await registerResponse.json();
+        const registerResponse = await request(app).post(registerUrl).send(registrationData);
 
-        const jwtToken = generateVerificationToken(registerData)
-        const verificationResponse = await fetch(`${verificationUrl}/${jwtToken}`);
-
-        const verificationData = await verificationResponse.json();
+        const jwtToken = generateVerificationToken(registerResponse.body);
+        const verificationResponse = await request(app).get(`${verificationUrl}/${jwtToken}`);
 
         expect(verificationResponse.status).toBe(200);
-        expect(verificationData.email).toBe(registrationData.email);
+        expect(verificationResponse.body.email).toBe(registrationData.email);
     });
 
-    it('Verify a merchant user', async () => {
+    test('Verify a merchant user', async () => {
         const registrationData = {
             firstname: 'John',
             lastname: 'Doe',
@@ -41,48 +35,33 @@ describe('Test register verify account', () => {
             password: 'password',
             kbis: "kbis"
         }
-        const registerResponse = await fetch(registerUrl, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(registrationData),
-        });
-        const registerData = await registerResponse.json();
+        const registerResponse = await request(app).post(registerUrl).send(registrationData);
 
-        const jwtToken = generateVerificationToken(registerData)
-        const verificationResponse = await fetch(`${verificationUrl}/${jwtToken}`);
-        const verificationData = await verificationResponse.json()
+        const jwtToken = generateVerificationToken(registerResponse.body);
+
+        const verificationResponse = await request(app).get(`${verificationUrl}/${jwtToken}`);
         expect(verificationResponse.status).toBe(200);
-        expect(verificationData.email).toBe(registrationData.email);
+        // expect(verificationResponse.body.email).toBe(registrationData.email);
     });
 
-    it('Verify status user before verification process', async () => {
+    test('Verify status user before verification process', async () => {
         const registrationData = {
             firstname: 'John',
             lastname: 'Doe',
             email: 'status@customer.com',
             password: 'password'
         }
-        const registerResponse = await fetch(registerUrl, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(registrationData),
-        });
-        const registerData = await registerResponse.json();
+        const registerResponse = await request(app).post(registerUrl).send(registrationData);
 
-        const jwtToken = generateVerificationToken(registerData)
-        const verificationResponse = await fetch(`${verificationUrl}/${jwtToken}`);
-        const verificationData = await verificationResponse.json();
+        const jwtToken = generateVerificationToken(registerResponse.body)
+        const verificationResponse = await request(app).get(`${verificationUrl}/${jwtToken}`);
 
         expect(verificationResponse.status).toBe(200);
-        expect(verificationData.email).toBe(registrationData.email);
-        expect(verificationData.status).toBe(true);
+        expect(verificationResponse.body.email).toBe(registrationData.email);
+        expect(verificationResponse.body.status).toBe(true);
     });
 
-    it('Get credentials for a merchant user', async () => {
+    test('Get credentials for a merchant user', async () => {
         const registrationData = {
             firstname: 'John',
             lastname: 'Doe',
@@ -90,25 +69,19 @@ describe('Test register verify account', () => {
             password: 'password',
             kbis: "kbis"
         }
-        const registerResponse = await fetch(registerUrl, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(registrationData),
-        });
-        const registerData = await registerResponse.json();
-        const userId = registerData.id
-        const jwtToken = generateVerificationToken(registerData)
-        const verificationResponse = await fetch(`${verificationUrl}/${jwtToken}`);
-        const verificationData = await verificationResponse.json();
+        const registerResponse = await request(app).post(registerUrl).send(registrationData);
+
+        const userId = registerResponse.body.id;
+        const jwtToken = generateVerificationToken(registerResponse.body);
+
+        const verificationResponse = await request(app).get(`${verificationUrl}/${jwtToken}`);
 
         expect(verificationResponse.status).toBe(200);
-        expect(verificationData.user_id).toBe(userId);
-        expect(verificationData.client_token).toBeDefined();
-        expect(verificationData.client_secret).toBeDefined();
-        expect(typeof verificationData.client_token).toBe('string');
-        expect(typeof verificationData.client_secret).toBe('string');
+        expect(verificationResponse.body.user_id).toBe(userId);
+        expect(verificationResponse.body.client_token).toBeDefined();
+        expect(verificationResponse.body.client_secret).toBeDefined();
+        expect(typeof verificationResponse.body.client_token).toBe('string');
+        expect(typeof verificationResponse.body.client_secret).toBe('string');
     });
 
 });

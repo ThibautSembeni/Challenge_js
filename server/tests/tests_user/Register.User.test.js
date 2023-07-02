@@ -1,71 +1,52 @@
-const HOST = 'http://localhost'
-const PORT = '3000'
-
+const request = require("supertest");
+const app = require("../../server");
+const db = require("../../db/index");
 
 describe('Test register', () => {
-    const target_url = 'register'
-    const url = `${HOST}:${PORT}/${target_url}`
+    const target = '/register';
 
-    it('Register User', async () => {
+    test('Register User', async () => {
         const registrationData = {
             firstname: 'John',
             lastname: 'Doe',
             email: 'test@test.com',
             password: 'password',
         }
-        const response = await fetch(url, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(registrationData),
-        });
-        const responseData = await response.json();
+        const response = await request(app).post(target).send(registrationData);
 
         expect(response.status).toBe(201);
-        expect(responseData.firstname).toBe(registrationData.firstname);
-        expect(responseData.lastname).toBe(registrationData.lastname);
-        expect(responseData.email).toBe(registrationData.email);
+        expect(response.body.firstname).toBe(registrationData.firstname);
+        expect(response.body.lastname).toBe(registrationData.lastname);
+        expect(response.body.email).toBe(registrationData.email);
     });
 
-    it('User already exists', async () => {
+    test('User already exists', async () => {
         const registrationData = {
             firstname: 'John',
             lastname: 'Doe',
             email: 'test@test.com',
             password: 'password',
         }
-        const response = await fetch(url, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(registrationData),
-        });
+        const response = await request(app).post(target).send(registrationData);
+
         expect(response.status).toBe(500);
     });
 
-    it('Register User with customer role', async () => {
+    test('Register User with customer role', async () => {
         const registrationData = {
             firstname: 'John',
             lastname: 'Doe',
             email: 'customer@test.com',
             password: 'password',
         }
-        const response = await fetch(url, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(registrationData),
-        });
-        const responseData = await response.json();
+        const response = await request(app).post(target).send(registrationData);
+
 
         expect(response.status).toBe(201);
-        expect(responseData.role).toBe('customer');
+        expect(response.body.role).toBe('customer');
     });
 
-    it('Register User with merchant role', async () => {
+    test('Register User with merchant role', async () => {
         const registrationData = {
             firstname: 'John',
             lastname: 'Doe',
@@ -73,20 +54,13 @@ describe('Test register', () => {
             password: 'password',
             kbis: 'kbis',
         }
-        const response = await fetch(url, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(registrationData),
-        });
-        const responseData = await response.json();
+        const response = await request(app).post(target).send(registrationData);
 
         expect(response.status).toBe(201);
-        expect(responseData.role).toBe('merchant');
+        expect(response.body.role).toBe('merchant');
     });
 
-    it('Register with incorrect email type', async () => {
+    test('Register with incorrect email type', async () => {
         const registrationData = {
             firstname: 'John',
             lastname: 'Doe',
@@ -94,62 +68,46 @@ describe('Test register', () => {
             password: 'password',
             kbis: 'kbis',
         }
-        const response = await fetch(url, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(registrationData),
-        });
-        const responseData = await response.json();
+
+        const response = await request(app).post(target).send(registrationData);
 
         expect(response.status).toBe(500);
-        expect(responseData.errors).toBeDefined();
-        expect(responseData.errors.email).toContain("L'email doit être valide");
+        expect(response.body.errors).toBeDefined();
+        expect(response.body.errors.email).toContain("L'email doit être valide");
     });
 
-    it('Register with incorrect password', async () => {
+    test('Register with incorrect password', async () => {
         const registrationData = {
             firstname: 'John',
             lastname: 'Doe',
             email: 'incorrect@field.com',
             password: 'pass'
         }
-        const response = await fetch(url, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(registrationData),
-        });
-        const responseData = await response.json();
+        const response = await request(app).post(target).send(registrationData);
 
         expect(response.status).toBe(500);
-        expect(responseData.errors).toBeDefined();
-        expect(responseData.errors.password).toContain("Validation len on password failed");
+        expect(response.body.errors).toBeDefined();
+        expect(response.body.errors.password).toContain("Validation len on password failed");
     });
 
-    it('Register with multiple incorrect field', async () => {
+    test('Register with multiple incorrect field', async () => {
         const registrationData = {
             firstname: 'f',
             lastname: 'Doe',
             email: 'incorrect@field.com',
             password: 'pass'
         }
-        const response = await fetch(url, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(registrationData),
-        });
-
-        const responseData = await response.json();
+        const response = await request(app).post(target).send(registrationData);
 
         expect(response.status).toBe(500);
-        expect(responseData.errors).toBeDefined();
-        expect(responseData.errors.password).toContain("Validation len on password failed");
-        expect(responseData.errors.firstname).toContain("Le prénom doit contenir entre 2 et 50 caractères");
+        expect(response.body.errors).toBeDefined();
+        expect(response.body.errors.password).toContain("Validation len on password failed");
+        expect(response.body.errors.firstname).toContain("Le prénom doit contenir entre 2 et 50 caractères");
     });
 
+    afterAll(() => {
+        return db.User.destroy({
+            where: {},
+        })
+    });
 });

@@ -22,10 +22,6 @@ module.exports = (connection) => {
             type: DataTypes.STRING,
             allowNull: true,
         },
-        user_id: {
-            type: DataTypes.STRING,
-            allowNull: true,
-        },
         created_at: {
             type: DataTypes.DATE,
             defaultValue: DataTypes.NOW,
