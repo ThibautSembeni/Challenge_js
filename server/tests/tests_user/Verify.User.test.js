@@ -1,12 +1,11 @@
 const {generateVerificationToken} = require("../../utils/user");
 
-const HOST = 'http://localhost'
-const PORT = '3000'
+const API_URL = 'http://localhost:3000'
 
 
 describe('Test register verify account', () => {
-    const registerUrl = `${HOST}:${PORT}/register`
-    const verificationUrl = `${HOST}:${PORT}/verify`
+    const registerUrl = `${API_URL}/register`
+    const verificationUrl = `${API_URL}/verify`
 
     it('Verify a customer user', async () => {
         const registrationData = {

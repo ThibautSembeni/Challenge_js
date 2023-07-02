@@ -153,7 +153,7 @@ module.exports = (connection) => {
     }
 
     User.addHook("beforeCreate", async (user) => {
-        if (user?.kbis ?? false) {
+        if (user.hasOwnProperty('kbis')) {
             user.role = 'merchant';
         }
         return updatePassword(user);
