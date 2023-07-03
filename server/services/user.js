@@ -1,6 +1,9 @@
-const { User } = require("../db");
+const {User} = require("../db");
 const Sequelize = require("sequelize");
 const ValidationError = require("../errors/ValidationError");
+const UniqueConstraintError = require("../errors/UniqueConstraintError");
+const sendAccountValidationEmail = require("./emailSender");
+const {generateVerificationToken} = require("../utils/user");
 
 module.exports = function UserService() {
     return {
@@ -20,12 +23,19 @@ module.exports = function UserService() {
             return User.findAll(dbOptions);
         },
         findOne: async function (filters) {
-            return User.findOne({ where: filters });
+            return User.findOne({where: filters});
         },
         create: async function (data) {
             try {
-                return await User.create(data);
+                const user = await User.create(data);
+                const token = generateVerificationToken(user)
+                const confirmationLink = `${process.env.API_URL}/verify/${token}`
+                await sendAccountValidationEmail(user, confirmationLink)
+                return user
             } catch (e) {
+                if (e instanceof Sequelize.UniqueConstraintError) {
+                    throw UniqueConstraintError.fromSequelizeUniqueConstraintError(e);
+                }
                 if (e instanceof Sequelize.ValidationError) {
                     throw ValidationError.fromSequelizeValidationError(e);
                 }
@@ -51,7 +61,6 @@ module.exports = function UserService() {
                     returning: true,
                     individualHooks: true,
                 });
-
                 return users;
             } catch (e) {
                 if (e instanceof Sequelize.ValidationError) {
@@ -61,10 +70,10 @@ module.exports = function UserService() {
             }
         },
         delete: async (filters) => {
-            return User.destroy({ where: filters });
+            return User.destroy({where: filters});
         },
         login: async (email, password) => {
-            const user = await User.findOne({ where: { email } });
+            const user = await User.findOne({where: {email}});
             if (!user) {
                 throw new ValidationError({
                     email: "Invalid credentials",
@@ -76,7 +85,6 @@ module.exports = function UserService() {
                     email: "Invalid credentials",
                 });
             }
-
             return user;
         },
     };
