@@ -29,7 +29,7 @@ const router = createRouter({
       component: PaymentView
     },
     {
-      path: '/paiement/:uuid',
+      path: '/paiement/:reference',
       name: 'paymentDetail',
       component: PaymentDetailView
     },

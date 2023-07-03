@@ -1,3 +1,56 @@
+<script setup>
+
+import {computed, onMounted, reactive} from 'vue'
+import '../assets/index.css'
+import SideBar from "@/components/SideBar.vue";
+import NavBar from "@/components/NavBar.vue";
+import moment from "moment";
+import FormatEuro from "@/components/Payment/FormatEuro.vue";
+
+onMounted(async () => {
+    await getTransactions()
+})
+
+const defaultValue = {
+    currentTab: 'Tous les paiements',
+    tabs: ['Tous les paiements', 'Litiges', 'Toutes les transactions'],
+    currentFilterAll: 'Tous',
+    filtersAll: ['Tous', 'Réussi', 'En attente', 'Échoué'],
+}
+
+const data = reactive({
+    ...defaultValue,
+    payments: {},
+})
+
+async function getTransactions () {
+    const response = await fetch(`${import.meta.env.VITE_API_URL}/transactions`, {
+        method: 'GET',
+        headers: {
+            'Content-type': 'application/json'
+        },
+    })
+    if (response.ok) {
+        data.payments = await response.json()
+    }
+}
+
+const filteredPaymentsAll = computed(() => {
+    switch (data.currentFilterAll) {
+        case 'Tous':
+            return data.payments
+        case 'Réussi':
+            return data.payments.filter(p => p.status === 'paid')
+        case 'En attente':
+            return data.payments.filter(p => p.status === 'pending')
+        case 'Échoué':
+            return data.payments.filter(p => p.status === 'failed')
+    }
+})
+
+</script>
+
+
 <template>
     <SideBar />
 
@@ -48,23 +101,24 @@
                             :key="payment.id"
                             class="bg-white border-b">
                             <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
-                                <router-link :to="{ name: 'paymentDetail', params: { 'uuid': 'a_remplace' } }">
-                                    {{ payment.amount }}
+                                <router-link :to="{ name: 'paymentDetail', params: { 'reference': payment.reference } }">
+                                    <FormatEuro :price="payment.amount" :currency="payment.currency" />
                                     <span class="ml-4 font-light text-gray-400">{{ payment.currency }}</span>
-                                    <span :class="`text-sm font-medium mr-2 px-2.5 py-0.5 rounded ml-4 ${payment.status === 'Réussi' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' } `">{{ payment.status }}</span>
+                                    <span :class="`text-sm font-medium mr-2 px-2.5 py-0.5 rounded ml-4 ${payment.status === 'pending' ? 'bg-orange-100 text-orange-800' : payment.status === 'paid' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }`">{{ payment.status === 'pending' ? 'En attente' : payment.status === 'paid' ? 'Réussi' : 'Échec' }}</span>
                                 </router-link>
                             </th>
                             <td class="px-6 py-4">
-                                {{ payment.description }}
+                                Achat par :
+                                {{ payment.client_info.name }}
                             </td>
                             <td class="px-6 py-4">
                                 ###
                             </td>
                             <td class="px-6 py-4">
-                                {{ payment.date }}
+                                {{ moment(payment.created_at).format('LLLL') }}
                             </td>
                         </tr>
-                        <tr class="bg-white border-b" v-if="!filteredPaymentsAll">
+                        <tr class="bg-white border-b" v-if="!filteredPaymentsAll.length">
                             <th colspan="4" scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap text-center">
                                 Aucun paiement
                             </th>
@@ -113,91 +167,3 @@
         </div>
     </div>
 </template>
-
-<script setup>
-
-import {computed, onMounted, reactive} from 'vue'
-import '../assets/index.css'
-import SideBar from "@/components/SideBar.vue";
-import NavBar from "@/components/NavBar.vue";
-import PaymentDetailView from "@/views/PaymentDetailView.vue";
-
-onMounted(async () => {
-    await getTransactions()
-})
-async function getTransactions () {
-    const response = await fetch(`${import.meta.env.VITE_API_URL}/transactions`, {
-        method: 'GET',
-        headers: {
-            'Content-type': 'application/json'
-        },
-    })
-    if (response.ok) {
-        const data = await response.json()
-        console.log(data)
-    }
-}
-
-const defaultValue = {
-    currentTab: 'Tous les paiements',
-    tabs: ['Tous les paiements', 'Litiges', 'Toutes les transactions'],
-    currentFilterAll: 'Tous',
-    filtersAll: ['Tous', 'Réussi', 'En attente', 'Échoué', 'Remboursé'],
-
-    // payments...... depuis API
-    // transactions...... depuis API
-}
-
-const data = reactive({ ...defaultValue })
-
-const filteredPaymentsAll = computed(() => {
-    switch (data.currentFilterAll) {
-        case 'Tous':
-            // return this.payments;
-            return [
-                {
-                    'amount': '208 975,98 €',
-                    'currency': 'EUR',
-                    'status': 'Réussi',
-                    'date': '27 avril. à 08:46',
-                    'description': 'Achat par : Romain Lethumier'
-                },
-                {
-                    'amount': '208,98 €',
-                    'currency': 'EUR',
-                    'status': 'Échec',
-                    'date': '29 avril. à 08:46',
-                    'description': 'Achat par : Tibo '
-                }
-            ]
-
-        case 'Réussi':
-            // return this.payments.filter(p => p.status === 'Réussi');
-            return [
-                {
-                    'amount': '208 975,98 €',
-                    'currency': 'EUR',
-                    'status': 'Réussi',
-                    'date': '27 avril. à 08:46',
-                    'description': 'Achat par : Romain Lethumier'
-                }
-            ];
-        case 'Remboursé':
-            return
-        case 'En attente':
-            return
-        case 'Échoué':
-            //return this.payments.filter(p => p.status === 'Échec');
-            return [
-                {
-                    'amount': '208,98 €',
-                    'currency': 'EUR',
-                    'status': 'Échec',
-                    'date': '29 avril. à 08:46',
-                    'description': 'Achat par : Tibo '
-                }
-            ]
-    }
-})
-
-</script>

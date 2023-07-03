@@ -1,5 +1,15 @@
+const {DataTypes} = require("sequelize");
 module.exports = (connection) => {
     const { DataTypes, Model } = require('sequelize');
+
+    function uniqueRef () {
+        let code = 'tr_';
+        let authorizedChar = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+        for (let i = 0; i < 20; i++) {
+            code += authorizedChar.charAt(Math.floor(Math.random() * authorizedChar.length));
+        }
+        return code;
+    }
 
     class Transaction extends Model {
         static associate(models) {
@@ -80,15 +90,15 @@ module.exports = (connection) => {
                 },
             }
         },
-        created_at: {
-            type: DataTypes.DATE,
-            defaultValue: DataTypes.NOW,
+        reference: {
+            type: DataTypes.STRING,
+            defaultValue: uniqueRef(),
             allowNull: false,
-        },
-        updated_at: {
-            type: DataTypes.DATE,
-            defaultValue: DataTypes.NOW,
-            allowNull: false,
+            validate: {
+                notNull: {
+                    msg: "La référence est obligatoire"
+                },
+            }
         },
     }, { sequelize: connection, tableName: 'transactions' });
 
