@@ -1,17 +1,3 @@
-<template>
-  <div class="form-group mt-4 column">
-    <label>{{ label }}</label>
-    <input
-      v-model="inputValue"
-      :type="type"
-      @input="handleInput"
-      :class="{ 'is-invalid': showError }"
-      class="mt-2"
-    />
-    <span v-if="showError" class="error-message">{{ errorMessage }}</span>
-  </div>
-</template>
-
 <script setup>
 import { ref } from 'vue'
 
@@ -31,6 +17,26 @@ const props = defineProps({
   type: {
     type: String,
     default: 'text'
+  },
+  placeholder: {
+    type: String,
+    default: ''
+  },
+  disabled: {
+    type: Boolean,
+    default: false
+  },
+  required: {
+    type: Boolean,
+    default: false
+  },
+  autocomplete: {
+    type: String,
+    default: 'off'
+  },
+  labelDescription: {
+    type: String,
+    default: ''
   }
 })
 const emit = defineEmits(['update:modelValue'])
@@ -60,12 +66,27 @@ const handleInput = (event) => {
 }
 </script>
 
-<style scoped>
-.form-group {
-  box-sizing: border-box;
-}
+<template>
+  <div class="column">
+    <label :class="{ required: required === true }">{{ label }}</label>
+    <p v-if="labelDescription">{{ labelDescription }}</p>
+    <input
+      v-model="inputValue"
+      :type="type"
+      @input="handleInput"
+      :class="{ 'is-invalid': showError }"
+      :placeholder="placeholder"
+      :disabled="disabled"
+      :required="required"
+      :autocomplete="autocomplete"
+    />
+    <span v-if="showError" class="error-message">{{ errorMessage }}</span>
+  </div>
+</template>
 
+<style scoped>
 input {
+  margin-top: 8px;
   box-sizing: border-box;
   border: unset;
   background-color: rgb(255, 255, 255);
@@ -75,11 +96,31 @@ input {
   padding: 10px;
 }
 
+input:focus {
+  outline: none;
+  border-color: #3a97d4;
+  box-shadow: 0 0 4px #3a97d4;
+}
+
+label {
+  font-size: 14px;
+  font-weight: 700;
+  margin: 0;
+}
+
+label.required::after {
+  content: '*';
+  color: red;
+}
+
+p {
+  margin: 0;
+  font-size: 12px;
+}
 input.is-invalid {
   box-shadow: 0 1px 1px rgba(0, 0, 0, 0.12), 0 0 0 1px red;
   border: unset;
 }
-
 .error-message {
   color: red;
   padding: 5px 0;
