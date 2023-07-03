@@ -1,53 +1,8 @@
-<template>
-  <div id="container-login">
-    <AuthForm :formData="formData" :onSubmit="loginUser">
-      <template #title><h2>Connectez-vous à votre compte</h2></template>
-      <template #inputs>
-        <GenericInput
-          label="E-mail"
-          :validator="validateEmail"
-          v-model="formData.email"
-          type="email"
-        />
-        <GenericInput
-          label="Password"
-          :validator="validatePassword"
-          v-model="formData.password"
-          type="password"
-        />
-      </template>
-      <template #submit>
-        <div class="column mt-4">
-          <GenericButton
-            :active="formData.password !== '' && formData.email !== ''"
-            color="primary"
-            text="Se connecter"
-          />
-        </div>
-      </template>
-    </AuthForm>
-  </div>
-</template>
-
-<style scoped>
-#container-login {
-  width: 35%;
-  margin: auto;
-  padding-top: 10%;
-}
-
-@media (max-width: 1024px) {
-  #container-login {
-    width: 80%;
-    padding-top: 10%;
-  }
-}
-</style>
 <script setup>
-import AuthForm from '@/components/AuthForm.vue'
 import { reactive } from 'vue'
-import GenericInput from '@/components/GenericInput.vue'
 import GenericButton from '@/components/GenericButton.vue'
+import Input from '@/components/Form/Input.vue'
+import Form from '@/components/Form/Form.vue'
 
 const defaultValue = {
   email: '',
@@ -88,3 +43,56 @@ const validatePassword = (value) => {
   return { isValid, message }
 }
 </script>
+<template>
+  <div id="container-login">
+    <Form :formData="formData" :onSubmit="loginUser">
+      <template #title><h2>Connectez-vous à votre compte</h2></template>
+      <template #inputs>
+        <Input
+          label="E-mail"
+          :validator="validateEmail"
+          v-model="formData.email"
+          type="email"
+          :required="true"
+        />
+        <Input
+          label="Password"
+          :validator="validatePassword"
+          v-model="formData.password"
+          type="password"
+          :required="true"
+        />
+      </template>
+      <template #submit>
+        <div class="column mt-4">
+          <GenericButton
+            :active="formData.password !== '' && formData.email !== ''"
+            color="primary"
+            text="Se connecter"
+          />
+        </div>
+      </template>
+    </Form>
+    <p>
+      Vous n'avez pas encore de compte ?
+      <router-link to="/register">Créez-vous en un !</router-link>
+    </p>
+  </div>
+</template>
+
+<style scoped>
+#container-login {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  height: 100vh;
+}
+
+@media (max-width: 1024px) {
+  #container-login {
+    width: 80%;
+    padding-top: 10%;
+  }
+}
+</style>

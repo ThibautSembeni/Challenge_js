@@ -30,6 +30,7 @@ const selectCountry = (country) => {
 const toggleList = () => {
   showList.value = !showList.value
 }
+console.log('countries', countries.value)
 </script>
 
 <template>
@@ -110,6 +111,10 @@ input {
     0 2px 5px rgba(60, 66, 87, 0.08);
   border-radius: 5px;
   padding: 10px;
+}
+
+label {
+  font-weight: 700;
 }
 
 ul {
