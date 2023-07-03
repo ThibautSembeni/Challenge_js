@@ -116,11 +116,27 @@
 
 <script setup>
 
-import {computed, reactive} from 'vue'
+import {computed, onMounted, reactive} from 'vue'
 import '../assets/index.css'
 import SideBar from "@/components/SideBar.vue";
 import NavBar from "@/components/NavBar.vue";
 import PaymentDetailView from "@/views/PaymentDetailView.vue";
+
+onMounted(async () => {
+    await getTransactions()
+})
+async function getTransactions () {
+    const response = await fetch(`${import.meta.env.VITE_API_URL}/transactions`, {
+        method: 'GET',
+        headers: {
+            'Content-type': 'application/json'
+        },
+    })
+    if (response.ok) {
+        const data = await response.json()
+        console.log(data)
+    }
+}
 
 const defaultValue = {
     currentTab: 'Tous les paiements',

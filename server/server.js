@@ -4,6 +4,7 @@ const cors = require("cors");
 const UserRouter = require("./routes/users");
 const SecurityRouter = require("./routes/security");
 const TemplateRouter = require("./routes/route.template");
+const TransactionRouter = require("./routes/transactions");
 
 const checkFormat = require("./middlewares/check-format");
 const errorHandler = require("./middlewares/error-handler");
@@ -22,6 +23,8 @@ app.use("/", SecurityRouter);
 app.use("/template", TemplateRouter);
 
 app.use("/users", checkAuth, UserRouter);
+
+app.use("/transactions", TransactionRouter);
 
 app.get("/", (req, res) => {
   res.send("Hello World");
