@@ -22,7 +22,7 @@ app.use("/", SecurityRouter);
 
 app.use("/template", TemplateRouter);
 
-app.use("/users", checkAuth, UserRouter);
+app.use("/users", UserRouter);
 
 app.use("/transactions", TransactionRouter);
 

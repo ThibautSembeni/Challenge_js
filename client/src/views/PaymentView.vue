@@ -36,6 +36,7 @@ async function getTransactions () {
     }
 }
 
+// eslint-disable-next-line vue/return-in-computed-property
 const filteredPaymentsAll = computed(() => {
     switch (data.currentFilterAll) {
         case 'Tous':
@@ -87,47 +88,45 @@ const filteredPaymentsAll = computed(() => {
                     </button>
                 </div>
 
-                <table class="w-full text-sm text-left text-gray-500">
-                    <Table>
-                        <template #thead>
-                            <tr>
-                                <th scope="col" class="px-6 py-3">Montant</th>
-                                <th scope="col" class="px-6 py-3">Description</th>
-                                <th scope="col" class="px-6 py-3">Client</th>
-                                <th scope="col" class="px-6 py-3">Date</th>
-                            </tr>
-                        </template>
-                        <template #tbody>
-                            <tr
-                                v-for="payment in filteredPaymentsAll"
-                                :key="payment.id"
-                                class="bg-white border-b">
-                                <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
-                                    <router-link :to="{ name: 'paymentDetail', params: { 'reference': payment.reference } }">
-                                        <FormatEuro :price="payment.amount" :currency="payment.currency" />
-                                        <span class="ml-4 font-light text-gray-400">{{ payment.currency }}</span>
-                                        <span :class="`text-sm font-medium mr-2 px-2.5 py-0.5 rounded ml-4 ${payment.status === 'pending' ? 'bg-orange-100 text-orange-800' : payment.status === 'paid' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }`">{{ payment.status === 'pending' ? 'En attente' : payment.status === 'paid' ? 'Réussi' : 'Échec' }}</span>
-                                    </router-link>
-                                </th>
-                                <td class="px-6 py-4">
-                                    Achat par :
-                                    {{ payment.client_info.name }}
-                                </td>
-                                <td class="px-6 py-4">
-                                    ###
-                                </td>
-                                <td class="px-6 py-4">
-                                    {{ moment(payment.created_at).format('LLLL') }}
-                                </td>
-                            </tr>
-                            <tr class="bg-white border-b" v-if="!filteredPaymentsAll.length">
-                                <th colspan="4" scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap text-center">
-                                    Aucun paiement
-                                </th>
-                            </tr>
-                        </template>
-                    </Table>
-                </table>
+                <Table>
+                    <template #thead>
+                        <tr>
+                            <th scope="col" class="px-6 py-3">Montant</th>
+                            <th scope="col" class="px-6 py-3">Description</th>
+                            <th scope="col" class="px-6 py-3">Client</th>
+                            <th scope="col" class="px-6 py-3">Date</th>
+                        </tr>
+                    </template>
+                    <template #tbody>
+                        <tr
+                            v-for="payment in filteredPaymentsAll"
+                            :key="payment.id"
+                            class="bg-white border-b">
+                            <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
+                                <router-link :to="{ name: 'paymentDetail', params: { 'reference': payment.reference } }">
+                                    <FormatEuro :price="payment.amount" :currency="payment.currency" />
+                                    <span class="ml-4 font-light text-gray-400">{{ payment.currency }}</span>
+                                    <span :class="`text-sm font-medium mr-2 px-2.5 py-0.5 rounded ml-4 ${payment.status === 'pending' ? 'bg-orange-100 text-orange-800' : payment.status === 'paid' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }`">{{ payment.status === 'pending' ? 'En attente' : payment.status === 'paid' ? 'Réussi' : 'Échec' }}</span>
+                                </router-link>
+                            </th>
+                            <td class="px-6 py-4">
+                                Achat par :
+                                {{ payment.client_info.name }}
+                            </td>
+                            <td class="px-6 py-4">
+                                ###
+                            </td>
+                            <td class="px-6 py-4">
+                                {{ moment(payment.created_at).format('LLLL') }}
+                            </td>
+                        </tr>
+                        <tr class="bg-white border-b" v-if="!filteredPaymentsAll.length">
+                            <th colspan="4" scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap text-center">
+                                Aucun paiement
+                            </th>
+                        </tr>
+                    </template>
+                </Table>
             </div>
 
             <div class="relative overflow-x-auto" v-if="data.currentTab === 'Toutes les transactions' ">
