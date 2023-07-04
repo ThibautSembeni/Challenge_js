@@ -4,7 +4,6 @@ module.exports = (connection) => {
     class Cart extends Model {
         static associate(models) {
             Cart.belongsTo(models.User, { foreignKey: 'user_id', as: 'user' });
-            Cart.hasMany(models.Product, { foreignKey: 'cart_id', as: 'products' });
         }
     }
 
@@ -22,16 +21,6 @@ module.exports = (connection) => {
                     msg: "La quantité est obligatoire"
                 },
             }
-        },
-        created_at: {
-            type: DataTypes.DATE,
-            defaultValue: DataTypes.NOW,
-            allowNull: false,
-        },
-        updated_at: {
-            type: DataTypes.DATE,
-            defaultValue: DataTypes.NOW,
-            allowNull: false,
         },
     }, { sequelize: connection, tableName: 'carts' });
 
