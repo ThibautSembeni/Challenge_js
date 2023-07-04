@@ -7,6 +7,7 @@ import CustomersView from "@/views/CustomersView.vue";
 import CustomerDetailView from "@/views/CustomerDetailView.vue";
 import ProductsView from "@/views/ProductsView.vue";
 import ProductDetailView from "@/views/ProductDetailView.vue";
+import ProductCreateView from "@/views/ProductCreateView.vue";
 
 const routes = [
   {
@@ -48,6 +49,11 @@ const routes = [
     path: '/produits',
     name: 'products',
     component: ProductsView
+  },
+  {
+    path: '/produit/ajouter',
+    name: 'productAdd',
+    component: ProductCreateView
   },
   {
     path: '/produit/:reference',

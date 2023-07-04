@@ -44,7 +44,7 @@ module.exports = (connection) => {
         },
         reference: {
             type: DataTypes.STRING,
-            defaultValue: uniqueRef(),
+            defaultValue: () => uniqueRef(),
             allowNull: false,
             validate: {
                 notNull: {

@@ -9,7 +9,6 @@ import PaymentDetail from "@/components/Payment/PaymentDetail.vue";
 import PaymentDetailLine from "@/components/Payment/PaymentDetailLine.vue";
 import FormatEuro from "@/components/Payment/FormatEuro.vue";
 import moment from "moment";
-import Table from "@/components/Table.vue";
 
 onMounted(async () => {
     await getProduct()
