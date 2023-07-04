@@ -1,11 +1,8 @@
-const {User} = require("../db");
+const { Transaction } = require("../db");
 const Sequelize = require("sequelize");
 const ValidationError = require("../errors/ValidationError");
-const UniqueConstraintError = require("../errors/UniqueConstraintError");
-const sendAccountValidationEmail = require("./emailSender");
-const {generateVerificationToken} = require("../utils/user");
 
-module.exports = function UserService() {
+module.exports = function TransactionService() {
     return {
         findAll: async function (filters, options) {
             let dbOptions = {
@@ -20,22 +17,15 @@ module.exports = function UserService() {
                 dbOptions.limit = options.limit;
                 dbOptions.offset = options.offset;
             }
-            return User.findAll(dbOptions);
+            return Transaction.findAll(dbOptions);
         },
         findOne: async function (filters) {
-            return User.findOne({where: filters});
+            return Transaction.findOne({ where: filters });
         },
         create: async function (data) {
             try {
-                const user = await User.create(data);
-                const token = generateVerificationToken(user)
-                const confirmationLink = `${process.env.API_URL}/verify/${token}`
-                await sendAccountValidationEmail(user, confirmationLink)
-                return user
+                return await Transaction.create(data);
             } catch (e) {
-                if (e instanceof Sequelize.UniqueConstraintError) {
-                    throw UniqueConstraintError.fromSequelizeUniqueConstraintError(e);
-                }
                 if (e instanceof Sequelize.ValidationError) {
                     throw ValidationError.fromSequelizeValidationError(e);
                 }
@@ -56,11 +46,12 @@ module.exports = function UserService() {
         },
         update: async (filters, newData) => {
             try {
-                const [nbUpdated, users] = await User.update(newData, {
+                const [nbUpdated, users] = await Transaction.update(newData, {
                     where: filters,
                     returning: true,
                     individualHooks: true,
                 });
+
                 return users;
             } catch (e) {
                 if (e instanceof Sequelize.ValidationError) {
@@ -70,22 +61,7 @@ module.exports = function UserService() {
             }
         },
         delete: async (filters) => {
-            return User.destroy({where: filters});
-        },
-        login: async (email, password) => {
-            const user = await User.findOne({where: {email}});
-            if (!user) {
-                throw new ValidationError({
-                    email: "Invalid credentials",
-                });
-            }
-            const isPasswordValid = await user.isPasswordValid(password);
-            if (!isPasswordValid) {
-                throw new ValidationError({
-                    email: "Invalid credentials",
-                });
-            }
-            return user;
+            return Transaction.destroy({ where: filters });
         },
     };
 };

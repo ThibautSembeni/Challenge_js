@@ -153,17 +153,22 @@ module.exports = (connection) => {
     }
 
     User.addHook("beforeCreate", async (user) => {
+        if (user.dataValues.hasOwnProperty('kbis')) {
+            user.role = 'merchant';
+        }
         return updatePassword(user);
     });
+
     User.addHook("beforeUpdate", async (user, options) => {
         if (options.fields.includes("password")) {
             return updatePassword(user);
         }
     });
+
     // Pour le projet et la synchro avec mongo 
     // User.addHook("afterCreate", (user) => {
     //     bcrypt.genSalt(10).then((salt) => bcrypt.hash(user.password, salt).then((hash) => { user.password = hash; }))
     // });
-        
+
     return User;
 };
