@@ -9,6 +9,7 @@ import PaymentDetail from "@/components/Payment/PaymentDetail.vue";
 import PaymentDetailLine from "@/components/Payment/PaymentDetailLine.vue";
 import FormatEuro from "@/components/Payment/FormatEuro.vue";
 import moment from "moment";
+import Table from "@/components/Table.vue";
 
 onMounted(async () => {
     await getTransaction()
@@ -147,8 +148,8 @@ async function getTransaction () {
             </PaymentDetail>
 
             <PaymentDetail title="Paiements associés">
-                <table class="w-full text-sm text-left text-gray-500">
-                    <thead class="text-xs text-gray-700 uppercase bg-gray-50 border-b">
+                <Table>
+                    <template #thead>
                         <tr>
                             <th scope="col" class="px-6 py-3">Risque</th>
                             <th scope="col" class="px-6 py-3">Montant</th>
@@ -158,8 +159,8 @@ async function getTransaction () {
                             <th scope="col" class="px-6 py-3">Adresse IP de l'appareil</th>
                             <th scope="col" class="px-6 py-3">Date</th>
                         </tr>
-                    </thead>
-                    <tbody>
+                    </template>
+                    <template #tbody>
                         <tr
                             class="bg-white border-b">
                             <td class="px-6 py-4">
@@ -190,8 +191,8 @@ async function getTransaction () {
                                 {{ moment(payment.created_at).format('LLLL') }}
                             </td>
                         </tr>
-                    </tbody>
-                </table>
+                    </template>
+                </Table>
             </PaymentDetail>
 
             <PaymentDetail title="Envoi">
