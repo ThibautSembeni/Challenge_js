@@ -43,7 +43,7 @@ async function getCustomers () {
         <NavBar />
         <div class="p-4 lg:p-10">
 
-            <h1 class="text-3xl font-bold">Clients</h1>
+            <h1 class="text-3xl font-bold"><i class="fa-solid fa-users mr-2"></i> Clients</h1>
 
             <div class="text-sm font-medium text-center text-gray-500 border-b border-gray-200">
                 <ul class="flex flex-wrap -mb-px">

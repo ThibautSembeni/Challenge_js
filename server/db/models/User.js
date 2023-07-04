@@ -136,16 +136,6 @@ module.exports = (connection) => {
             defaultValue: false,
             allowNull: false,
         },
-        created_at: {
-            type: DataTypes.DATE,
-            defaultValue: DataTypes.NOW,
-            allowNull: false,
-        },
-        updated_at: {
-            type: DataTypes.DATE,
-            defaultValue: DataTypes.NOW,
-            allowNull: false,
-        },
     }, { sequelize: connection, tableName: 'users' });
 
     function updatePassword(user) {

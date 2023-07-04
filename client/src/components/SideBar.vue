@@ -36,6 +36,11 @@
                 to: 'customers',
                 icon: 'fa-solid fa-users',
             },
+            {
+                name: 'Produits',
+                to: 'products',
+                icon: 'fa-solid fa-boxes-stacked',
+            },
         ],
     }
 

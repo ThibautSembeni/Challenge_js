@@ -60,7 +60,7 @@ const filteredPaymentsAll = computed(() => {
         <NavBar />
         <div class="p-4 lg:p-10">
 
-            <h1 class="text-3xl font-bold">Paiements</h1>
+            <h1 class="text-3xl font-bold"><i class="fa-solid fa-dollar-sign mr-2"></i> Paiements</h1>
 
             <div class="text-sm font-medium text-center text-gray-500 border-b border-gray-200">
                 <ul class="flex flex-wrap -mb-px">

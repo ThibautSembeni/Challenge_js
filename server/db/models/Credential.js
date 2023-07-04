@@ -22,16 +22,6 @@ module.exports = (connection) => {
             type: DataTypes.STRING,
             allowNull: true,
         },
-        created_at: {
-            type: DataTypes.DATE,
-            defaultValue: DataTypes.NOW,
-            allowNull: false,
-        },
-        updated_at: {
-            type: DataTypes.DATE,
-            defaultValue: DataTypes.NOW,
-            allowNull: false,
-        },
     }, { sequelize: connection, tableName: 'credentials' });
 
     function generateToken() {
