@@ -1,9 +1,10 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 import LoginView from "../views/LoginView.vue";
-import RegisterView from "../views/RegisterView.vue";
 import PaymentView from "@/views/PaymentView.vue";
 import PaymentDetailView from "@/views/PaymentDetailView.vue";
+import CustomersView from "@/views/CustomersView.vue";
+import CustomerDetailView from "@/views/CustomerDetailView.vue";
 
 const routes = [
   {
@@ -22,15 +23,25 @@ const routes = [
     component: () => import('../views/RegisterView.vue')
   },
   {
-      path: '/paiements',
-      name: 'payments',
-      component: PaymentView
-    },
-    {
-      path: '/paiement/:reference',
-      name: 'paymentDetail',
-      component: PaymentDetailView
-    },
+    path: '/paiements',
+    name: 'payments',
+    component: PaymentView
+  },
+  {
+    path: '/paiement/:reference',
+    name: 'paymentDetail',
+    component: PaymentDetailView
+  },
+  {
+    path: '/clients',
+    name: 'customers',
+    component: CustomersView
+  },
+  {
+    path: '/client/:id',
+    name: 'customerDetail',
+    component: CustomerDetailView
+  },
   {
     path: '/about',
     name: 'about',

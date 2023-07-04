@@ -4,13 +4,13 @@ const ValidationError = require("../errors/ValidationError");
 
 module.exports = function TransactionService() {
     return {
-        findAll: async function (filters, options) {
+        findAll: async function (filters, options = {}) {
             let dbOptions = {
                 where: filters,
             };
-            // options.order = {name: "ASC", dob: "DESC"}
+
+            // Check if options.order exists before trying to access it
             if (options.order) {
-                // => [["name", "ASC"], ["dob", "DESC"]]
                 dbOptions.order = Object.entries(options.order);
             }
             if (options.limit) {

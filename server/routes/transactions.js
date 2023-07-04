@@ -1,19 +1,19 @@
 const genericRouter = require("./generic");
-const transactionController = require("../controllers/transaction");
+const genericController = require("../controllers/generic");
 const TransactionService = require("../services/transactions");
 const middleware = require("../middlewares/apikey");
-const customTemplateController = require("../controllers/controller.template");
+const customTransactionController = require("../controllers/transaction");
 
 module.exports = new genericRouter(
-    new transactionController(
+    new genericController(
         new TransactionService(),
         {
-
+            customController: customTransactionController,
         }
     ),
     {
         customRoutes: [
-
+            { method: 'get', path: '/transaction/user/:id', middleware: [], handler: 'getTransactionsByUserId' },
         ],
         defaultRoutes: {
             getAll: { method: 'get', path: '/', middleware: [], active: true },
