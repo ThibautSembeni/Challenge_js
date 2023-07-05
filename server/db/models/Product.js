@@ -34,17 +34,7 @@ module.exports = (connection) => {
                     msg: "Le prix est obligatoire"
                 },
             }
-        },
-        created_at: {
-            type: DataTypes.DATE,
-            defaultValue: DataTypes.NOW,
-            allowNull: false,
-        },
-        updated_at: {
-            type: DataTypes.DATE,
-            defaultValue: DataTypes.NOW,
-            allowNull: false,
-        },
+        }
     }, { sequelize: connection, tableName: 'products' });
 
     return Product;

@@ -1,6 +1,6 @@
 module.exports = (connection) => {
     const { DataTypes, Model } = require('sequelize');
-    
+
     class Operation extends Model {
         static associate(models) {
             Operation.belongsTo(models.Transaction, { foreignKey: 'transaction_id', as: 'transaction' });
@@ -42,17 +42,7 @@ module.exports = (connection) => {
             values: ['pending', 'succeeded', 'failed'],
             allowNull: false,
             defaultValue: 'pending',
-        },
-        created_at: {
-            type: DataTypes.DATE,
-            defaultValue: DataTypes.NOW,
-            allowNull: false,
-        },
-        updated_at: {
-            type: DataTypes.DATE,
-            defaultValue: DataTypes.NOW,
-            allowNull: false,
-        },
+        }
     }, { sequelize: connection, tableName: 'operations' });
 
     return Operation;

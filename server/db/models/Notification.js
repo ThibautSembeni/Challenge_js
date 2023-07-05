@@ -6,7 +6,7 @@ module.exports = (connection) => {
             Notification.belongsTo(models.Transaction, { foreignKey: 'transaction_id', as: 'transaction' });
         }
     }
-    
+
     Notification.init({
         id: {
             type: DataTypes.INTEGER,
@@ -21,17 +21,7 @@ module.exports = (connection) => {
                     msg: "Les informations du PSP sont obligatoires"
                 },
             }
-        },
-        created_at: {
-            type: DataTypes.DATE,
-            defaultValue: DataTypes.NOW,
-            allowNull: false,
-        },
-        updated_at: {
-            type: DataTypes.DATE,
-            defaultValue: DataTypes.NOW,
-            allowNull: false,
-        },
+        }
     }, { sequelize: connection, tableName: 'notifications' });
 
     return Notification;

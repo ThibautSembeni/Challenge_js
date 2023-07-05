@@ -80,16 +80,6 @@ module.exports = (connection) => {
                 },
             }
         },
-        created_at: {
-            type: DataTypes.DATE,
-            defaultValue: DataTypes.NOW,
-            allowNull: false,
-        },
-        updated_at: {
-            type: DataTypes.DATE,
-            defaultValue: DataTypes.NOW,
-            allowNull: false,
-        },
     }, { sequelize: connection, tableName: 'transactions' });
 
     return Transaction;
