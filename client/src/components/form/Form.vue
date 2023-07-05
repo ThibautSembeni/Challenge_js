@@ -1,5 +1,4 @@
 <script setup>
-import { ref } from 'vue'
 const props = defineProps({
   onSubmit: {
     type: Function,
@@ -17,8 +16,10 @@ const props = defineProps({
   }
 })
 
-const handleSubmit = () => {
-  props.onSubmit(props.formData)
+const handleSubmit = (event) => {
+  props.onSubmit(props.formData).then(() => {
+    event.target.reset()
+  })
 }
 </script>
 
