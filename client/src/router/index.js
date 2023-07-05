@@ -1,8 +1,13 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
-import LoginView from '../views/LoginView.vue'
-import PaymentView from '@/views/PaymentView.vue'
-import PaymentDetailView from '@/views/PaymentDetailView.vue'
+import LoginView from "../views/LoginView.vue";
+import PaymentView from "@/views/PaymentsView.vue";
+import PaymentDetailView from "@/views/PaymentDetailView.vue";
+import CustomersView from "@/views/CustomersView.vue";
+import CustomerDetailView from "@/views/CustomerDetailView.vue";
+import ProductsView from "@/views/ProductsView.vue";
+import ProductDetailView from "@/views/ProductDetailView.vue";
+import ProductCreateView from "@/views/ProductCreateView.vue";
 
 const routes = [
   {
@@ -28,16 +33,37 @@ const routes = [
   {
     path: '/paiements',
     name: 'payments',
-    component: PaymentView,
-    meta: { requiresAuth: true },
-
+    component: PaymentView
   },
   {
-    path: '/paiement/:uuid',
+    path: '/paiement/:reference',
     name: 'paymentDetail',
-    component: PaymentDetailView,
-    meta: { requiresAuth: true },
-
+    component: PaymentDetailView
+  },
+  {
+    path: '/clients',
+    name: 'customers',
+    component: CustomersView
+  },
+  {
+    path: '/client/:id',
+    name: 'customerDetail',
+    component: CustomerDetailView
+  },
+  {
+    path: '/produits',
+    name: 'products',
+    component: ProductsView
+  },
+  {
+    path: '/produit/ajouter',
+    name: 'productAdd',
+    component: ProductCreateView
+  },
+  {
+    path: '/produit/:reference',
+    name: 'productDetail',
+    component: ProductDetailView
   },
   {
     path: '/about',
