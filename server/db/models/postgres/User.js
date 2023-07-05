@@ -97,7 +97,7 @@ module.exports = (connection) => {
             validate: {
                 len: {
                     args: [2, 100],
-                    msg: "Le nom du fichier doit contenir entre 2 et 50 caractères"
+                    msg: "Le nom du fichier doit contenir entre 2 et 100 caractères"
                 },
             }
         },

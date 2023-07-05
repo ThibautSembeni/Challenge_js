@@ -5,8 +5,9 @@ const UnauthorizedError = require("../errors/UnauthorizedError");
 const UniqueConstraintError = require("../errors/UniqueConstraintError");
 const sendAccountValidationEmail = require("./emailSender");
 const { generateVerificationToken } = require("../utils/user");
+const UserMongoService = require('./mongo/user')
 
-module.exports = function UserService() {
+module.exports = function UserService(MongoService) {
     return {
         findAll: async function (filters, options) {
             let dbOptions = {
@@ -28,11 +29,13 @@ module.exports = function UserService() {
         },
         create: async function (data) {
             try {
-                const user = await User.create(data);
-                const token = generateVerificationToken(user)
-                const confirmationLink = `${process.env.API_URL}/verify/${token}`
-                await sendAccountValidationEmail(user, confirmationLink)
-                return user
+                // const user = await User.create(data);
+                // const token = generateVerificationToken(user)
+                // const confirmationLink = `${process.env.API_URL}/verify/${token}`
+                // await sendAccountValidationEmail(user, confirmationLink)
+                // MongoService.create(data);
+                console.log(typeof MongoService)
+                return {};
             } catch (e) {
                 if (e instanceof Sequelize.UniqueConstraintError) {
                     throw UniqueConstraintError.fromSequelizeUniqueConstraintError(e);

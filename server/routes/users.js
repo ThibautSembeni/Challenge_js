@@ -1,12 +1,13 @@
 const genericRouter = require("./generic");
 const genericController = require("../controllers/generic");
 const UserService = require("../services/user");
+const MongoService = require("../services/mongo/user");
 const middleware = require("../middlewares/apikey");
 const customTemplateController = require("../controllers/controller.template");
 
 module.exports = new genericRouter(
     new genericController(
-        new UserService()
+        new UserService(new MongoService())
     ),
     {
         // `customRoutes` is optional is for add others custom routes
