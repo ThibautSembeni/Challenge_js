@@ -6,7 +6,7 @@ module.exports = (connection) => {
             Notification.belongsTo(models.Transaction, { foreignKey: 'transaction_id', as: 'transaction' });
         }
     }
-    
+
     Notification.init({
         id: {
             type: DataTypes.INTEGER,

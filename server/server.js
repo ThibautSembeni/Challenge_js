@@ -13,7 +13,8 @@ const checkAuth = require("./middlewares/check-auth");
 
 const app = express();
 
-app.use(cors())
+app.use(cors(
+))
 
 app.use(checkFormat);
 

@@ -1,8 +1,8 @@
-const {DataTypes} = require("sequelize");
+const { DataTypes } = require("sequelize");
 module.exports = (connection) => {
     const { DataTypes, Model } = require('sequelize');
 
-    function uniqueRef () {
+    function uniqueRef() {
         let code = 'prod_';
         let authorizedChar = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
         for (let i = 0; i < 20; i++) {

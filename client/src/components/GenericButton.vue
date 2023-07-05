@@ -62,7 +62,6 @@ button {
 .button-primary.is-not-active {
   background-color: #635bff82;
   cursor: unset;
-
 }
 
 @media (min-width: 1024px) {
