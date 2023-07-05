@@ -1,9 +1,10 @@
-const {User} = require("../db");
+const { User } = require("../db");
 const Sequelize = require("sequelize");
 const ValidationError = require("../errors/ValidationError");
+const UnauthorizedError = require("../errors/UnauthorizedError");
 const UniqueConstraintError = require("../errors/UniqueConstraintError");
 const sendAccountValidationEmail = require("./emailSender");
-const {generateVerificationToken} = require("../utils/user");
+const { generateVerificationToken } = require("../utils/user");
 
 module.exports = function UserService() {
     return {
@@ -23,7 +24,7 @@ module.exports = function UserService() {
             return User.findAll(dbOptions);
         },
         findOne: async function (filters) {
-            return User.findOne({where: filters});
+            return User.findOne({ where: filters });
         },
         create: async function (data) {
             try {
@@ -70,22 +71,27 @@ module.exports = function UserService() {
             }
         },
         delete: async (filters) => {
-            return User.destroy({where: filters});
+            return User.destroy({ where: filters });
         },
         login: async (email, password) => {
-            const user = await User.findOne({where: {email}});
-            if (!user) {
-                throw new ValidationError({
-                    email: "Invalid credentials",
-                });
+            try {
+
+                const user = await User.findOne({ where: { email } });
+                if (!user) {
+                    throw new UnauthorizedError();
+                }
+                const isPasswordValid = await user.isPasswordValid(password);
+                console.log(isPasswordValid)
+                if (!isPasswordValid) {
+                    throw new UnauthorizedError();
+                }
+                return user;
+            } catch (error) {
+                if (error instanceof Sequelize.ValidationError) {
+                    throw ValidationError.fromSequelizeValidationError(error);
+                }
+                throw error;
             }
-            const isPasswordValid = await user.isPasswordValid(password);
-            if (!isPasswordValid) {
-                throw new ValidationError({
-                    email: "Invalid credentials",
-                });
-            }
-            return user;
         },
     };
 };

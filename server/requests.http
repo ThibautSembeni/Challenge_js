@@ -69,6 +69,11 @@ POST http://localhost:3000/login
 Content-Type: application/json
 
 {
-    "email": "t@test123546.com",
-    "password": "123456"
+    "email": "thibautsembeni@gmail.com",
+    "password": "password"
 }
+
+###
+GET http://localhost:3000/check
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NDQ1LCJmdWxsTmFtZSI6IlNlbWJlbmkgVGhpYmF1dCIsImlhdCI6MTY4ODUzOTIxNSwiZXhwIjoxNjg4NTQyODE1fQ.lrIA106QU-EM6ALzIsopb3n8YQGuGND11QcIAzhpluA

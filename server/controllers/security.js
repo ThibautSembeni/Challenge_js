@@ -1,4 +1,4 @@
-const { getUserFromJWTToken, generateVerificationToken } = require("../utils/user");
+const { getUserFromJWTToken, generateVerificationToken, checkTokenMiddleware } = require("../utils/user");
 const { User, Credential } = require("../db");
 
 module.exports = function SecurityController(UserService) {
@@ -8,9 +8,15 @@ module.exports = function SecurityController(UserService) {
                 const { email, password } = req.body;
                 const user = await UserService.login(email, password);
                 const token = generateVerificationToken(user);
+                res.cookie('token', token, { httpOnly: true });
                 res.json({ token });
             } catch (err) {
-                next(err);
+                console.error(err);
+                if (err.name === 'UnauthorizedError') {
+                    res.status(401).json(err.errors);
+                } else {
+                    next(err);
+                }
             }
         },
         verify: async (req, res, next) => {
@@ -32,10 +38,13 @@ module.exports = function SecurityController(UserService) {
                 if (error.name === 'ValidationError') {
                     res.status(422).json(error.errors);
                 } else {
+                    console.error(error);
                     res.status(500).json(error);
                 }
             }
         },
-
+        check: async (req, res, next) => {
+            return res.status(200).send();
+        }
     };
 };

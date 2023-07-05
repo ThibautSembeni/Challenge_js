@@ -6,6 +6,8 @@ module.exports = function genericController(Service, options = {}) {
                 const results = await Service.findAll(filters, { order, limit: itemPerPage, offset: (page - 1) * itemPerPage });
                 res.json(results);
             } catch (error) {
+                console.error(error);
+
                 res.status(500).json(error);
             }
         },
@@ -17,6 +19,8 @@ module.exports = function genericController(Service, options = {}) {
                     res.json(result);
                 else res.sendStatus(404);
             } catch (error) {
+                console.error(error);
+
                 res.status(500).json(error);
             }
         },
@@ -33,6 +37,7 @@ module.exports = function genericController(Service, options = {}) {
                     res.status(409).json(error.errors);
                 }
                 else {
+                    console.error(error);
                     res.status(500).json(error);
                 }
             }
@@ -48,6 +53,8 @@ module.exports = function genericController(Service, options = {}) {
                 if (error.constructor.name === 'ValidationError') {
                     res.status(422).json(error.errors);
                 } else {
+                    console.error(error);
+
                     res.status(500).json(error);
                 }
             }
@@ -63,6 +70,8 @@ module.exports = function genericController(Service, options = {}) {
                 if (error.constructor.name === 'ValidationError') {
                     res.status(422).json(error.errors);
                 } else {
+                    console.error(error);
+
                     res.status(500).json(error);
                 }
             }

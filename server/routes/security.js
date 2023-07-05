@@ -2,6 +2,7 @@ const genericRouter = require("./generic");
 const genericController = require("../controllers/generic");
 const securityController = require("../controllers/security");
 const UserService = require("../services/user");
+const checkAuth = require("../middlewares/check-auth");
 
 module.exports = new genericRouter(
     new genericController(
@@ -16,7 +17,8 @@ module.exports = new genericRouter(
         customRoutes: [
             { handler: 'login', method: 'post', path: '/login', middleware: [] },
             { handler: 'create', method: 'post', path: '/register', middleware: [] },
-            { handler: 'verify', method: 'get', path: '/verify/:token/', middleware: [] }
+            { handler: 'verify', method: 'get', path: '/verify/:token/', middleware: [] },
+            { handler: 'check', method: 'get', path: '/check', middleware: [checkAuth] }
         ],
         // `defaultRoutes` is all resfull routes
         // to desactivate resfull routes set default routes to false like ``defaultRoutes: false``
