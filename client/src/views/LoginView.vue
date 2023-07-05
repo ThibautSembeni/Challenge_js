@@ -39,11 +39,6 @@ const validateEmail = (email) => {
   const message = isValid ? '' : 'Veuillez entrer une adresse email valide.'
   return { isValid, message }
 }
-const validatePassword = (value) => {
-  const isValid = value.length >= 8
-  const message = isValid ? '' : 'Le mot de passe doit avoir au moins 8 caractères.'
-  return { isValid, message }
-}
 </script>
 <template>
   <div id="container-login-form" class="flex justify-center content-center items-center">
@@ -59,13 +54,7 @@ const validatePassword = (value) => {
           type="email"
           :required="true"
         />
-        <Input
-          label="Password"
-          :validator="validatePassword"
-          v-model="formData.password"
-          type="password"
-          :required="true"
-        />
+        <Input label="Password" v-model="formData.password" type="password" :required="true" />
       </template>
       <template #submit>
         <div class="column mt-4">
