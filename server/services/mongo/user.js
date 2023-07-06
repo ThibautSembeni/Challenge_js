@@ -4,12 +4,11 @@ const UniqueConstraintError = require("../../errors/UniqueConstraintError");
 
 module.exports = function UserMongoService() {
     return {
-        create: function (data) {
+        create: (data) => {
             try {
-                return new MongoUser(data).save().then(() => console.log('Enregistrement du user réussi'))
-                    .catch(() => console.log('Enregistrement du user échoué'));
+                new MongoUser(data).save().then(() => console.log('Enregistrement du user réussi'))
+                    .catch((error) => console.log(error));
             } catch (error) {
-
             }
         }
     }

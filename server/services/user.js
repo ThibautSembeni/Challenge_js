@@ -29,13 +29,12 @@ module.exports = function UserService(MongoService) {
         },
         create: async function (data) {
             try {
-                // const user = await User.create(data);
-                // const token = generateVerificationToken(user)
-                // const confirmationLink = `${process.env.API_URL}/verify/${token}`
-                // await sendAccountValidationEmail(user, confirmationLink)
-                // MongoService.create(data);
-                console.log(typeof MongoService)
-                return {};
+                const user = await User.create(data);
+                const token = generateVerificationToken(user)
+                const confirmationLink = `${process.env.API_URL}/verify/${token}`
+                await sendAccountValidationEmail(user, confirmationLink)
+                MongoService.create(data);
+                return user;
             } catch (e) {
                 if (e instanceof Sequelize.UniqueConstraintError) {
                     throw UniqueConstraintError.fromSequelizeUniqueConstraintError(e);
