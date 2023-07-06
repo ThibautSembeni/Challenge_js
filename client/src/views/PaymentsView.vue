@@ -1,10 +1,62 @@
+<script setup>
+import { computed, onMounted, reactive } from 'vue'
+import '../assets/index.css'
+import SideBar from '@/components/SideBar.vue'
+import NavBar from '@/components/NavBar.vue'
+import moment from 'moment'
+import FormatEuro from '@/components/Payment/FormatEuro.vue'
+import Table from '@/components/Table.vue'
+
+onMounted(async () => {
+  await getTransactions()
+})
+
+const defaultValue = {
+  currentTab: 'Tous les paiements',
+  tabs: ['Tous les paiements', 'Litiges', 'Toutes les transactions'],
+  currentFilterAll: 'Tous',
+  filtersAll: ['Tous', 'Réussi', 'En attente', 'Échoué']
+}
+
+const data = reactive({
+  ...defaultValue,
+  payments: {}
+})
+
+async function getTransactions() {
+  const response = await fetch(`${import.meta.env.VITE_API_URL}/transactions`, {
+    method: 'GET',
+    headers: {
+      'Content-type': 'application/json'
+    }
+  })
+  if (response.ok) {
+    data.payments = await response.json()
+  }
+}
+
+// eslint-disable-next-line vue/return-in-computed-property
+const filteredPaymentsAll = computed(() => {
+  switch (data.currentFilterAll) {
+    case 'Tous':
+      return data.payments
+    case 'Réussi':
+      return data.payments.filter((p) => p.status === 'paid')
+    case 'En attente':
+      return data.payments.filter((p) => p.status === 'pending')
+    case 'Échoué':
+      return data.payments.filter((p) => p.status === 'failed')
+  }
+})
+</script>
+
 <template>
   <SideBar />
 
   <div class="sm:ml-64">
     <NavBar />
     <div class="p-4 lg:p-10">
-      <h1 class="text-3xl font-bold">Paiements</h1>
+      <h1 class="text-3xl font-bold"><i class="fa-solid fa-dollar-sign mr-2"></i> Paiements</h1>
 
       <div class="text-sm font-medium text-center text-gray-500 border-b border-gray-200">
         <ul class="flex flex-wrap -mb-px">
@@ -42,40 +94,51 @@
           </button>
         </div>
 
-        <table class="w-full text-sm text-left text-gray-500">
-          <thead class="text-xs text-gray-700 uppercase bg-gray-50 border-b">
+        <Table>
+          <template #thead>
             <tr>
               <th scope="col" class="px-6 py-3">Montant</th>
               <th scope="col" class="px-6 py-3">Description</th>
               <th scope="col" class="px-6 py-3">Client</th>
               <th scope="col" class="px-6 py-3">Date</th>
             </tr>
-          </thead>
-          <tbody>
+          </template>
+          <template #tbody>
             <tr v-for="payment in filteredPaymentsAll" :key="payment.id" class="bg-white border-b">
               <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
-                <router-link :to="{ name: 'paymentDetail', params: { uuid: 'a_remplace' } }">
-                  {{ payment.amount }}
+                <router-link
+                  :to="{ name: 'paymentDetail', params: { reference: payment.reference } }"
+                >
+                  <FormatEuro :price="payment.amount" :currency="payment.currency" />
                   <span class="ml-4 font-light text-gray-400">{{ payment.currency }}</span>
                   <span
                     :class="`text-sm font-medium mr-2 px-2.5 py-0.5 rounded ml-4 ${
-                      payment.status === 'Réussi'
+                      payment.status === 'pending'
+                        ? 'bg-orange-100 text-orange-800'
+                        : payment.status === 'paid'
                         ? 'bg-green-100 text-green-800'
                         : 'bg-red-100 text-red-800'
-                    } `"
-                    >{{ payment.status }}</span
+                    }`"
+                    >{{
+                      payment.status === 'pending'
+                        ? 'En attente'
+                        : payment.status === 'paid'
+                        ? 'Réussi'
+                        : 'Échec'
+                    }}</span
                   >
                 </router-link>
               </th>
               <td class="px-6 py-4">
-                {{ payment.description }}
+                Achat par :
+                {{ payment.client_info.name }}
               </td>
               <td class="px-6 py-4">###</td>
               <td class="px-6 py-4">
-                {{ payment.date }}
+                {{ moment(payment.created_at).format('LLLL') }}
               </td>
             </tr>
-            <tr class="bg-white border-b" v-if="!filteredPaymentsAll">
+            <tr class="bg-white border-b" v-if="!filteredPaymentsAll.length">
               <th
                 colspan="4"
                 scope="row"
@@ -84,13 +147,13 @@
                 Aucun paiement
               </th>
             </tr>
-          </tbody>
-        </table>
+          </template>
+        </Table>
       </div>
 
       <div class="relative overflow-x-auto" v-if="data.currentTab === 'Toutes les transactions'">
-        <table class="w-full text-sm text-left text-gray-500">
-          <thead class="text-xs text-gray-700 uppercase bg-gray-50 border-b">
+        <Table>
+          <template #thead>
             <tr>
               <th scope="col" class="px-6 py-3">Type</th>
               <th scope="col" class="px-6 py-3">Net</th>
@@ -99,8 +162,8 @@
               <th scope="col" class="px-6 py-3">Description</th>
               <th scope="col" class="px-6 py-3">Disponible le</th>
             </tr>
-          </thead>
-          <tbody>
+          </template>
+          <template #tbody>
             <tr class="bg-white border-b">
               <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
                 Paiement
@@ -111,95 +174,9 @@
               <td class="px-6 py-4">Achat par : Romain Lethumier</td>
               <td class="px-6 py-4">4 mai</td>
             </tr>
-          </tbody>
-        </table>
+          </template>
+        </Table>
       </div>
     </div>
   </div>
 </template>
-
-<script setup>
-import { computed, onMounted, reactive } from 'vue'
-import '../assets/index.css'
-import SideBar from '@/components/SideBar.vue'
-import NavBar from '@/components/NavBar.vue'
-import PaymentDetailView from '@/views/PaymentDetailView.vue'
-
-onMounted(async () => {
-  await getTransactions()
-})
-async function getTransactions() {
-  const response = await fetch(`${import.meta.env.VITE_API_URL}/transactions`, {
-    method: 'GET',
-    headers: {
-      'Content-type': 'application/json'
-    }
-  })
-  if (response.ok) {
-    const data = await response.json()
-    console.log(data)
-  }
-}
-
-const defaultValue = {
-  currentTab: 'Tous les paiements',
-  tabs: ['Tous les paiements', 'Litiges', 'Toutes les transactions'],
-  currentFilterAll: 'Tous',
-  filtersAll: ['Tous', 'Réussi', 'En attente', 'Échoué', 'Remboursé']
-
-  // payments...... depuis API
-  // transactions...... depuis API
-}
-
-const data = reactive({ ...defaultValue })
-
-const filteredPaymentsAll = computed(() => {
-  switch (data.currentFilterAll) {
-    case 'Tous':
-      // return this.payments;
-      return [
-        {
-          amount: '208 975,98 €',
-          currency: 'EUR',
-          status: 'Réussi',
-          date: '27 avril. à 08:46',
-          description: 'Achat par : Romain Lethumier'
-        },
-        {
-          amount: '208,98 €',
-          currency: 'EUR',
-          status: 'Échec',
-          date: '29 avril. à 08:46',
-          description: 'Achat par : Tibo '
-        }
-      ]
-
-    case 'Réussi':
-      // return this.payments.filter(p => p.status === 'Réussi');
-      return [
-        {
-          amount: '208 975,98 €',
-          currency: 'EUR',
-          status: 'Réussi',
-          date: '27 avril. à 08:46',
-          description: 'Achat par : Romain Lethumier'
-        }
-      ]
-    case 'Remboursé':
-      return
-    case 'En attente':
-      return
-    case 'Échoué':
-      //return this.payments.filter(p => p.status === 'Échec');
-      return [
-        {
-          amount: '208,98 €',
-          currency: 'EUR',
-          status: 'Échec',
-          date: '29 avril. à 08:46',
-          description: 'Achat par : Tibo '
-        }
-      ]
-  }
-})
-</script>

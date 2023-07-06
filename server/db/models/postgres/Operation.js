@@ -42,7 +42,7 @@ module.exports = (connection) => {
             values: ['pending', 'succeeded', 'failed'],
             allowNull: false,
             defaultValue: 'pending',
-        }
+        },
     }, { sequelize: connection, tableName: 'operations' });
 
     return Operation;

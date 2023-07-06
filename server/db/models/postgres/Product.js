@@ -1,10 +1,17 @@
+const { DataTypes } = require("sequelize");
 module.exports = (connection) => {
     const { DataTypes, Model } = require('sequelize');
 
-    class Product extends Model {
-        static associate(models) {
-            Product.belongsTo(models.Cart, { foreignKey: 'cart_id', as: 'cart' });
+    function uniqueRef() {
+        let code = 'prod_';
+        let authorizedChar = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+        for (let i = 0; i < 20; i++) {
+            code += authorizedChar.charAt(Math.floor(Math.random() * authorizedChar.length));
         }
+        return code;
+    }
+    class Product extends Model {
+
     }
 
     Product.init({
@@ -33,6 +40,26 @@ module.exports = (connection) => {
                 notNull: {
                     msg: "Le prix est obligatoire"
                 },
+            }
+        },
+        reference: {
+            type: DataTypes.STRING,
+            defaultValue: () => uniqueRef(),
+            allowNull: false,
+            validate: {
+                notNull: {
+                    msg: "La référence est obligatoire"
+                },
+            }
+        },
+        stock: {
+            type: DataTypes.INTEGER,
+            allowNull: false,
+            defaultValue: 1,
+            validate: {
+                notNull: {
+                    msg: "Le stock est obligatoire"
+                }
             }
         }
     }, { sequelize: connection, tableName: 'products' });

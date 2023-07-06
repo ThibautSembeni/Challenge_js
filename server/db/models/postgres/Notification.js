@@ -21,7 +21,7 @@ module.exports = (connection) => {
                     msg: "Les informations du PSP sont obligatoires"
                 },
             }
-        }
+        },
     }, { sequelize: connection, tableName: 'notifications' });
 
     return Notification;

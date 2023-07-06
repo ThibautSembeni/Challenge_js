@@ -21,7 +21,7 @@ module.exports = (connection) => {
         client_secret: {
             type: DataTypes.STRING,
             allowNull: true,
-        }
+        },
     }, { sequelize: connection, tableName: 'credentials' });
 
     function generateToken() {

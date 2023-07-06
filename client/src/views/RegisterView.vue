@@ -1,10 +1,11 @@
 <script setup>
-import { reactive, ref } from 'vue'
+import { reactive, ref, watch } from 'vue'
 import GenericButton from '@/components/GenericButton.vue'
 import IconLogo from '@/components/icons/iconLogo.vue'
 
 import Form from '@/components/form/Form.vue'
 import Input from '@/components/form/Input.vue'
+
 const defaultValue = {
   lastname: '',
   firstname: '',
@@ -12,9 +13,21 @@ const defaultValue = {
   password: ''
 }
 
-const formData = reactive({ ...defaultValue })
+const formData = reactive(
+  defaultValue || {
+    lastname: '',
+    firstname: '',
+    email: '',
+    password: ''
+  }
+)
+
 const requestError = ref('')
 const infosMsg = ref('')
+
+watch(defaultValue, (newInitialValues) => {
+  Object.assign(formData, newInitialValues)
+})
 
 const validateEmail = (email) => {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
@@ -44,9 +57,8 @@ async function registerUser(_user) {
   } else if (response.status === 409) {
     requestError.value = `L'adresse email ${_user.email} est déjà utilisée.`
   } else if (response.ok) {
-    const data = await response.json()
-    console.log(data)
     infosMsg.value = 'Un email de confirmation vous a été envoyé'
+    // event.target.reset();
   }
 }
 </script>

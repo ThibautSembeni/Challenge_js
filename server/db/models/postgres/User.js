@@ -135,7 +135,7 @@ module.exports = (connection) => {
             type: DataTypes.BOOLEAN,
             defaultValue: false,
             allowNull: false,
-        }
+        },
     }, { sequelize: connection, tableName: 'users' });
 
     function updatePassword(user) {
