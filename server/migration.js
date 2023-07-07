@@ -1,4 +1,4 @@
-const db = require("./db");
+const { db } = require("./db");
 
 const mode = process.argv[2] ?? "alter";
 

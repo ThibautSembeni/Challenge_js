@@ -5,8 +5,6 @@ const path = require('path');
 const db = { connection };
 const mongoDB = { mongoConnection };
 
-const User = require('./models/mongo/User');
-
 const files = fs.readdirSync(path.join(__dirname, "models", "postgres"));
 files.forEach(file => {
     const model = require(path.join(__dirname, "models", "postgres", file))(connection);
