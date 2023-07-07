@@ -1,6 +1,8 @@
 module.exports = (connection) => {
     const { DataTypes, Model } = require('sequelize');
     const bcrypt = require('bcryptjs');
+    const mongoUser = require('../mongo/User');
+    const UniqueConstraintError = require("../../../errors/UniqueConstraintError");
 
     class User extends Model {
         static associate(models) {
@@ -156,9 +158,13 @@ module.exports = (connection) => {
     });
 
     // Pour le projet et la synchro avec mongo 
-    // User.addHook("afterCreate", (user) => {
-    //     bcrypt.genSalt(10).then((salt) => bcrypt.hash(user.password, salt).then((hash) => { user.password = hash; }))
-    // });
+    User.addHook("afterCreate", (user) => {
+        mongoUser.create(user.dataValues).catch((error) => {
+            if (error.name === 'MongoServerError' && error.code === 11000) {
+                console.log('duplicate key error');
+            }
+        });
+    });
 
     return User;
 };

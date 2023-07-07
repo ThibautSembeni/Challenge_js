@@ -35,7 +35,7 @@ const utilisateurSchema = new mongoose.Schema({
     },
     email: {
         type: String,
-        unique: [true, "L'email est déjà utilisé"],
+        unique: true,
         required: [true, "L'email est obligatoire"],
         default: null,
         validate: {
@@ -47,8 +47,6 @@ const utilisateurSchema = new mongoose.Schema({
     password: {
         type: String,
         required: [true, "Le mot de passe est obligatoire"],
-        minlength: [8, "Le mot de passe doit contenir au moins 8 caractères"],
-        maxlength: [32, "Le mot de passe doit contenir au maximum 32 caractères"],
         default: null,
     },
     confirmation_url: {
@@ -61,22 +59,13 @@ const utilisateurSchema = new mongoose.Schema({
     },
     payout_currency: {
         type: String,
-        validate: {
-            validator: function (v) {
-                return /^([E][U][R]|[U][S][D])$/.test(v);
-            },
-        },
         default: 'EUR',
     },
     role: {
         type: String,
         required: [true, "Le rôle est obligatoire"],
         default: "customer",
-        validate: {
-            validator: function (v) {
-                return /^(admin|merchant|customer)$/.test(v);
-            },
-        },
+        enum: ["customer", "merchant", "admin"],
     },
     kbis: {
         type: String,

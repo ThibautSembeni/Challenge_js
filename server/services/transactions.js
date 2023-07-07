@@ -1,4 +1,4 @@
-const { Transaction } = require("../db");
+const { db } = require("../db");
 const Sequelize = require("sequelize");
 const ValidationError = require("../errors/ValidationError");
 
@@ -17,14 +17,14 @@ module.exports = function TransactionService() {
                 dbOptions.limit = options.limit;
                 dbOptions.offset = options.offset;
             }
-            return Transaction.findAll(dbOptions);
+            return db.Transaction.findAll(dbOptions);
         },
         findOne: async function (filters) {
-            return Transaction.findOne({ where: filters });
+            return db.Transaction.findOne({ where: filters });
         },
         create: async function (data) {
             try {
-                return await Transaction.create(data);
+                return await db.Transaction.create(data);
             } catch (e) {
                 if (e instanceof Sequelize.ValidationError) {
                     throw ValidationError.fromSequelizeValidationError(e);
@@ -46,7 +46,7 @@ module.exports = function TransactionService() {
         },
         update: async (filters, newData) => {
             try {
-                const [nbUpdated, users] = await Transaction.update(newData, {
+                const [nbUpdated, users] = await db.Transaction.update(newData, {
                     where: filters,
                     returning: true,
                     individualHooks: true,
@@ -61,7 +61,7 @@ module.exports = function TransactionService() {
             }
         },
         delete: async (filters) => {
-            return Transaction.destroy({ where: filters });
+            return db.Transaction.destroy({ where: filters });
         },
     };
 };

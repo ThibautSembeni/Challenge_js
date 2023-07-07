@@ -3,6 +3,7 @@ const mongoConnection = require('./mongo');
 const fs = require('fs');
 const path = require('path');
 const db = { connection };
+const mongoDB = { mongoConnection };
 
 const User = require('./models/mongo/User');
 
@@ -20,7 +21,8 @@ Object.keys(db).forEach(modelName => {
 
 const mongoFiles = fs.readdirSync(path.join(__dirname, "models", "mongo"));
 mongoFiles.forEach(file => {
-    require(path.join(__dirname, "models", "mongo", file));
+    const model = require(path.join(__dirname, "models", "mongo", file));
+    mongoDB[file.split('.')[0]] = model;
 });
 
-module.exports = db;
+module.exports = { db, mongoDB };

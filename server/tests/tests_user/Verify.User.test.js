@@ -1,7 +1,7 @@
 const { generateVerificationToken } = require("../../utils/user");
 const request = require("supertest");
 const app = require("../../server");
-const db = require("../../db/index");
+const { db, mongoDB } = require("../../db/index");
 
 const API_URL = 'http://localhost:3000'
 
@@ -19,7 +19,7 @@ describe('Test register verify account', () => {
         }
         const registerResponse = await request(app).post(registerUrl).send(registrationData);
 
-        const jwtToken = generateVerificationToken(registerResponse.body);
+        const jwtToken = await generateVerificationToken(registerResponse.body);
         const verificationResponse = await request(app).get(`${verificationUrl}/${jwtToken}`);
 
         expect(verificationResponse.status).toBe(200);
@@ -36,7 +36,7 @@ describe('Test register verify account', () => {
         }
         const registerResponse = await request(app).post(registerUrl).send(registrationData);
 
-        const jwtToken = generateVerificationToken(registerResponse.body);
+        const jwtToken = await generateVerificationToken(registerResponse.body);
 
         const verificationResponse = await request(app).get(`${verificationUrl}/${jwtToken}`);
         expect(verificationResponse.status).toBe(200);
@@ -52,7 +52,7 @@ describe('Test register verify account', () => {
         }
         const registerResponse = await request(app).post(registerUrl).send(registrationData);
 
-        const jwtToken = generateVerificationToken(registerResponse.body)
+        const jwtToken = await generateVerificationToken(registerResponse.body)
         const verificationResponse = await request(app).get(`${verificationUrl}/${jwtToken}`);
 
         expect(verificationResponse.status).toBe(200);
@@ -71,7 +71,7 @@ describe('Test register verify account', () => {
         const registerResponse = await request(app).post(registerUrl).send(registrationData);
 
         const userId = registerResponse.body.id;
-        const jwtToken = generateVerificationToken(registerResponse.body);
+        const jwtToken = await generateVerificationToken(registerResponse.body);
 
         const verificationResponse = await request(app).get(`${verificationUrl}/${jwtToken}`);
 
@@ -83,4 +83,11 @@ describe('Test register verify account', () => {
         expect(typeof verificationResponse.body.client_secret).toBe('string');
     });
 
+    afterAll(() => {
+        const users = mongoDB.User.find({});
+        users.deleteMany();
+        db.User.destroy({
+            where: {},
+        })
+    });
 });

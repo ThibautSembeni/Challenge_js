@@ -7,8 +7,8 @@
     "start": "node --watch index.js",
     "watch": "node --watch index.js",
     "d:s:u": "node migration.js",
-    "test:dev": "jest --verbose ./tests --watch --detectOpenHandles",
-    "test": "jest --verbose ./tests --detectOpenHandles"
+    "test:dev": "jest --verbose ./tests --watch",
+    "test": "jest --verbose ./tests"
   },
   "keywords": [],
   "author": "",

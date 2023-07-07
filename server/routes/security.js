@@ -3,11 +3,10 @@ const genericController = require("../controllers/generic");
 const securityController = require("../controllers/security");
 const UserService = require("../services/user");
 const checkAuth = require("../middlewares/check-auth");
-const MongoService = require("../services/mongo/user");
 
 module.exports = new genericRouter(
     new genericController(
-        new UserService(new MongoService()),
+        new UserService(),
         // `customController` if for link controller and service for `customRoutes`
         {
             customController: securityController,

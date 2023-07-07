@@ -1,6 +1,7 @@
 const request = require("supertest");
 const app = require("../../server");
-const db = require("../../db/index");
+const { db, mongoDB } = require("../../db/index");
+const mongo = require("../../db/models/mongo/User");
 
 describe('Test register', () => {
     const target = '/register';
@@ -106,6 +107,8 @@ describe('Test register', () => {
     });
 
     afterAll(() => {
+        const users = mongoDB.User.find({});
+        users.deleteMany();
         return db.User.destroy({
             where: {},
         })

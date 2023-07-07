@@ -1,4 +1,4 @@
-const { User } = require("../db");
+const { db } = require("../db");
 const Sequelize = require("sequelize");
 const ValidationError = require("../errors/ValidationError");
 const UnauthorizedError = require("../errors/UnauthorizedError");
@@ -22,18 +22,17 @@ module.exports = function UserService(MongoService) {
                 dbOptions.limit = options.limit;
                 dbOptions.offset = options.offset;
             }
-            return User.findAll(dbOptions);
+            return db.User.findAll(dbOptions);
         },
         findOne: async function (filters) {
             return User.findOne({ where: filters });
         },
         create: async function (data) {
             try {
-                const user = await User.create(data);
-                const token = generateVerificationToken(user)
+                const user = await db.User.create(data);
+                const token = await generateVerificationToken(user)
                 const confirmationLink = `${process.env.API_URL}/verify/${token}`
                 await sendAccountValidationEmail(user, confirmationLink)
-                MongoService.create(data);
                 return user;
             } catch (e) {
                 if (e instanceof Sequelize.UniqueConstraintError) {
@@ -42,6 +41,7 @@ module.exports = function UserService(MongoService) {
                 if (e instanceof Sequelize.ValidationError) {
                     throw ValidationError.fromSequelizeValidationError(e);
                 }
+
                 throw e;
             }
         },
@@ -59,7 +59,7 @@ module.exports = function UserService(MongoService) {
         },
         update: async (filters, newData) => {
             try {
-                const [nbUpdated, users] = await User.update(newData, {
+                const [nbUpdated, users] = await db.User.update(newData, {
                     where: filters,
                     returning: true,
                     individualHooks: true,
@@ -73,12 +73,12 @@ module.exports = function UserService(MongoService) {
             }
         },
         delete: async (filters) => {
-            return User.destroy({ where: filters });
+            return db.User.destroy({ where: filters });
         },
         login: async (email, password) => {
             try {
 
-                const user = await User.findOne({ where: { email } });
+                const user = await db.User.findOne({ where: { email } });
                 if (!user) {
                     throw new UnauthorizedError();
                 }
