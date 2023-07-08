@@ -32,7 +32,7 @@ app.use("/transactions", TransactionRouter);
 app.use("/products", ProductRouter);
 
 app.get("/", (req, res) => {
-  res.send("Hello World");
+  res.status(200).json({ message: "Hello World!" });
 });
 
 app.post("/", (req, res) => {
