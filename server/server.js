@@ -23,13 +23,13 @@ app.use(express.json());
 
 app.use("/", SecurityRouter);
 
-app.use("/template", TemplateRouter);
+app.use("/template", checkAuth, TemplateRouter);
 
-app.use("/users", UserRouter);
+app.use("/users", checkAuth, UserRouter);
 
-app.use("/transactions", TransactionRouter);
+app.use("/transactions", checkAuth, TransactionRouter);
 
-app.use("/products", ProductRouter);
+app.use("/products", checkAuth, ProductRouter);
 
 app.get("/", (req, res) => {
   res.status(200).json({ message: "Hello World!" });
