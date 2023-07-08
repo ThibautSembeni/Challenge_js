@@ -43,6 +43,12 @@ services:
     environment:
       - JWT_SECRET=${JWT_SECRET:-secret}
       - DATABASE_URL=${DATABASE_URL:-postgres://root:password@database:5432/app}
+      - MONGO_URL=${MONGO_URL}
+      - SCRAPPING_API_KEY=${SCRAPPING_API_KEY}
+      - PROJECT_NAME=${PROJECT_NAME}
+      - EMAIL_SENDER=${EMAIL_SENDER}
+      - MAILJET_PK=${MAILJET_PK}
+      - MAILJET_SK=${MAILJET_SK}
 
 volumes:
   postgre-data: {}
