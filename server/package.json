@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node --watch index.js",
+    "start": "node index.js",
     "watch": "node --watch index.js",
     "d:s:u": "node migration.js",
     "test:dev": "jest --verbose ./tests --watch --runInBand --detectOpenHandles",

@@ -16,7 +16,7 @@ Content-Type: application/json
 
 ###
 GET http://localhost:3000/users
-X-api-key: 13
+# X-api-key: 13
 ###
 GET http://localhost:3000/users/1685116695797
 
