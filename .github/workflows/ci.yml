@@ -31,7 +31,13 @@ jobs:
           POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
         ports:
           - 5432:5432
-        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 3
+      mongo:
+        image: mongo:latest
+        env:
+          MONGO_INITDB_ROOT_USERNAME: root
+          MONGO_INITDB_ROOT_PASSWORD: password
+        ports:
+          - 27017:27017
 
     steps:
       - name: Checkout code
@@ -49,8 +55,8 @@ jobs:
       - name: Run Sequelize migrations
         run: |
           cd server
-          JWT_SECRET=$JWT_SECRET DATABASE_URL=postgres://$POSTGRES_USER:$POSTGRES_PASSWORD@localhost:5432/$POSTGRES_DB npm run d:s:u
+          MONGO_URL=mongodb://root:password@localhost:27017/StripeCollections?authSource=admin JWT_SECRET=$JWT_SECRET DATABASE_URL=postgres://$POSTGRES_USER:$POSTGRES_PASSWORD@localhost:5432/$POSTGRES_DB npm run d:s:u
       - name: Run tests
         run: |
           cd server
-          MAILJET_PK=$MAILJET_PK MAILJET_SK=$MAILJET_SK JWT_SECRET=$JWT_SECRET DATABASE_URL=postgres://$POSTGRES_USER:$POSTGRES_PASSWORD@localhost:5432/$POSTGRES_DB npm run test
+          MONGO_URL=mongodb://root:password@localhost:27017/StripeCollections?authSource=admin MAILJET_PK=$MAILJET_PK MAILJET_SK=$MAILJET_SK JWT_SECRET=$JWT_SECRET DATABASE_URL=postgres://$POSTGRES_USER:$POSTGRES_PASSWORD@localhost:5432/$POSTGRES_DB npm run test

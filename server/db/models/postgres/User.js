@@ -1,7 +1,7 @@
 module.exports = (connection) => {
     const { DataTypes, Model } = require('sequelize');
     const bcrypt = require('bcryptjs');
-
+    const mongo = require('../mongo')
     class User extends Model {
         static associate(models) {
             User.hasMany(models.Credential, { foreignKey: 'user_id', as: 'credentials' });
@@ -97,7 +97,7 @@ module.exports = (connection) => {
             validate: {
                 len: {
                     args: [2, 100],
-                    msg: "Le nom du fichier doit contenir entre 2 et 50 caractères"
+                    msg: "Le nom du fichier doit contenir entre 2 et 100 caractères"
                 },
             }
         },
@@ -156,9 +156,13 @@ module.exports = (connection) => {
     });
 
     // Pour le projet et la synchro avec mongo 
-    // User.addHook("afterCreate", (user) => {
-    //     bcrypt.genSalt(10).then((salt) => bcrypt.hash(user.password, salt).then((hash) => { user.password = hash; }))
-    // });
+    User.addHook("afterCreate", (user) => {
+        mongo.User.create(user.dataValues).catch((error) => {
+            if (error.name === 'MongoServerError' && error.code === 11000) {
+                console.log('duplicate key error');
+            }
+        });
+    });
 
     return User;
 };

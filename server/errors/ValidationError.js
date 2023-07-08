@@ -12,6 +12,14 @@ class ValidationError extends Error {
         }, {});
         return new ValidationError(errors);
     }
+    static fromMongooseValidationError(e) {
+        const errors = e.errors.reduce((acc, error) => {
+            if (!acc[error.path]) acc[error.path] = [];
+            acc[error.path].push(error.message);
+            return acc;
+        }, {});
+        return new ValidationError(errors);
+    }
 }
 
 module.exports = ValidationError;

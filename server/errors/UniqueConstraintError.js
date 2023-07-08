@@ -12,6 +12,14 @@ class UniqueConstraintError extends Error {
         }, {});
         return new UniqueConstraintError(errors);
     }
+
+    static fromMongooseUniqueConstraintError(e) {
+        const errors = Object.keys(e).reduce((acc, key) => {
+            acc[key] = e[key];
+            return acc;
+        }, {});
+        return new UniqueConstraintError(errors);
+    }
 }
 
 module.exports = UniqueConstraintError;

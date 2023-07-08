@@ -1,4 +1,4 @@
-const { Transaction } = require("../db");
+const { Transaction } = require("../db/models/postgres");
 const Sequelize = require("sequelize");
 const ValidationError = require("../errors/ValidationError");
 

@@ -1,5 +1,5 @@
 const sendAccountValidationEmail = require("../../services/emailSender")
-
+const mongoose = require("mongoose");
 describe('Test Email', () => {
 
     it('Send email with email not defined', async () => {
@@ -40,6 +40,5 @@ describe('Test Email', () => {
         const confirmationLink = 'https://example.com/confirm';
         const result = await sendAccountValidationEmail(user, confirmationLink);
         expect(result).toBe(true)
-
     });
 });

@@ -61,7 +61,8 @@ Content-Type: application/json
     "firstname": "John",
     "lastname": "Doe",
     "email": "test1@test.com",
-    "password": "password"
+    "password": "password",
+    "kbis": "kbis"
 }
 
 ###
@@ -69,11 +70,14 @@ POST http://localhost:3000/login
 Content-Type: application/json
 
 {
-    "email": "thibautsembeni@gmail.com",
+    "email": "test1@test.com",
     "password": "password"
 }
 
 ###
 GET http://localhost:3000/check
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NDQ1LCJmdWxsTmFtZSI6IlNlbWJlbmkgVGhpYmF1dCIsImlhdCI6MTY4ODUzOTIxNSwiZXhwIjoxNjg4NTQyODE1fQ.lrIA106QU-EM6ALzIsopb3n8YQGuGND11QcIAzhpluA
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MzcyLCJmdWxsTmFtZSI6IkRvZSBKb2huIiwiaWF0IjoxNjg4ODIzMDI0LCJleHAiOjE2ODg4MjY2MjR9.hJCpN7YIbO9_BASIwOJ1iQYqwMnld3y_JC6kdUl2lak
+
+### 
+GET http://localhost:3000/verify/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MzcyLCJmdWxsTmFtZSI6IkRvZSBKb2huIiwiaWF0IjoxNjg4ODIzMDI0LCJleHAiOjE2ODg4MjY2MjR9.hJCpN7YIbO9_BASIwOJ1iQYqwMnld3y_JC6kdUl2lak

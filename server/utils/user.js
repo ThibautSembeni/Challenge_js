@@ -1,7 +1,7 @@
 const jwt = require("jsonwebtoken");
 const UnauthorizedError = require("./../errors/UnauthorizedError");
 
-const generateVerificationToken = (user) => {
+const generateVerificationToken = async (user) => {
     const token = jwt.sign(
         { id: user.id, fullName: user.lastname + " " + user.firstname },
         process.env.JWT_SECRET,

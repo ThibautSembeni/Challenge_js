@@ -1,4 +1,4 @@
-const { Product } = require("../db");
+const { Product } = require("../db/models/postgres");
 const Sequelize = require("sequelize");
 const ValidationError = require("../errors/ValidationError");
 

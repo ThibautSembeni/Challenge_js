@@ -1,6 +1,8 @@
 const request = require("supertest");
 const app = require("../../server");
-const db = require("../../db/index");
+const postgres = require("../../db/models/postgres");
+const mongo = require("../../db/models/mongo");
+const mongoose = require("mongoose");
 
 describe('Test register', () => {
     const target = '/register';
@@ -105,9 +107,32 @@ describe('Test register', () => {
         expect(response.body.firstname).toContain("Le prénom doit contenir entre 2 et 50 caractères");
     });
 
-    afterAll(() => {
-        return db.User.destroy({
+    test('Request to check if you are authorized to make requests', async () => {
+        const response = await request(app).get("/check");
+
+        const login = await request(app).post("/login").send({
+            email: 'test@test.com',
+            password: 'password'
+        });
+
+        const token = login.body.token;
+
+        const authorizedRequest = await request(app).get("/check").set('Authorization', `Bearer ${token}`);
+
+        expect(response.status).toBe(401);
+        expect(login.status).toBe(200);
+        expect(login.body.token).toBeDefined();
+        expect(authorizedRequest.status).toBe(200);
+    });
+
+    afterAll(async () => {
+        await postgres.Credential.destroy({
             where: {},
-        })
+        });
+        await postgres.User.destroy({
+            where: {},
+        });
+        await mongo.User.deleteMany({});
+        await mongoose.connection.close();
     });
 });

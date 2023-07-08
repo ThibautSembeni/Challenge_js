@@ -1,5 +1,5 @@
 const { getUserFromJWTToken, generateVerificationToken, checkTokenMiddleware } = require("../utils/user");
-const { User, Credential } = require("../db");
+const { Credential } = require("../db/models/postgres");
 
 module.exports = function SecurityController(UserService) {
     return {
@@ -7,7 +7,7 @@ module.exports = function SecurityController(UserService) {
             try {
                 const { email, password } = req.body;
                 const user = await UserService.login(email, password);
-                const token = generateVerificationToken(user);
+                const token = await generateVerificationToken(user);
                 res.cookie('token', token, { httpOnly: true });
                 res.json({ token });
             } catch (err) {
