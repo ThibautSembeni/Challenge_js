@@ -1,4 +1,4 @@
-const { db } = require("../db");
+const { User } = require("../db/models/postgres");
 const Sequelize = require("sequelize");
 const ValidationError = require("../errors/ValidationError");
 const UnauthorizedError = require("../errors/UnauthorizedError");
@@ -22,14 +22,14 @@ module.exports = function UserService(MongoService) {
                 dbOptions.limit = options.limit;
                 dbOptions.offset = options.offset;
             }
-            return db.User.findAll(dbOptions);
+            return User.findAll(dbOptions);
         },
         findOne: async function (filters) {
             return User.findOne({ where: filters });
         },
         create: async function (data) {
             try {
-                const user = await db.User.create(data);
+                const user = await User.create(data);
                 const token = await generateVerificationToken(user)
                 const confirmationLink = `${process.env.API_URL}/verify/${token}`
                 await sendAccountValidationEmail(user, confirmationLink)
@@ -59,7 +59,7 @@ module.exports = function UserService(MongoService) {
         },
         update: async (filters, newData) => {
             try {
-                const [nbUpdated, users] = await db.User.update(newData, {
+                const [nbUpdated, users] = await User.update(newData, {
                     where: filters,
                     returning: true,
                     individualHooks: true,
@@ -73,12 +73,12 @@ module.exports = function UserService(MongoService) {
             }
         },
         delete: async (filters) => {
-            return db.User.destroy({ where: filters });
+            return User.destroy({ where: filters });
         },
         login: async (email, password) => {
             try {
 
-                const user = await db.User.findOne({ where: { email } });
+                const user = await User.findOne({ where: { email } });
                 if (!user) {
                     throw new UnauthorizedError();
                 }

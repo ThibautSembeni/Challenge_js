@@ -1,5 +1,5 @@
 const { getUserFromJWTToken, generateVerificationToken, checkTokenMiddleware } = require("../utils/user");
-const { db } = require("../db/index");
+const { Credential } = require("../db/models/postgres");
 
 module.exports = function SecurityController(UserService) {
     return {
@@ -30,7 +30,7 @@ module.exports = function SecurityController(UserService) {
                 }
                 const user = updatedUser[0];
                 if (user.role === 'merchant') {
-                    const credentials = await db.Credential.create({ user_id: user.id });
+                    const credentials = await Credential.create({ user_id: user.id });
                     return res.status(200).json(credentials);
                 }
                 return res.status(200).json(user);

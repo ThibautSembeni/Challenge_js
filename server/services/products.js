@@ -1,4 +1,4 @@
-const { db } = require("../db");
+const { Product } = require("../db/models/postgres");
 const Sequelize = require("sequelize");
 const ValidationError = require("../errors/ValidationError");
 
@@ -17,10 +17,10 @@ module.exports = function ProductService() {
                 dbOptions.limit = options.limit;
                 dbOptions.offset = options.offset;
             }
-            return db.Product.findAll(dbOptions);
+            return Product.findAll(dbOptions);
         },
         findOne: async function (filters) {
-            return db.Product.findOne({ where: filters });
+            return Product.findOne({ where: filters });
         },
         create: async function (data) {
             try {
@@ -36,7 +36,7 @@ module.exports = function ProductService() {
                 if (!data.description || data.description.length < 2 || data.description.length > 5000)
                     throw new ValidationError('La description doit contenir entre 2 et 5000 caractères');
 
-                return await db.Product.create(data);
+                return await Product.create(data);
             } catch (e) {
                 if (e instanceof Sequelize.ValidationError || e instanceof ValidationError) {
                     throw ValidationError.fromSequelizeValidationError(e);
@@ -59,7 +59,7 @@ module.exports = function ProductService() {
         },
         update: async (filters, newData) => {
             try {
-                const [nbUpdated, users] = await db.Product.update(newData, {
+                const [nbUpdated, users] = await Product.update(newData, {
                     where: filters,
                     returning: true,
                     individualHooks: true,
@@ -74,7 +74,7 @@ module.exports = function ProductService() {
             }
         },
         delete: async (filters) => {
-            return db.Product.destroy({ where: filters });
+            return Product.destroy({ where: filters });
         },
     };
 };

@@ -1,7 +1,8 @@
 const { generateVerificationToken } = require("../../utils/user");
 const request = require("supertest");
 const app = require("../../server");
-const { db, mongoDB } = require("../../db/index");
+const postgres = require("../../db/models/postgres");
+const mongo = require("../../db/models/mongo");
 
 const API_URL = 'http://localhost:3000'
 
@@ -84,9 +85,9 @@ describe('Test register verify account', () => {
     });
 
     afterAll(() => {
-        const users = mongoDB.User.find({});
+        const users = mongo.User.find({});
         users.deleteMany();
-        db.User.destroy({
+        postgres.User.destroy({
             where: {},
         })
     });

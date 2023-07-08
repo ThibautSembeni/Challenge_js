@@ -77,3 +77,6 @@ Content-Type: application/json
 GET http://localhost:3000/check
 Content-Type: application/json
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NTcwLCJmdWxsTmFtZSI6IkRvZSBKb2huIiwiaWF0IjoxNjg4NjUyNDI5LCJleHAiOjE2ODg2NTYwMjl9.LmtLOACur8vz1uBMV2ePtGIpWvib7QZNonyQUQHNGOc
+
+### 
+GET http://localhost:3000/verify/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NDksImZ1bGxOYW1lIjoiRG9lIEpvaG4iLCJpYXQiOjE2ODg4MTU1MjIsImV4cCI6MTY4ODgxOTEyMn0.pbgeyPGXz3tgRvD1pNuqyP2KacfA0mI8eCahC45aGjE

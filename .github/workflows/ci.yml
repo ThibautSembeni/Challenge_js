@@ -52,10 +52,10 @@ jobs:
         run: |
           cd server
           npm install
-      # - name: Run Sequelize migrations
-      #   run: |
-      #     cd server
-      #     MONGO_URL=mongodb://root:password@localhost:27017/StripeCollections?authSource=admin JWT_SECRET=$JWT_SECRET DATABASE_URL=postgres://$POSTGRES_USER:$POSTGRES_PASSWORD@localhost:5432/$POSTGRES_DB npm run d:s:u
+      - name: Run Sequelize migrations
+        run: |
+          cd server
+          MONGO_URL=mongodb://root:password@localhost:27017/StripeCollections?authSource=admin JWT_SECRET=$JWT_SECRET DATABASE_URL=postgres://$POSTGRES_USER:$POSTGRES_PASSWORD@localhost:5432/$POSTGRES_DB npm run d:s:u
       - name: Run tests
         run: |
           cd server
