@@ -19,6 +19,7 @@ jobs:
       POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
       POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
       JWT_SECRET: ${{ secrets.JWT_SECRET }}
+      MONGO_URL: ${{ secrets.MONGO_URL }}
 
     name: Deploy application
     steps:
@@ -44,5 +45,5 @@ jobs:
           command: |
             cd ${{ secrets.PROD_PATH }}
             docker compose -f docker-compose.prod.yml down --remove-orphans
-            POSTGRES_USER=${{ secrets.POSTGRES_USER }} POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }} POSTGRES_DB=${{ secrets.POSTGRES_DB }} JWT_SECRET=${{ secrets.JWT_SECRET }} DATABASE_URL=postgres://${{ secrets.POSTGRES_USER }}:${{ secrets.POSTGRES_PASSWORD }}@database:5432/${{ secrets.POSTGRES_DB }} docker compose -f docker-compose.prod.yml build --no-cache
-            POSTGRES_USER=${{ secrets.POSTGRES_USER }} POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }} POSTGRES_DB=${{ secrets.POSTGRES_DB }} JWT_SECRET=${{ secrets.JWT_SECRET }} DATABASE_URL=postgres://${{ secrets.POSTGRES_USER }}:${{ secrets.POSTGRES_PASSWORD }}@database:5432/${{ secrets.POSTGRES_DB }} docker compose -f docker-compose.prod.yml up -d
+            MONGO_URL=${{ secrets.MONGO_URL }} POSTGRES_USER=${{ secrets.POSTGRES_USER }} POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }} POSTGRES_DB=${{ secrets.POSTGRES_DB }} JWT_SECRET=${{ secrets.JWT_SECRET }} DATABASE_URL=postgres://${{ secrets.POSTGRES_USER }}:${{ secrets.POSTGRES_PASSWORD }}@database:5432/${{ secrets.POSTGRES_DB }} docker compose -f docker-compose.prod.yml build --no-cache
+            MONGO_URL=${{ secrets.MONGO_URL }} POSTGRES_USER=${{ secrets.POSTGRES_USER }} POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }} POSTGRES_DB=${{ secrets.POSTGRES_DB }} JWT_SECRET=${{ secrets.JWT_SECRET }} DATABASE_URL=postgres://${{ secrets.POSTGRES_USER }}:${{ secrets.POSTGRES_PASSWORD }}@database:5432/${{ secrets.POSTGRES_DB }} docker compose -f docker-compose.prod.yml up -d
