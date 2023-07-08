@@ -2,8 +2,8 @@
 import { reactive, ref } from 'vue'
 import router from '@/router'
 import GenericButton from '@/components/GenericButton.vue'
-import Input from '@/components/Form/Input.vue'
-import Form from '@/components/Form/Form.vue'
+import Input from '@/components/form/Input.vue'
+import Form from '@/components/form/Form.vue'
 
 const defaultValue = {
   email: '',
