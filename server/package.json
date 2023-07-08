@@ -8,7 +8,7 @@
     "watch": "node --watch index.js",
     "d:s:u": "node migration.js",
     "test:dev": "jest --verbose ./tests --watch",
-    "test": "jest --verbose ./tests"
+    "test": "jest --verbose ./tests --forceExit"
   },
   "keywords": [],
   "author": "",

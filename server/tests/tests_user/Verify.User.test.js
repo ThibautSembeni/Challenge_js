@@ -3,7 +3,7 @@ const request = require("supertest");
 const app = require("../../server");
 const postgres = require("../../db/models/postgres");
 const mongo = require("../../db/models/mongo");
-
+const mongoose = require('mongoose');
 const API_URL = 'http://localhost:3000'
 
 
@@ -84,11 +84,10 @@ describe('Test register verify account', () => {
         expect(typeof verificationResponse.body.client_secret).toBe('string');
     });
 
-    afterAll(() => {
-        const users = mongo.User.find({});
-        users.deleteMany();
+    afterAll(async () => {
         postgres.User.destroy({
             where: {},
         })
+        await mongoose.connection.close();
     });
 });

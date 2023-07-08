@@ -2,7 +2,7 @@ const request = require("supertest");
 const app = require("../../server");
 const postgres = require("../../db/models/postgres");
 const mongo = require("../../db/models/mongo");
-
+const mongoose = require("mongoose");
 
 describe('Test register', () => {
     const target = '/register';
@@ -107,11 +107,12 @@ describe('Test register', () => {
         expect(response.body.firstname).toContain("Le prénom doit contenir entre 2 et 50 caractères");
     });
 
-    afterAll(() => {
+    afterAll(async () => {
         const users = mongo.User.find({});
         users.deleteMany();
         postgres.User.destroy({
             where: {},
-        })
+        });
+        await mongoose.connection.close();
     });
 });

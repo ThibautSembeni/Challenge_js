@@ -1,5 +1,5 @@
 const sendAccountValidationEmail = require("../../services/emailSender")
-
+const mongoose = require("mongoose");
 describe('Test Email', () => {
 
     it('Send email with email not defined', async () => {
@@ -42,4 +42,8 @@ describe('Test Email', () => {
         expect(result).toBe(true)
 
     });
+});
+
+afterAll(async () => {
+    await mongoose.connection.close();
 });
