@@ -4,8 +4,6 @@ const app = require("../../server");
 const postgres = require("../../db/models/postgres");
 const mongo = require("../../db/models/mongo");
 const mongoose = require('mongoose');
-const API_URL = 'http://localhost:3000'
-
 
 describe('Test register verify account', () => {
     const registerUrl = `/register`
@@ -27,7 +25,7 @@ describe('Test register verify account', () => {
         expect(verificationResponse.body.email).toBe(registrationData.email);
     });
 
-    test('Verify a merchant user', async () => {
+    it('Verify a merchant user', async () => {
         const registrationData = {
             firstname: 'John',
             lastname: 'Doe',
@@ -35,13 +33,21 @@ describe('Test register verify account', () => {
             password: 'password',
             kbis: "kbis"
         }
-        const registerResponse = await request(app).post(registerUrl).send(registrationData);
 
-        const jwtToken = await generateVerificationToken(registerResponse.body);
+        const payload = await request(app).post(registerUrl).send(registrationData);
 
-        const verificationResponse = await request(app).get(`${verificationUrl}/${jwtToken}`);
+        const token = await generateVerificationToken(payload.body);
+
+        // await new Promise((resolve, reject) => {
+        //     setTimeout(() => {
+        //         resolve();
+        //     }, 1000);
+        // });
+
+        const verificationResponse = await request(app).get(`${verificationUrl}/${token}`);
+
         expect(verificationResponse.status).toBe(200);
-        expect(verificationResponse.body.user_id).toBe(registerResponse.body.id);
+        expect(verificationResponse.body.user_id).toBe(payload.body.id);
     });
 
     test('Verify status user before verification process', async () => {
@@ -53,7 +59,8 @@ describe('Test register verify account', () => {
         }
         const registerResponse = await request(app).post(registerUrl).send(registrationData);
 
-        const jwtToken = await generateVerificationToken(registerResponse.body)
+        const jwtToken = await generateVerificationToken(registerResponse.body);
+
         const verificationResponse = await request(app).get(`${verificationUrl}/${jwtToken}`);
 
         expect(verificationResponse.status).toBe(200);
@@ -85,9 +92,13 @@ describe('Test register verify account', () => {
     });
 
     afterAll(async () => {
-        postgres.User.destroy({
+        await postgres.Credential.destroy({
             where: {},
         })
+        await postgres.User.destroy({
+            where: {},
+        })
+        await mongo.User.deleteMany({});
         await mongoose.connection.close();
     });
 });

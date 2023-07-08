@@ -1,9 +1,7 @@
 module.exports = (connection) => {
     const { DataTypes, Model } = require('sequelize');
     const bcrypt = require('bcryptjs');
-    const mongoUser = require('../mongo/User');
-    const UniqueConstraintError = require("../../../errors/UniqueConstraintError");
-
+    const mongo = require('../mongo')
     class User extends Model {
         static associate(models) {
             User.hasMany(models.Credential, { foreignKey: 'user_id', as: 'credentials' });
@@ -159,7 +157,7 @@ module.exports = (connection) => {
 
     // Pour le projet et la synchro avec mongo 
     User.addHook("afterCreate", (user) => {
-        mongoUser.create(user.dataValues).catch((error) => {
+        mongo.User.create(user.dataValues).catch((error) => {
             if (error.name === 'MongoServerError' && error.code === 11000) {
                 console.log('duplicate key error');
             }

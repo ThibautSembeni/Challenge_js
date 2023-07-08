@@ -40,10 +40,5 @@ describe('Test Email', () => {
         const confirmationLink = 'https://example.com/confirm';
         const result = await sendAccountValidationEmail(user, confirmationLink);
         expect(result).toBe(true)
-
     });
-});
-
-afterAll(async () => {
-    await mongoose.connection.close();
 });
