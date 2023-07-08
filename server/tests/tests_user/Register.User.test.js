@@ -128,10 +128,11 @@ describe('Test register', () => {
     afterAll(async () => {
         await postgres.Credential.destroy({
             where: {},
-        })
+        });
         await postgres.User.destroy({
             where: {},
-        })
+        });
+        await mongo.User.deleteMany({});
         await mongoose.connection.close();
     });
 });
