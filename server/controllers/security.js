@@ -1,5 +1,4 @@
 const {getUserFromJWTToken, generateVerificationToken, checkTokenMiddleware} = require("../utils/user");
-const {Credential} = require("../db/models/postgres");
 const EmailSender = require("../services/emailSender");
 const jwt = require("jsonwebtoken");
 
@@ -24,17 +23,14 @@ module.exports = function SecurityController(UserService) {
         create: async (req, res, next) => {
             try {
                 const {body} = req;
-
                 const user = await UserService.create(body);
                 const token = await generateVerificationToken(user)
                 const confirmationLink = `${process.env.API_URL}/verify/${token}`
-
                 if (user.role === 'customer') {
                     // await EmailSender.accountValidationEmail(user, confirmationLink)
                 } else if (user.role === 'merchant') {
                     // await EmailSender.sendPendingValidationEmail(user)
                 }
-
                 return res.status(201).json(user);
             } catch (error) {
                 if (error.constructor.name === 'ValidationError') {
@@ -70,6 +66,19 @@ module.exports = function SecurityController(UserService) {
         check: async (req, res, next) => {
             return res.status(200).send();
         },
+        me: async (req, res, next) => {
+            try {
+                const {id} = req.user;
+                const user = await UserService.findOne({id});
+                if (!user) {
+                    return res.status(404).json({message: 'Not found user'});
+                }
+                return res.status(200).json(user);
+            } catch (error) {
+                console.error('Error during search :', error);
+                return res.status(500).json({message: 'Error during search'});
+            }
+        },
         refreshToken: async (req, res, next) => {
             const {token} = req.body;
             try {
@@ -77,7 +86,7 @@ module.exports = function SecurityController(UserService) {
                     ignoreExpiration: true,
                 })
                 const newToken = await generateVerificationToken(user)
-                return res.status(200).json({ token: newToken });
+                return res.status(200).json({token: newToken});
             } catch (e) {
                 next(e)
             }

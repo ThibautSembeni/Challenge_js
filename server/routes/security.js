@@ -19,6 +19,7 @@ module.exports = new genericRouter(
             { handler: 'create', method: 'post', path: '/register', middleware: [] },
             { handler: 'verify', method: 'get', path: '/verify/:token/', middleware: [] },
             { handler: 'check', method: 'get', path: '/check', middleware: [checkAuth] },
+            { handler: 'me', method: 'get', path: '/me', middleware: [checkAuth] },
             { handler: 'refreshToken', method: 'post', path: '/refresh-token', middleware: [] }
         ],
         // `defaultRoutes` is all resfull routes
