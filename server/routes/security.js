@@ -18,7 +18,8 @@ module.exports = new genericRouter(
             { handler: 'login', method: 'post', path: '/login', middleware: [] },
             { handler: 'create', method: 'post', path: '/register', middleware: [] },
             { handler: 'verify', method: 'get', path: '/verify/:token/', middleware: [] },
-            { handler: 'check', method: 'get', path: '/check', middleware: [checkAuth] }
+            { handler: 'check', method: 'get', path: '/check', middleware: [checkAuth] },
+            { handler: 'refreshToken', method: 'post', path: '/refresh-token', middleware: [] }
         ],
         // `defaultRoutes` is all resfull routes
         // to desactivate resfull routes set default routes to false like ``defaultRoutes: false``
