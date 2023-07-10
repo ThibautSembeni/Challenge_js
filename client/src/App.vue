@@ -1,6 +1,11 @@
 <script setup>
 import { RouterLink, RouterView } from 'vue-router'
 import HelloWorld from './components/HelloWorld.vue'
+import { computed } from 'vue';
+import store from "@/stores/store";
+import Spinner from "@/components/Spinner.vue";
+
+const isLoading = computed(() => store.state.isLoading);
 
 fetch(`${import.meta.env.VITE_API_URL}`)
   .then((res) => res.json())
@@ -10,17 +15,18 @@ fetch(`${import.meta.env.VITE_API_URL}`)
 
 <template>
   <!--  <header>
-    <img alt="Vue logo" class="logo" src="@/assets/logo.svg" width="125" height="125" />
+  <img alt="Vue logo" class="logo" src="@/assets/logo.svg" width="125" height="125" />
 
-    <div class="wrapper">
-      <HelloWorld msg="You did it!" />
+  <div class="wrapper">
+    <HelloWorld msg="You did it!" />
 
-      <nav>
-        <RouterLink to="/">Home</RouterLink>
-        <RouterLink to="/about">About</RouterLink>
-      </nav>
-    </div>
-  </header>-->
+    <nav>
+      <RouterLink to="/">Home</RouterLink>
+      <RouterLink to="/about">About</RouterLink>
+    </nav>
+  </div>
+</header>-->
+  <Spinner  v-if="isLoading"/>
 
   <RouterView />
 </template>
