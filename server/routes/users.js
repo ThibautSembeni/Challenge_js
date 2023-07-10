@@ -3,7 +3,7 @@ const genericController = require("../controllers/generic");
 const UserService = require("../services/user");
 const middleware = require("../middlewares/apikey");
 const customTemplateController = require("../controllers/controller.template");
-const userController = require("../controllers/user");
+const userController = require("../controllers/merchant");
 const checkAdminRole = require("../middlewares/check-roles")
 module.exports = new genericRouter(
     new genericController(
@@ -15,8 +15,7 @@ module.exports = new genericRouter(
     {
         // `customRoutes` is optional is for add others custom routes
         customRoutes: [
-            { handler: 'countPendingUsers', method: 'get', path: '/count/pending-merchants', middleware: [checkAdminRole] },
-            { handler: 'getPendingValidationMerchants', method: 'get', path: '/merchants/pending', middleware: [checkAdminRole] },
+
         ],
         // `defaultRoutes` is all resfull routes
         // to desactivate resfull routes set default routes to false like ``defaultRoutes: false``
