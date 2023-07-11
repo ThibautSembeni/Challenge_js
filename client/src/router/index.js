@@ -1,6 +1,6 @@
 import {createRouter, createWebHistory} from 'vue-router'
 import HomeView from '../views/HomeView.vue'
-import LoginView from '../views/LoginView.vue'
+import LoginView from '../views/auth/LoginView.vue'
 import PaymentView from '@/views/PaymentsView.vue'
 import PaymentDetailView from '@/views/PaymentDetailView.vue'
 import CustomersView from '@/views/CustomersView.vue'
@@ -9,13 +9,16 @@ import ProductsView from '@/views/ProductsView.vue'
 import ProductDetailView from '@/views/ProductDetailView.vue'
 import ProductCreateView from '@/views/ProductCreateView.vue'
 import {canUserAccess} from "@/utils/auth";
-import ForbiddenView from "@/views/Erros/ForbiddenView.vue";
-import NotFoundView from "@/views/Erros/NotFoundView.vue";
-import DashboardView from "@/views/Admin/DashboardView.vue";
-import UsersView from "@/views/Admin/UsersView.vue";
-import UsersDetails from "@/views/Admin/ShowUserView.vue";
-import PendingUsers from "@/views/Admin/PendingUsers.vue";
-import EditUserView from "@/views/Admin/EditUserView.vue";
+import ForbiddenView from "@/views/errors/ForbiddenView.vue";
+import NotFoundView from "@/views/errors/NotFoundView.vue";
+import DashboardView from "@/views/admin/DashboardView.vue";
+import UsersView from "@/views/admin/UsersView.vue";
+import UsersDetails from "@/views/admin/ShowUserView.vue";
+import PendingUsers from "@/views/admin/PendingUsers.vue";
+import EditUserView from "@/views/admin/EditUserView.vue";
+import LogoutView from "@/views/auth/LogoutView.vue";
+import DashboardMerchant from "@/views/merchant/DashboardMerchant.vue";
+import SetupMerchant from "@/views/merchant/SetupMerchant.vue";
 
 const customerRoutes = [
     {
@@ -31,9 +34,15 @@ const customerRoutes = [
         meta: {requiresAuth: false}
     },
     {
+        path: '/logout',
+        name: 'logout',
+        component: LogoutView,
+        meta: {requiresAuth: false}
+    },
+    {
         path: '/register',
         name: 'register',
-        component: () => import('../views/RegisterView.vue'),
+        component: () => import('../views/auth/RegisterView.vue'),
         meta: {requiresAuth: false}
     },
     {
@@ -95,7 +104,7 @@ const adminRoutes = [
     {
         path: '/admin/users',
         name: 'adminUsers',
-        meta: { requiresAuth: true, requiresAdminAccess: true },
+        meta: {requiresAuth: true, requiresAdminAccess: true},
         children: [
             {
                 path: '',
@@ -122,6 +131,21 @@ const adminRoutes = [
     }
 ]
 
+const merchantRoutes = [
+    {
+        path: '/merchant',
+        name: 'merchant',
+        component: DashboardMerchant,
+        meta: {requiresAuth: true, requiresMerchantAccess: true}
+    },
+    {
+        path: '/merchant/setup',
+        name: 'setupMerchant',
+        component: SetupMerchant,
+        meta: {requiresAuth: true, requiresMerchantAccess: true}
+    },
+];
+
 const errorRoutes = [
     {
         path: '/forbidden',
@@ -136,9 +160,10 @@ const errorRoutes = [
 ];
 
 const routes = [
-    ...errorRoutes,
+    ...adminRoutes,
+    ...merchantRoutes,
     ...customerRoutes,
-    ...adminRoutes
+    ...errorRoutes,
 ]
 
 const router = createRouter({

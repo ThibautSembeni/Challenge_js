@@ -5,8 +5,9 @@ const store = createStore({
     plugins: [createPersistedState()],
     state: {
         isLoading: false,
-        user: null,
         isLoggedIn: false,
+        user: null,
+        credentials:null
     },
     mutations: {
         setIsLoading(state, value) {
@@ -17,6 +18,9 @@ const store = createStore({
         },
         setLoggedIn(state, isLoggedIn) {
             state.isLoggedIn = isLoggedIn;
+        },
+        setCredentials(state, credentials) {
+            state.credentials = credentials;
         }
     },
     actions: {

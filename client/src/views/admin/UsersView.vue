@@ -27,7 +27,7 @@ onMounted(async () => {
   }
 });
 const showUser = (userId) =>{
-  router.push(`${userId}`);
+  router.push(`users/${userId}`);
 }
 
 const editUser = (userId) =>{
