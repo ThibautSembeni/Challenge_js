@@ -48,7 +48,7 @@ module.exports = function SecurityController(UserService) {
                 const {token} = req.params;
                 const encodedUser = getUserFromJWTToken(token);
                 const id = parseInt(encodedUser.id, 10);
-                const updatedUser = await UserService.update({id}, {status: true});
+                const updatedUser = await UserService.update({id}, {status: 'approved'});
                 if (updatedUser.length === 0) {
                     return res.sendStatus(404);
                 }

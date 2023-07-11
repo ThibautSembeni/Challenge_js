@@ -6,7 +6,7 @@ module.exports = function merchantController(UserService) {
         countPendingUsers: async (req, res, next) => {
             try {
                 const count = await UserService.count(
-                    {role: "merchant", status: false}
+                    {role: "merchant", status: 'pending'}
                 );
                 res.json(count)
             } catch (error) {
@@ -16,7 +16,7 @@ module.exports = function merchantController(UserService) {
         getPendingValidationMerchants: async (req, res, next) => {
             try {
                 const {page, itemPerPage, order, ...filters} = req.query;
-                const users = await UserService.findAll({role: "merchant", status: false}, {
+                const users = await UserService.findAll({role: "merchant", status: 'pending'}, {
                     order: {
                         createdAt: "ASC",
                     },
@@ -35,7 +35,7 @@ module.exports = function merchantController(UserService) {
         approveMerchant: async (req, res, next) => {
             try {
                 const { id } = req.params;
-                const merchants = await UserService.update({ id }, { status: true });
+                const merchants = await UserService.update({ id }, { status: 'approved' });
                 if (merchants.length !== 1) {
                     res.sendStatus(404)
                 }
@@ -51,12 +51,12 @@ module.exports = function merchantController(UserService) {
         declineMerchant: async (req, res, next) => {
             try {
                 const { id } = req.params;
-                const merchants = await UserService.update({ id }, { status: false });
+                const merchants = await UserService.update({ id }, { status: 'declined' });
                 if (merchants.length !== 1) {
                     res.sendStatus(404)
                 }
                 const merchant = merchants[0];
-                // await EmailSender.sendDeclineMail(merchant)
+                await EmailSender.sendDeclineMail(merchant)
                 res.json(merchant);
             } catch (error) {
                 console.error(error);

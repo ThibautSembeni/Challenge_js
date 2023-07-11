@@ -132,8 +132,9 @@ module.exports = (connection) => {
             }
         },
         status: {
-            type: DataTypes.BOOLEAN,
-            defaultValue: false,
+            type: DataTypes.ENUM,
+            values: ['pending', 'approved', 'declined'],
+            defaultValue: 'pending',
             allowNull: false,
         },
     }, { sequelize: connection, tableName: 'users' });
