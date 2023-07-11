@@ -8,6 +8,7 @@ import CustomerDetailView from '@/views/CustomerDetailView.vue'
 import ProductsView from '@/views/ProductsView.vue'
 import ProductDetailView from '@/views/ProductDetailView.vue'
 import ProductCreateView from '@/views/ProductCreateView.vue'
+import PaymentCreateView from "@/views/PaymentCreateView.vue";
 
 const routes = [
   {
@@ -32,6 +33,12 @@ const routes = [
     path: '/paiements',
     name: 'payments',
     component: PaymentView,
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/transaction/ajouter',
+    name: 'transactionAdd',
+    component: PaymentCreateView,
     meta: { requiresAuth: true }
   },
   {

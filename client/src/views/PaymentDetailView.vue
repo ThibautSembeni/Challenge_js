@@ -46,8 +46,7 @@ async function getTransaction() {
           <router-link
             :to="{ name: 'payments' }"
             class="bg-blue-100 text-blue-800 text-sm font-medium ml-2 px-2.5 py-0.5 rounded-full mr-2"
-            ><i class="fa-solid fa-chevron-left mr-2"></i> Retour</router-link
-          >
+            ><i class="fa-solid fa-chevron-left mr-2"></i> Retour</router-link>
           <h1 class="uppercase"><i class="fa-solid fa-dollar-sign mr-2"></i> Chargement...</h1>
         </div>
       </div>
