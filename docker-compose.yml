@@ -23,7 +23,7 @@ services:
     working_dir: /usr/local/app
     ports:
       - 127.0.0.1:3000:3000
-    command: npm run start
+    command: npm run watch
     env_file:
       - web-variables.env
 

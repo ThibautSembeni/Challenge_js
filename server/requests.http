@@ -81,3 +81,25 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NzY0LCJmdWxsT
 
 ### 
 GET http://localhost:3000/verify/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NzY0LCJmdWxsTmFtZSI6IkRvZSBKb2huIiwiaWF0IjoxNjg4ODMzNjMzLCJleHAiOjE2ODg4MzcyMzN9.nzC_gToW-c2yNvbonhlk7ElOGQ8ga4hmtsQsBcy_bZw
+
+
+
+####################
+### Transactions ###
+####################
+
+GET http://localhost:3000/transactions
+Content-Type: application/json
+
+###
+GET http://localhost:3000/transactions/transaction/subscribe?username=John
+Accept: text/event-stream
+
+###
+POST http://localhost:3000/transactions
+Content-Type: application/json
+
+{
+    "amount": 100,
+    "type": "deposit"
+}

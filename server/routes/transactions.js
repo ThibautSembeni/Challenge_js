@@ -14,10 +14,12 @@ module.exports = new genericRouter(
     {
         customRoutes: [
             { method: 'get', path: '/transaction/user/:id', middleware: [], handler: 'getTransactionsByUserId' },
+            { method: 'get', path: '/transaction/subscribe', middleware: [], handler: 'subscribe' },
+            { method: 'post', path: '/', middleware: [], handler: 'transaction' },
         ],
         defaultRoutes: {
             getAll: { method: 'get', path: '/', middleware: [], active: true },
-            create: { method: 'post', path: '/', middleware: [], active: true },
+            create: { method: 'post', path: '/', middleware: [], active: false },
             getOne: { method: 'get', path: '/:reference', middleware: [], active: true },
             replace: { method: 'put', path: '/:id', middleware: [], active: true },
             update: { method: 'patch', path: '/:id', middleware: [], active: true },
