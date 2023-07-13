@@ -1,9 +1,9 @@
-module.exports = function operationController(Service, options = {}) {
+module.exports = function OperationController(OperationService, options = {}) {
     let result = {
         getAll: async (req, res) => {
             const { page, itemPerPage, order, ...filters } = req.query;
             try {
-                const results = await Service.findAll(filters, { order, limit: itemPerPage, offset: (page - 1) * itemPerPage });
+                const results = await OperationService.findAll(filters, { order, limit: itemPerPage, offset: (page - 1) * itemPerPage });
                 res.json(results);
             } catch (error) {
                 console.error(error);
@@ -14,7 +14,7 @@ module.exports = function operationController(Service, options = {}) {
         getOne: async (req, res) => {
             const { id } = req.params;
             try {
-                const result = await Service.findOne({ id: parseInt(id, 10) });
+                const result = await OperationService.findOne({ id: parseInt(id, 10) });
                 if (result)
                     res.json(result);
                 else res.sendStatus(404);
@@ -27,7 +27,7 @@ module.exports = function operationController(Service, options = {}) {
         create: async (req, res) => {
             const { body } = req;
             try {
-                const result = await Service.create(body);
+                const result = await OperationService.create(body);
                 res.status(201).json(result);
             } catch (error) {
                 if (error.constructor.name === 'ValidationError') {
@@ -46,7 +46,7 @@ module.exports = function operationController(Service, options = {}) {
             const { id } = req.params;
             const { body } = req;
             try {
-                const [[result, created]] = await Service.replace({ id: parseInt(id, 10) }, { id: parseInt(id, 10), ...body });
+                const [[result, created]] = await OperationService.replace({ id: parseInt(id, 10) }, { id: parseInt(id, 10), ...body });
                 if (created) res.status(201).json(result);
                 else res.json(result);
             } catch (error) {
@@ -63,7 +63,7 @@ module.exports = function operationController(Service, options = {}) {
             const { id } = req.params;
             const { body } = req;
             try {
-                const [result] = await Service.update({ id: parseInt(id, 10) }, body);
+                const [result] = await OperationService.update({ id: parseInt(id, 10) }, body);
                 if (result) res.json(result);
                 else res.sendStatus(404);
             } catch (error) {
@@ -79,7 +79,7 @@ module.exports = function operationController(Service, options = {}) {
         delete: async (req, res) => {
             const { id } = req.params;
             try {
-                const nbDeleted = await Service.delete({ id: parseInt(id, 10) });
+                const nbDeleted = await OperationService.delete({ id: parseInt(id, 10) });
                 if (nbDeleted) res.sendStatus(204);
                 else res.sendStatus(404);
             } catch (error) {
@@ -87,10 +87,30 @@ module.exports = function operationController(Service, options = {}) {
                 res.status(500).json(error);
             }
         },
+        capture: async (req, res, next) => {
+            const { transaction_id } = req.params;
+            try {
+                const result = await OperationService.capture({ transaction_id: parseInt(transaction_id, 10) });
+                if (result) res.json(result);
+                else res.sendStatus(404);
+            } catch (error) {
+                next(error);
+            }
+        },
+        refund: async (req, res, next) => {
+            const { transaction_id } = req.params;
+            try {
+                const result = await OperationService.refund({ transaction_id: parseInt(transaction_id, 10) });
+                if (result) res.json(result);
+                else res.sendStatus(404);
+            } catch (error) {
+                next(error);
+            }
+        }
     }
 
     if (options.hasOwnProperty('customController')) {
-        result = { ...result, ...options.customController(Service) }
+        result = { ...result, ...options.customController(OperationService) }
     }
 
     return result;
