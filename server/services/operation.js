@@ -3,7 +3,7 @@ const Sequelize = require('sequelize');
 const ValidationError = require('../errors/ValidationError');
 const UnauthorizedError = require('../errors/UnauthorizedError');
 const UniqueConstraintError = require('../errors/UniqueConstraintError');
-const { getScrappingExchangeRates } = require('../scrapping');
+const { getScrappingExchangeRates } = require('../utils/scrapping');
 
 module.exports = function OperationService() {
     return {
