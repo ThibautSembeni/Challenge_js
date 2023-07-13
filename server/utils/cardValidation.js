@@ -1,31 +1,25 @@
-function validateCardNumber(cardNumber) {
+const cardValidator = require('card-validator');
+
+function validateCardNumber(cardNumber, cvv, expirationDate) {
     // suppression des espaces et des tirets
     const cleanedCardNumber = cardNumber.replace(/\s+/g, '').replace(/-/g, ''); 
 
     // vérification que la chaîne ne contient que des chiffres
     if(!/^\d+$/.test(cleanedCardNumber)) return false; 
 
-    const cardNumberArray = cleanedCardNumber.split('').map(Number);
+    // validation du numéro de carte
+    const cardNumberValidation = cardValidator.number(cleanedCardNumber);
+    if(!cardNumberValidation.isPotentiallyValid || !cardNumberValidation.isValid) return false;
 
-    let sum = 0;
-    let isEven = false;
+    // validation du CVV
+    const cvvValidation = cardValidator.cvv(cvv);
+    if(!cvvValidation.isPotentiallyValid || !cvvValidation.isValid) return false;
 
-    // utilisation de l'algorithme de Luhn
-    for(let i = cardNumberArray.length - 1; i >= 0; i--) {
-        let currentNumber = cardNumberArray[i];
+    // validation de la date d'expiration
+    const expirationDateValidation = cardValidator.expirationDate(expirationDate);
+    if(!expirationDateValidation.isPotentiallyValid || !expirationDateValidation.isValid) return false;
 
-        if(isEven) { 
-            currentNumber *= 2; 
-            if(currentNumber > 9) { 
-                currentNumber -= 9; 
-            }
-        }
-
-        sum += currentNumber; 
-        isEven = !isEven; 
-    }
-
-    return sum % 10 === 0; 
+    return true;
 }
 
 module.exports = validateCardNumber;
