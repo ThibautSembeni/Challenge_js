@@ -1,4 +1,4 @@
-module.exports = function transactionController(transactionService, options = {}) {
+module.exports = function transactionController(TransactionService, options = {}) {
     const { notifyUser, notify } = require("../utils/notify.sse");
     const eventsSent = [];
     const subscribers = {};
@@ -8,7 +8,7 @@ module.exports = function transactionController(transactionService, options = {}
         getOne: async function (req, res, next) {
             try {
                 const reference = req.params.reference
-                const transaction = await transactionService.findOne({ reference: reference })
+                const transaction = await TransactionService.findOne({ reference: reference })
                 if (transaction) {
                     res.json(transaction)
                 } else {
@@ -21,7 +21,7 @@ module.exports = function transactionController(transactionService, options = {}
         getTransactionsByUserId: async (req, res, next) => {
             try {
                 const id = req.params.id
-                const results = await transactionService.findAll({ user_id: id })
+                const results = await TransactionService.findAll({ user_id: id })
                 if (results) {
                     res.json(results)
                 } else {
@@ -48,17 +48,17 @@ module.exports = function transactionController(transactionService, options = {}
             }
         },
         transaction: async (req, res, next) => {
-            const transaction = req.body;
-            transaction.id = Date.now();
-            transaction.date = new Date();
-            messages.push(transaction);
-            notify({ id: transaction.id, name: "transaction", data: transaction }, false, subscribers, eventsSent);
-            res.status(201).json(transaction);
+            try {
+                const transaction = req.body;
+                const results = await TransactionService.create(transaction);
+                messages.push(results);
+                notify({ id: results.id, name: "transaction", data: results }, false, subscribers, eventsSent);
+                res.status(201).json(transaction);
+            } catch (error) {
+                console.error(error);
+                next(error);
+            }
         },
-    }
-
-    if (options.hasOwnProperty('customController')) {
-        result = { ...result, ...options.customController(transactionService) }
     }
 
     return result;

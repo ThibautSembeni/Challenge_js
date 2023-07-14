@@ -1,5 +1,5 @@
 <script setup>
-import { computed, onMounted, reactive } from 'vue'
+import { computed, onMounted, reactive, watch } from 'vue'
 import '../assets/index.css'
 import SideBar from '@/components/SideBar.vue'
 import NavBar from '@/components/NavBar.vue'
@@ -9,6 +9,7 @@ import Table from '@/components/Table.vue'
 
 onMounted(async () => {
   await getTransactions()
+  await subscribeToSSETransaction()
 })
 
 const defaultValue = {
@@ -33,6 +34,26 @@ async function getTransactions() {
   if (response.ok) {
     data.payments = await response.json()
   }
+}
+
+async function subscribeToSSETransaction() {
+  const params = new URLSearchParams()
+  params.set('username', 'test')
+  if (localStorage.getItem('last-id')) {
+    params.set('last-id', localStorage.getItem('last-id'))
+  }
+  const eventSource = new EventSource(
+    `${import.meta.env.VITE_API_URL}/transactions/transaction/subscribe?` + params
+  )
+  bindEventSource(eventSource)
+}
+
+function bindEventSource(eventSource) {
+  eventSource.addEventListener('transaction', (event) => {
+    const message = JSON.parse(event.data)
+    data.payments[Object.entries(data.payments).length] = message
+    localStorage.setItem('last-id', event.lastEventId)
+  })
 }
 
 // eslint-disable-next-line vue/return-in-computed-property

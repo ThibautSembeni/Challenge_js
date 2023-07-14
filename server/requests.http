@@ -100,6 +100,40 @@ POST http://localhost:3000/transactions
 Content-Type: application/json
 
 {
-    "amount": 100,
-    "type": "deposit"
+   "client_info": {
+        "name": "Michel Chemlal le petit vieux",
+        "address": "2T route de villechavant, Villebougis, 89150 France"
+    },
+    "billing_info": {
+        "zipcode": "89100",
+        "country":  "FRANCE",
+        "card_type": "Visa",
+        "card_bank": "Stripe Payments UK Limited",
+        "card_number": "4141414141414142",
+        "expiration_date": "04 / 2024",
+        "cvc": true,
+        "IP": "192.168.1.1",
+        "device": "Ordinateur"       
+    },
+    "shipping_info": {
+        "amount": 9,
+        "costs": 10000,
+        "net": 200000,
+        "currency": "EUR",
+        "payment_type": "Carte de crédit"
+    },
+    "cart": {
+        "card_number": "4141414141414141"
+    },
+    "amount": 9,
+    "currency": "EUR"
+}
+
+###
+POST http://localhost:3000/transactions
+Content-Type: application/json
+
+{
+    "amount": 210000.45,
+    "currency": "EUR"
 }
