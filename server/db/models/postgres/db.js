@@ -1,6 +1,6 @@
 const Sequelize = require('sequelize');
 
-const connection = new Sequelize(process.env.DATABASE_URL, { logging: false })
+const connection = new Sequelize('postgres://root:password@database:5432/app', { logging: false })
 
 if (process.env.NODE_ENV === 'test') {
     connection

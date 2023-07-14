@@ -19,6 +19,7 @@ import EditUserView from "@/views/admin/EditUserView.vue";
 import LogoutView from "@/views/auth/LogoutView.vue";
 import DashboardMerchant from "@/views/merchant/DashboardMerchant.vue";
 import SetupMerchant from "@/views/merchant/SetupMerchant.vue";
+import ProfileView from "@/views/auth/ProfileView.vue";
 
 const customerRoutes = [
     {
@@ -31,6 +32,12 @@ const customerRoutes = [
         path: '/login',
         name: 'login',
         component: LoginView,
+        meta: {requiresAuth: false}
+    },
+    {
+        path: '/profile',
+        name: 'profile',
+        component: ProfileView,
         meta: {requiresAuth: false}
     },
     {
@@ -148,8 +155,8 @@ const merchantRoutes = [
 
 const errorRoutes = [
     {
-        path: '/forbidden',
-        name: 'forbidden',
+        path: '/404',
+        name: '404',
         component: ForbiddenView
     },
     {
@@ -173,7 +180,6 @@ const router = createRouter({
 
 router.beforeEach(async (to, from, next) => {
     const canAccess = await canUserAccess(to)
-    console.log("can", canAccess)
     if (canAccess !== true) {
         next(canAccess);
     } else {

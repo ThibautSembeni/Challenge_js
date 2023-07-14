@@ -30,7 +30,6 @@ const store = createStore({
         getLoggedIn(state) {
             return state.isLoggedIn;
         }
-
     }
 });
 

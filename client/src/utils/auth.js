@@ -11,11 +11,11 @@ export async function canUserAccess(route) {
 
     if (requiresAdminAccess) {
         const user = await getUser();
-        return user && user.role === "admin" ? true : "/forbidden";
+        return user && user.role === "admin" ? true : "/404";
     }
     if (requiresMerchantAccess) {
         const user = await getUser();
-        return user && user.role === "merchant" ? true : "/forbidden";
+        return user && user.role === "merchant" ? true : "/404";
     }
     if (requiresAuth) {
         if (isLoggedIn() === true) {

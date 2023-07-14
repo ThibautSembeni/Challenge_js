@@ -80,7 +80,6 @@ module.exports = function UserService(MongoService) {
                     throw new UnauthorizedError();
                 }
                 const isPasswordValid = await user.isPasswordValid(password);
-                console.log(isPasswordValid)
                 if (!isPasswordValid) {
                     throw new UnauthorizedError();
                 }
