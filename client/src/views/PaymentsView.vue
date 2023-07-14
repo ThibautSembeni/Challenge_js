@@ -16,7 +16,11 @@ const defaultValue = {
   currentTab: 'Tous les paiements',
   tabs: ['Tous les paiements', 'Litiges', 'Toutes les transactions'],
   currentFilterAll: 'Tous',
-  filtersAll: ['Tous', 'Réussi', 'En attente', 'Échoué']
+  filtersAll: ['Tous', 'Réussi', 'En attente', 'Échoué'],
+  pager: {
+    currentPage: 1,
+    perPage: 20
+  }
 }
 
 const data = reactive({
@@ -60,13 +64,48 @@ function bindEventSource(eventSource) {
 const filteredPaymentsAll = computed(() => {
   switch (data.currentFilterAll) {
     case 'Tous':
-      return data.payments
+      return Object.values(data.payments)
+        .sort(
+          (firstItem, secondItem) =>
+            new Date(secondItem.createdAt).getTime() - new Date(firstItem.createdAt).getTime()
+        )
+        .slice(
+          (data.pager.currentPage - 1) * data.pager.perPage,
+          data.pager.currentPage * data.pager.perPage
+        )
     case 'Réussi':
-      return data.payments.filter((p) => p.status === 'paid')
+      return data.payments
+        .filter((p) => p.status === 'paid')
+        .sort(
+          (firstItem, secondItem) =>
+            new Date(secondItem.createdAt).getTime() - new Date(firstItem.createdAt).getTime()
+        )
+        .slice(
+          (data.pager.currentPage - 1) * data.pager.perPage,
+          data.pager.currentPage * data.pager.perPage
+        )
     case 'En attente':
-      return data.payments.filter((p) => p.status === 'pending')
+      return data.payments
+        .filter((p) => p.status === 'pending')
+        .sort(
+          (firstItem, secondItem) =>
+            new Date(secondItem.createdAt).getTime() - new Date(firstItem.createdAt).getTime()
+        )
+        .slice(
+          (data.pager.currentPage - 1) * data.pager.perPage,
+          data.pager.currentPage * data.pager.perPage
+        )
     case 'Échoué':
-      return data.payments.filter((p) => p.status === 'failed')
+      return data.payments
+        .filter((p) => p.status === 'failed')
+        .sort(
+          (firstItem, secondItem) =>
+            new Date(secondItem.createdAt).getTime() - new Date(firstItem.createdAt).getTime()
+        )
+        .slice(
+          (data.pager.currentPage - 1) * data.pager.perPage,
+          data.pager.currentPage * data.pager.perPage
+        )
   }
 })
 </script>
@@ -156,7 +195,7 @@ const filteredPaymentsAll = computed(() => {
               </td>
               <td class="px-6 py-4">###</td>
               <td class="px-6 py-4">
-                {{ moment(payment.created_at).format('LLLL') }}
+                {{ moment(payment.createdAt).format('LLLL') }}
               </td>
             </tr>
             <tr class="bg-white border-b" v-if="!filteredPaymentsAll.length">
@@ -167,6 +206,49 @@ const filteredPaymentsAll = computed(() => {
               >
                 Aucun paiement
               </th>
+            </tr>
+          </template>
+          <template #tfoot>
+            <tr>
+              <td colspan="3" class="px-6 py-4">
+                <span
+                  >Résultats
+                  {{ data.pager.currentPage * data.pager.perPage - data.pager.perPage + 1 }}–{{
+                    data.pager.currentPage * data.pager.perPage
+                  }}
+                  affichés sur {{ data.payments.length }} résultats</span
+                >
+              </td>
+              <td class="px-6 py-4 flex flex-end space-x-2 w-full">
+                <button
+                  @click="data.pager.currentPage--"
+                  :disabled="data.pager.currentPage === 1"
+                  :class="`border border-black-700 font-medium rounded-lg text-sm px-2 py-1 text-center ${
+                    data.pager.currentPage === 1 ? 'border-gray-200 text-gray-300' : ''
+                  }`"
+                >
+                  précédent
+                </button>
+                <button
+                  @click="data.pager.currentPage++"
+                  :disabled="
+                    data.pager.currentPage * data.pager.perPage - data.pager.perPage + 1 ===
+                      data.payments.length ||
+                    data.pager.currentPage * data.pager.perPage - data.pager.perPage + 1 <=
+                      data.payments.length
+                  "
+                  :class="`border border-black-700 font-medium rounded-lg text-sm px-2 py-1 text-center ${
+                    data.pager.currentPage * data.pager.perPage - data.pager.perPage + 1 ===
+                      data.payments.length ||
+                    data.pager.currentPage * data.pager.perPage - data.pager.perPage + 1 <=
+                      data.payments.length
+                      ? 'border-gray-200 text-gray-300'
+                      : ''
+                  }`"
+                >
+                  suivant
+                </button>
+              </td>
             </tr>
           </template>
         </Table>
