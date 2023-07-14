@@ -11,7 +11,12 @@ module.exports = (req, res, next) => {
         return next(new UnauthorizedError());
     }
     try {
-        req.user = jwt.verify(token, process.env.JWT_SECRET);
+        const user = jwt.verify(token, process.env.JWT_SECRET);
+        console.log(user.role)
+        if (user.role !== 'admin'){
+            return next(new UnauthorizedError());
+        }
+        req.user = user
     } catch (err) {
         return next(new UnauthorizedError());
     }

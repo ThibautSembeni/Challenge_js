@@ -3,7 +3,6 @@ const Sequelize = require("sequelize");
 const ValidationError = require("../errors/ValidationError");
 const UnauthorizedError = require("../errors/UnauthorizedError");
 const UniqueConstraintError = require("../errors/UniqueConstraintError");
-const sendAccountValidationEmail = require("./emailSender");
 const { generateVerificationToken } = require("../utils/user");
 const UserMongoService = require('./mongo/user')
 
@@ -30,9 +29,7 @@ module.exports = function UserService(MongoService) {
         create: async function (data) {
             try {
                 const user = await User.create(data);
-                const token = await generateVerificationToken(user)
-                const confirmationLink = `${process.env.API_URL}/verify/${token}`
-                await sendAccountValidationEmail(user, confirmationLink)
+
                 return user;
             } catch (e) {
                 if (e instanceof Sequelize.UniqueConstraintError) {
@@ -95,5 +92,11 @@ module.exports = function UserService(MongoService) {
                 throw error;
             }
         },
+        count:async function (filters){
+            const dbOptions = {
+                where: filters
+            }
+            return User.count(dbOptions);
+        }
     };
 };

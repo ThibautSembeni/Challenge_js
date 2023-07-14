@@ -25,7 +25,7 @@ async function getCustomers () {
     const response = await fetch(`${import.meta.env.VITE_API_URL}/users`, {
         method: 'GET',
         headers: {
-            'Content-type': 'application/json'
+            'Content-type': 'application/json',
         },
     })
     if (response.ok) {

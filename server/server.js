@@ -6,6 +6,7 @@ const SecurityRouter = require("./routes/security");
 const TemplateRouter = require("./routes/route.template");
 const TransactionRouter = require("./routes/transactions");
 const ProductRouter = require("./routes/products");
+const MerchantRouter = require("./routes/merchant");
 
 const checkFormat = require("./middlewares/check-format");
 const errorHandler = require("./middlewares/error-handler");
@@ -26,6 +27,8 @@ app.use("/", SecurityRouter);
 app.use("/template", checkAuth, TemplateRouter);
 
 app.use("/users", checkAuth, UserRouter);
+
+app.use("/merchants", checkAuth, MerchantRouter);
 
 app.use("/transactions", checkAuth, TransactionRouter);
 
