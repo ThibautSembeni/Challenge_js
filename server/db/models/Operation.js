@@ -43,6 +43,7 @@ module.exports = (connection) => {
             allowNull: false,
             defaultValue: 'pending',
         },
+        
     }, { sequelize: connection, tableName: 'operations' });
 
     return Operation;

@@ -61,7 +61,9 @@ module.exports = function TransactionService() {
             }
         },
         delete: async (filters) => {
+
             return Transaction.destroy({ where: filters });
         },
+
     };
 };
