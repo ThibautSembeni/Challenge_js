@@ -8,6 +8,16 @@ store.commit('setLoggedIn',false)
   <div>
     logout
   </div>
+  <br>
+  <br>
+  <br>
+  <div>
+
+    <RouterLink to="login" >
+
+      Go pour login page
+    </RouterLink>
+  </div>
 </template>
 
 <style scoped>
