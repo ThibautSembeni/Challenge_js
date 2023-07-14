@@ -31,7 +31,7 @@ const showUser = (userId) =>{
 }
 
 const editUser = (userId) =>{
-  router.push(`edit/${userId}`);
+  router.push(`users/edit/${userId}`);
 }
 </script>
 
