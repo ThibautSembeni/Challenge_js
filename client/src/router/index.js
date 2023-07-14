@@ -110,32 +110,35 @@ const adminRoutes = [
     },
     {
         path: '/admin/users',
-        name: 'adminUsers',
+        name: 'UsersView',
+        component: UsersView,
         meta: {requiresAuth: true, requiresAdminAccess: true},
-        children: [
-            {
-                path: '',
-                name: 'UsersView',
-                component: UsersView
-            },
-            {
-                path: ':userId(\\d+)',
-                name: 'adminUserDetails',
-                component: UsersDetails
-            },
-            {
-                path: 'edit/:userId(\\d+)',
-                name: 'editUser',
-                component: EditUserView
-            },
-            {
-                path: 'pending',
-                name: 'adminPendingUsers',
-                component: PendingUsers
-            }
+    },
+    {
+        path: '/admin/users',
+        name: 'UsersView',
+        component: UsersView,
+        meta: {requiresAuth: true, requiresAdminAccess: true},
+    },
+    {
+        path: '/admin/users/:userId(\\d+)',
+        name: 'adminUserDetails',
+        component: UsersDetails,
+        meta: {requiresAuth: true, requiresAdminAccess: true},
+    },
+    {
+        path: '/admin/users/edit/:userId(\\d+)',
+        name: 'editUser',
+        component: EditUserView,
+        meta: {requiresAuth: true, requiresAdminAccess: true},
+    },
+    {
+        path: '/admin/users/pending',
+        name: 'adminPendingUsers',
+        component: PendingUsers,
+        meta: {requiresAuth: true, requiresAdminAccess: true},
+    },
 
-        ]
-    }
 ]
 
 const merchantRoutes = [

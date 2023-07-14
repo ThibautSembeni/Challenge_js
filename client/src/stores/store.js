@@ -24,7 +24,7 @@ const store = createStore({
         }
     },
     actions: {
-        getUser(state) {
+        getCurrentUser(state) {
             return state.user;
         },
         getLoggedIn(state) {
