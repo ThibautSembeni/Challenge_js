@@ -93,6 +93,10 @@ httpClient.patch = async function (url, data, config) {
 	return makeRequest('patch', url, data, config);
 };
 
+httpClient.patch = async function (url, data, config) {
+    return makeRequest('patch', url, data, config);
+};
+
 httpClient.delete = async function (url, config) {
 	return makeRequest('delete', url, null, config);
 };

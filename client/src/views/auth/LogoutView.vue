@@ -1,8 +1,8 @@
 <script setup>
 import store from "@/stores/store";
 
-store.commit('setUser',null)
-store.commit('setLoggedIn',false)
+store.commit('setUser', null)
+store.commit('setLoggedIn', false)
 </script>
 <template>
   <div>
@@ -13,7 +13,7 @@ store.commit('setLoggedIn',false)
   <br>
   <div>
 
-    <RouterLink to="login" >
+    <RouterLink to="login">
 
       Go pour login page
     </RouterLink>
