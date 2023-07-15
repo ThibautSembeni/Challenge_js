@@ -41,7 +41,7 @@ module.exports = function adminController(UserService) {
                 }
                 const merchant = merchants[0];
                 const credentials = await Credential.create({user_id: merchant.id});
-                // await EmailSender.sendCredentialsForMerchant(merchant, credentials)
+                await EmailSender.sendCredentialsForMerchant(merchant, credentials)
                 res.json(credentials);
             } catch (error) {
                 console.error(error);
