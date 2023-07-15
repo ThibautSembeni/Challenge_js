@@ -12,10 +12,10 @@ module.exports = new genericRouter(
     {
         // `customRoutes` is optional is for add others custom routes
         customRoutes: [
-            {handler: 'countPendingUsers', method: 'get', path: '/pending/count', middleware: []},
-            {handler: 'getPendingValidationMerchants', method: 'get', path: '/pending', middleware: []},
-            {handler: 'approveMerchant', method: 'get', path: '/approve/:id', middleware: []},
-            {handler: 'declineMerchant', method: 'get', path: '/decline/:id', middleware: []},
+            {handler: 'countPendingUsers', method: 'get', path: '/merchants/pending/count', middleware: []},
+            {handler: 'getPendingValidationMerchants', method: 'get', path: '/merchants/pending', middleware: []},
+            {handler: 'approveMerchant', method: 'get', path: '/merchants/approve/:id', middleware: []},
+            {handler: 'declineMerchant', method: 'get', path: '/merchants/decline/:id', middleware: []},
         ],
         defaultRoutes: {},
         // `middlewares` is for set a middleware on all routes over
