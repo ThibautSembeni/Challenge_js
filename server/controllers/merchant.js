@@ -37,12 +37,12 @@ module.exports = function merchantController(UserService) {
                 const { id } = req.params;
                 const merchants = await UserService.update({ id }, { status: 'approved' });
                 if (merchants.length !== 1) {
-                    res.sendStatus(404)
+                    return res.sendStatus(404)
                 }
                 const merchant = merchants[0];
                 const credentials = await Credential.create({ user_id: merchant.id });
-                // await EmailSender.sendCredentialsForMerchant(merchant, credentials)
-                res.json(credentials);
+                await EmailSender.sendCredentialsForMerchant(merchant, credentials)
+                return res.json(credentials);
             } catch (error) {
                 console.error(error);
                 res.status(500).json({ error: "Internal server error" });
@@ -53,7 +53,7 @@ module.exports = function merchantController(UserService) {
                 const { id } = req.params;
                 const merchants = await UserService.update({ id }, { status: 'declined' });
                 if (merchants.length !== 1) {
-                    res.sendStatus(404)
+                    return res.sendStatus(404)
                 }
                 const merchant = merchants[0];
                 await EmailSender.sendDeclineMail(merchant)
