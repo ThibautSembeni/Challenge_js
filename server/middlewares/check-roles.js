@@ -12,7 +12,6 @@ module.exports = (req, res, next) => {
     }
     try {
         const user = jwt.verify(token, process.env.JWT_SECRET);
-        console.log(user.role)
         if (user.role !== 'admin'){
             return next(new UnauthorizedError());
         }
