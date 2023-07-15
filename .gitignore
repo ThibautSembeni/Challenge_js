@@ -1,4 +1,3 @@
 *.env
 .idea
 web-variables.env
-Challenge_js.iml
