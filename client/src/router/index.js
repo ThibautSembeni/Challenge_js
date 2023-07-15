@@ -14,7 +14,7 @@ import NotFoundView from "@/views/errors/NotFoundView.vue";
 import DashboardView from "@/views/admin/DashboardView.vue";
 import UsersView from "@/views/admin/UsersView.vue";
 import UsersDetails from "@/views/admin/ShowUserView.vue";
-import PendingUsers from "@/views/admin/PendingUsers.vue";
+import PendingMerchants from "@/views/admin/PendingMerchants.vue";
 import EditUserView from "@/views/admin/EditUserView.vue";
 import LogoutView from "@/views/auth/LogoutView.vue";
 import DashboardMerchant from "@/views/merchant/DashboardMerchant.vue";
@@ -103,32 +103,34 @@ const adminRoutes = [
     },
     {
         path: '/admin/users',
-        name: 'adminUsers',
+        name: 'UsersView',
+        component: UsersView,
         meta: {requiresAuth: true, requiresAdminAccess: true},
-        children: [
-            {
-                path: '',
-                name: 'UsersView',
-                component: UsersView
-            },
-            {
-                path: ':userId(\\d+)',
-                name: 'adminUserDetails',
-                component: UsersDetails
-            },
-            {
-                path: 'edit/:userId(\\d+)',
-                name: 'editUser',
-                component: EditUserView
-            },
-            {
-                path: 'pending',
-                name: 'adminPendingUsers',
-                component: PendingUsers
-            }
-
-        ]
-    }
+    },
+    {
+        path: '/admin/users',
+        name: 'UsersView',
+        component: UsersView,
+        meta: {requiresAuth: true, requiresAdminAccess: true},
+    },
+    {
+        path: '/admin/users/:userId(\\d+)',
+        name: 'adminUserDetails',
+        component: UsersDetails,
+        meta: {requiresAuth: true, requiresAdminAccess: true},
+    },
+    {
+        path: '/admin/users/edit/:userId(\\d+)',
+        name: 'editUser',
+        component: EditUserView,
+        meta: {requiresAuth: true, requiresAdminAccess: true},
+    },
+    {
+        path: '/admin/users/pending',
+        name: 'adminPendingUsers',
+        component: PendingMerchants,
+        meta: {requiresAuth: true, requiresAdminAccess: true},
+    },
 ]
 
 const merchantRoutes = [
@@ -148,8 +150,8 @@ const merchantRoutes = [
 
 const errorRoutes = [
     {
-        path: '/forbidden',
-        name: 'forbidden',
+        path: '/404',
+        name: '404',
         component: ForbiddenView
     },
     {
@@ -173,7 +175,6 @@ const router = createRouter({
 
 router.beforeEach(async (to, from, next) => {
     const canAccess = await canUserAccess(to)
-    console.log("can", canAccess)
     if (canAccess !== true) {
         next(canAccess);
     } else {
