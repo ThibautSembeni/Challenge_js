@@ -1,13 +1,13 @@
 const genericRouter = require("./generic");
 const genericController = require("../controllers/generic");
 const UserService = require("../services/user");
-const merchantController = require("../controllers/merchant");
-const checkAdminRole = require("../middlewares/check-roles");
+const adminController = require("../controllers/admin");
+const checkAdminRole = require("../middlewares/check-admin-role");
 module.exports = new genericRouter(
     new genericController(
         new UserService(),
         {
-            customController: merchantController,
+            customController: adminController,
         }
     ),
     {

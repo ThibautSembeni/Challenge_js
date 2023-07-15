@@ -7,12 +7,13 @@ const SecurityRouter = require("./routes/security");
 const TemplateRouter = require("./routes/route.template");
 const TransactionRouter = require("./routes/transactions");
 const ProductRouter = require("./routes/products");
-const MerchantRouter = require("./routes/merchant");
+const adminRouter = require("./routes/admin");
 const CredentialRouter = require("./routes/credentials");
 
 const checkFormat = require("./middlewares/check-format");
 const errorHandler = require("./middlewares/error-handler");
 const checkAuth = require("./middlewares/check-auth");
+const checkAdmin = require("./middlewares/check-admin-role");
 const verifyCredentials = require("./middlewares/verify-credentials");
 
 
@@ -30,13 +31,13 @@ app.use("/template", checkAuth, TemplateRouter);
 
 app.use("/users", checkAuth, UserRouter);
 
-app.use("/merchants", cors({credentials: true}), verifyCredentials, MerchantRouter);
-
 app.use("/transactions", checkAuth, TransactionRouter);
 
 app.use("/products", checkAuth, ProductRouter);
 
 app.use("/credentials", checkAuth, CredentialRouter);
+
+app.use("/admin", checkAdmin, adminRouter);
 
 app.get("/", (req, res) => {
     res.status(200).json({message: "Hello World!"});

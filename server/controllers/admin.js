@@ -1,7 +1,7 @@
 const {Credential} = require("../db/models/postgres");
 const EmailSender = require("../services/emailSender");
 
-module.exports = function merchantController(UserService) {
+module.exports = function adminController(UserService) {
     return {
         countPendingUsers: async (req, res, next) => {
             try {

@@ -1,16 +1,10 @@
 const genericRouter = require("./generic");
 const genericController = require("../controllers/generic");
 const UserService = require("../services/user");
-const middleware = require("../middlewares/apikey");
-const customTemplateController = require("../controllers/controller.template");
-const userController = require("../controllers/merchant");
-const checkAdminRole = require("../middlewares/check-roles")
+
 module.exports = new genericRouter(
     new genericController(
-        new UserService(),
-        {
-            customController: userController,
-        }
+        new UserService()
     ),
     {
         // `customRoutes` is optional is for add others custom routes
