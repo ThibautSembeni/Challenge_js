@@ -3,7 +3,6 @@ import SideBar from '@/components/SideBar.vue'
 import NavBar from '@/components/NavBar.vue'
 import {useRoute} from 'vue-router';
 import {onMounted, ref} from "vue";
-import httpClient from "@/services/httpClient";
 import GoBack from "@/components/GoBack.vue";
 import {getUserById} from "@/services/users";
 
