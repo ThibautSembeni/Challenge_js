@@ -34,7 +34,6 @@ async function loginUser(_user) {
   } catch (error) {
     requestError.value = error.message
   }
-
 }
 
 const validateEmail = (email) => {

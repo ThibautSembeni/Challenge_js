@@ -24,27 +24,30 @@ describe('Test register verify account', () => {
         }
         const registerResponse = await request(app).post(registerUrl).send(registrationData);
 
-		const jwtToken = await generateVerificationToken(registerResponse.body);
-		const verificationResponse = await request(app).get(`${verificationUrl}/${jwtToken}`);
+        const jwtToken = await generateVerificationToken(registerResponse.body);
+        const verificationResponse = await request(app).get(`${verificationUrl}/${jwtToken}`);
 
-		expect(verificationResponse.status).toBe(302);
-	});
+        expect(verificationResponse.status).toBe(200);
+        expect(verificationResponse.body.email).toBe(registrationData.email);
+    });
 
-	test('Verify status user before verification process', async () => {
-		const registrationData = {
-			firstname: 'John',
-			lastname: 'Doe',
-			email: 'status@customer.com',
-			password: 'password'
-		}
-		const registerResponse = await request(app).post(registerUrl).send(registrationData);
+    test('Verify status user before verification process', async () => {
+        const registrationData = {
+            firstname: 'John',
+            lastname: 'Doe',
+            email: 'status@customer.com',
+            password: 'password'
+        }
+        const registerResponse = await request(app).post(registerUrl).send(registrationData);
 
-		const jwtToken = await generateVerificationToken(registerResponse.body);
+        const jwtToken = await generateVerificationToken(registerResponse.body);
 
         const verificationResponse = await request(app).get(`${verificationUrl}/${jwtToken}`);
 
-		expect(verificationResponse.status).toBe(302);
-	});
+        expect(verificationResponse.status).toBe(200);
+        expect(verificationResponse.body.email).toBe(registrationData.email);
+        expect(verificationResponse.body.status).toBe('approved');
+    });
 
     afterAll(async () => {
         await postgres.Credential.destroy({
