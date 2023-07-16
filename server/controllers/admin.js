@@ -1,7 +1,7 @@
 const {Credential} = require("../db/models/postgres");
 const EmailSender = require("../services/emailSender");
 
-module.exports = function merchantController(UserService) {
+module.exports = function adminController(UserService) {
     return {
         countPendingUsers: async (req, res, next) => {
             try {
@@ -34,24 +34,24 @@ module.exports = function merchantController(UserService) {
         },
         approveMerchant: async (req, res, next) => {
             try {
-                const { id } = req.params;
-                const merchants = await UserService.update({ id }, { status: 'approved' });
+                const {id} = req.params;
+                const merchants = await UserService.update({id}, {status: 'approved'});
                 if (merchants.length !== 1) {
                     res.sendStatus(404)
                 }
                 const merchant = merchants[0];
-                const credentials = await Credential.create({ user_id: merchant.id });
-                // await EmailSender.sendCredentialsForMerchant(merchant, credentials)
+                const credentials = await Credential.create({user_id: merchant.id});
+                await EmailSender.sendCredentialsForMerchant(merchant, credentials)
                 res.json(credentials);
             } catch (error) {
                 console.error(error);
-                res.status(500).json({ error: "Internal server error" });
+                res.status(500).json({error: "Internal server error"});
             }
         },
         declineMerchant: async (req, res, next) => {
             try {
-                const { id } = req.params;
-                const merchants = await UserService.update({ id }, { status: 'declined' });
+                const {id} = req.params;
+                const merchants = await UserService.update({id}, {status: 'declined'});
                 if (merchants.length !== 1) {
                     res.sendStatus(404)
                 }
@@ -60,7 +60,7 @@ module.exports = function merchantController(UserService) {
                 res.json(merchant);
             } catch (error) {
                 console.error(error);
-                res.status(500).json({ error: "Internal server error" });
+                res.status(500).json({error: "Internal server error"});
             }
         },
 

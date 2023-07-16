@@ -3,10 +3,16 @@ const app = require("../../server");
 const postgres = require("../../db/models/postgres");
 const mongo = require("../../db/models/mongo");
 const mongoose = require("mongoose");
+const EmailSender = require("../../services/emailSender");
 
 describe('Test register', () => {
-    const target = '/register';
+    EmailSender.mailjet = {
+        post: jest.fn().mockReturnThis(),
+        request: jest.fn().mockResolvedValue({response: {request: {socket: {destroy: jest.fn()}}}})
+    };
 
+    const target = '/register';
+    
     test('Register User', async () => {
         const registrationData = {
             firstname: 'John',

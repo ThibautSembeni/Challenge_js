@@ -11,9 +11,8 @@ module.exports = (req, res, next) => {
         return next(new UnauthorizedError());
     }
     try {
-        const user = jwt.verify(token, process.env.JWT_SECRET);
-        console.log(user.role)
-        if (user.role !== 'admin'){
+        const user = getUserFromJWTToken(token);
+        if (user.role !== 'admin') {
             return next(new UnauthorizedError());
         }
         req.user = user
