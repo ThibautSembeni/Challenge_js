@@ -24,7 +24,6 @@ const userDetails = reactive({
   phone_number: null
 });
 
-
 onMounted(async () => {
   currentUser.value = await getCurrentUser()
   if (currentUser) {
@@ -61,7 +60,7 @@ const validEdit = async () => {
 
 const sendRequest = async (payload) => {
   try {
-    const response = await changePassword(payload)
+    await changePassword(payload)
   } catch (error) {
     console.error(`Error lors de changement de votre mot de passe : ${error}`)
   }
