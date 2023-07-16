@@ -2,12 +2,11 @@
 import SideBar from '@/components/SideBar.vue'
 import NavBar from '@/components/NavBar.vue'
 import TabPanel from '@/components/TabPanel.vue'
-import {getCurrentUser} from '@/services/auth'
+import {changePassword, getCurrentUser} from '@/services/auth'
 import {onMounted, reactive, ref} from 'vue'
 import Input from '@/components/form/Input.vue'
 import EditPasswordSection from "@/components/EditPasswordSection.vue";
 import {updateUser} from "@/services/users";
-import httpClient from "@/services/httpClient";
 
 const tabs = [
   {title: 'My details', name: 'details'},
@@ -60,8 +59,12 @@ const validEdit = async () => {
   }
 }
 
-const changePassword = async (payload) => {
-  const response = await httpClient.post('/change-password', payload)
+const sendRequest = async (payload) => {
+  try {
+    const response = await changePassword(payload)
+  } catch (error) {
+    console.error(`Error lors de changement de votre mot de passe : ${error}`)
+  }
 }
 
 </script>
@@ -154,7 +157,7 @@ const changePassword = async (payload) => {
 
         <template #security>
           <div>
-            <EditPasswordSection @passwordEvent="changePassword"/>
+            <EditPasswordSection @passwordEvent="sendRequest"/>
           </div>
         </template>
       </TabPanel>

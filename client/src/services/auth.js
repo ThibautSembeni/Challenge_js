@@ -12,8 +12,6 @@ export async function login(userCredentials) {
     localStorage.setItem('access_token', token)
     store.commit('setLoggedIn', true)
     return token
-
-
 }
 
 export async function registerUser(userCredentials) {
@@ -26,7 +24,6 @@ export async function registerUser(userCredentials) {
         throw new Error(errorMessage);
     }
     return response;
-
 }
 
 export async function getCurrentUser() {
@@ -41,4 +38,15 @@ export async function fetchUser() {
     const userData = await httpClient.get('/me')
     store.commit('setUser', userData.data)
     return userData.data
+}
+
+export async function changePassword(payload) {
+    const response = await httpClient.post('/change-password',payload)
+    if (response.status > 401) {
+        throw new Error(response.data)
+    }
+    else if(response.status === 401){
+        throw new Error(`Password Invalid`);
+    }
+    return response
 }
