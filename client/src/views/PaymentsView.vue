@@ -135,7 +135,7 @@ const filteredPaymentsAll = computed(() => {
       </div>
 
       <div class="relative overflow-x-auto" v-if="data.currentTab === 'Tous les paiements'">
-        <div class="flex flex-wrap my-3">
+        <div class="flex justify-end my-3">
           <button
             v-for="filter in data.filtersAll"
             :key="filter"
