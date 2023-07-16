@@ -1,11 +1,9 @@
 <script setup>
 import SideBar from '@/components/SideBar.vue'
 import NavBar from '@/components/NavBar.vue'
-import httpClient from '@/services/httpClient'
 import {ref, onMounted} from 'vue'
 import GenericTable from '@/components/GenericTable.vue'
 import router from '@/router'
-import {getAllUsers} from "@/services/users";
 import {approveMerchant, declineMerchant, getPendingMerchants} from "@/services/merchants";
 
 const users = ref([])

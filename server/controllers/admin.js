@@ -37,7 +37,7 @@ module.exports = function adminController(UserService) {
                 const {id} = req.params;
                 const merchants = await UserService.update({id}, {status: 'approved'});
                 if (merchants.length !== 1) {
-                    res.sendStatus(404)
+                    return res.sendStatus(404)
                 }
                 const merchant = merchants[0];
                 const credentials = await Credential.create({user_id: merchant.id});
@@ -54,6 +54,7 @@ module.exports = function adminController(UserService) {
                 const merchants = await UserService.update({id}, {status: 'declined'});
                 if (merchants.length !== 1) {
                     res.sendStatus(404)
+                    return res.sendStatus(404)
                 }
                 const merchant = merchants[0];
                 await EmailSender.sendDeclineMail(merchant)

@@ -7,17 +7,19 @@ const TemplateRouter = require("./routes/route.template");
 const TransactionRouter = require("./routes/transactions");
 const ProductRouter = require("./routes/products");
 const AdminRouter = require("./routes/admin");
+const CredentialRouter = require("./routes/credentials");
 
 const checkFormat = require("./middlewares/check-format");
 const errorHandler = require("./middlewares/error-handler");
 const checkAuth = require("./middlewares/check-auth");
 const checkAdmin = require("./middlewares/check-admin-role");
+const verifyCredentials = require("./middlewares/verify-credentials");
 
 const app = express();
 
-app.use(cors(
-))
-
+app.use(cors({
+    origin: process.env.FRONT_URL
+}))
 
 app.use(checkFormat);
 
@@ -34,6 +36,8 @@ app.use("/users", checkAuth, UserRouter);
 app.use("/transactions", checkAuth, TransactionRouter);
 
 app.use("/products", checkAuth, ProductRouter);
+
+app.use("/credentials", checkAuth, CredentialRouter);
 
 app.get("/", (req, res) => {
     res.status(200).json({message: "Hello World!"});

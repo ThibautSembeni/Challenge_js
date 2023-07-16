@@ -4,6 +4,6 @@
 
 <template>
   <div>
-    Forbidden View
+    404 View
   </div>
 </template>

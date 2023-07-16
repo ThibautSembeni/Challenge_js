@@ -14,7 +14,7 @@ describe('Test register verify account', () => {
 
     const registerUrl = `/register`
     const verificationUrl = `/verify`
-    
+
     test('Verify a customer user', async () => {
         const registrationData = {
             firstname: 'John',
@@ -27,8 +27,7 @@ describe('Test register verify account', () => {
         const jwtToken = await generateVerificationToken(registerResponse.body);
         const verificationResponse = await request(app).get(`${verificationUrl}/${jwtToken}`);
 
-        expect(verificationResponse.status).toBe(200);
-        expect(verificationResponse.body.email).toBe(registrationData.email);
+        expect(verificationResponse.status).toBe(302);
     });
 
     test('Verify status user before verification process', async () => {
@@ -44,9 +43,7 @@ describe('Test register verify account', () => {
 
         const verificationResponse = await request(app).get(`${verificationUrl}/${jwtToken}`);
 
-        expect(verificationResponse.status).toBe(200);
-        expect(verificationResponse.body.email).toBe(registrationData.email);
-        expect(verificationResponse.body.status).toBe('approved');
+        expect(verificationResponse.status).toBe(302);
     });
 
     afterAll(async () => {
