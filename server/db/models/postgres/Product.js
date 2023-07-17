@@ -61,7 +61,18 @@ module.exports = (connection) => {
                     msg: "Le stock est obligatoire"
                 }
             }
-        }
+        },
+        status: {
+            type: DataTypes.ENUM,
+            values: ['active', 'archived'],
+            defaultValue: 'active',
+            allowNull: false,
+            validate: {
+                notNull: {
+                    msg: "Le statut est obligatoire"
+                },
+            }
+        },
     }, { sequelize: connection, tableName: 'products' });
 
     return Product;

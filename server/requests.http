@@ -17,6 +17,7 @@ Content-Type: application/json
 ###
 GET http://localhost:3000/users
 # X-api-key: 13
+
 ###
 GET http://localhost:3000/users/1685116695797
 
@@ -70,7 +71,7 @@ POST http://localhost:3000/login
 Content-Type: application/json
 
 {
-    "email": "test1@test.com",
+    "email": "thibautsembeni@gmail.com",
     "password": "password"
 }
 
@@ -137,3 +138,8 @@ Content-Type: application/json
     "amount": 210000.45,
     "currency": "EUR"
 }
+
+
+###
+GET http://localhost:3000/products
+Content-Type: application/json
