@@ -33,6 +33,10 @@ async function getTransaction() {
     isLoading.value = false
   }
 }
+console.log(payment)
+const formatEuro = (value, currency) => {
+  return new Intl.NumberFormat('fr-FR', { style: 'currency', currency: currency }).format(value)
+}
 </script>
 
 <template>
@@ -111,7 +115,7 @@ async function getTransaction() {
           </thead>
           <tbody>
             <tr>
-              <td class="p-3 border-r">{{ moment(payment.created_at).format('LLLL') }}</td>
+              <td class="p-3 border-r">{{ moment(payment.updatedAt).format('LLLL') }}</td>
               <td class="p-3 border-r">{{ payment.client_info.name }}</td>
               <td class="p-3 border-r">
                 <i class="fa-brands fa-cc-visa mr-2"></i> <i class="fa-solid fa-ellipsis mr-2"></i>
@@ -139,7 +143,7 @@ async function getTransaction() {
             </span>
             <h3 class="mb-1">Paiement réussi</h3>
             <time class="block mb-2 text-sm font-normal leading-none text-gray-400">{{
-              moment(payment.updated_at).format('LLLL')
+              moment(payment.updatedAt).format('LLLL')
             }}</time>
           </li>
           <li class="ml-6">
@@ -150,7 +154,7 @@ async function getTransaction() {
             </span>
             <h3 class="mb-1">Paiement démarré</h3>
             <time class="block mb-2 text-sm font-normal leading-none text-gray-400">{{
-              moment(payment.created_at).format('LLLL')
+              moment(payment.createdAt).format('LLLL')
             }}</time>
           </li>
         </ol>
@@ -160,17 +164,20 @@ async function getTransaction() {
         <div class="flex flex-wrap justify-between my-4">
           <div class="w-full md:w-1/2">
             <div class="flex flex-wrap">
-              <PaymentDetailLine title="Montant" content="à faire (affichage formatté)" />
+              <PaymentDetailLine
+                title="Montant"
+                :content="formatEuro(payment.amount, payment.currency)"
+              />
               <PaymentDetailLine title="Devise" :content="payment.currency" />
               <PaymentDetailLine title="Frais" content="à faire (affichage formatté)" />
               <PaymentDetailLine
                 title="Date de paiement"
-                :content="moment(payment.created_at).format('ll')"
+                :content="moment(payment.createdAt).format('ll')"
               />
               <PaymentDetailLine title="Net" content="à faire (affichage formatté)" />
               <PaymentDetailLine
                 title="Heure de paiement"
-                :content="moment(payment.created_at).format('LT')"
+                :content="moment(payment.createdAt).format('LT')"
               />
               <PaymentDetailLine
                 title="Statut"
@@ -283,7 +290,7 @@ async function getTransaction() {
                 {{ payment.billing_info.IP }}
               </td>
               <td class="px-6 py-4">
-                {{ moment(payment.created_at).format('LLLL') }}
+                {{ moment(payment.createdAt).format('LLLL') }}
               </td>
             </tr>
           </template>

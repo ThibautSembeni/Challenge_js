@@ -29,6 +29,7 @@ module.exports = function TransactionService() {
                 if (e instanceof Sequelize.ValidationError) {
                     throw ValidationError.fromSequelizeValidationError(e);
                 }
+                console.log(e);
                 throw e;
             }
         },

@@ -37,9 +37,9 @@
           <ul class="py-2" aria-labelledby="user-menu-button">
             <li>
               <a
-                href="#"
+                href="/profile"
                 class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
-                >Dashboard</a
+                >Profile</a
               >
             </li>
             <li>
@@ -58,7 +58,7 @@
             </li>
             <li>
               <a
-                href="#"
+                href="/logout"
                 class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
                 >Sign out</a
               >

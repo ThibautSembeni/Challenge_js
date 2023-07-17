@@ -15,9 +15,5 @@ module.exports = function productController(productService, options = {}) {
         },
     }
 
-    if (options.hasOwnProperty('customController')) {
-        result = { ...result, ...options.customController(productService) }
-    }
-
     return result;
 }

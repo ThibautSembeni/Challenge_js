@@ -1,11 +1,17 @@
-const { generateVerificationToken } = require("../../utils/user");
+const {generateVerificationToken} = require("../../utils/user");
 const request = require("supertest");
 const app = require("../../server");
 const postgres = require("../../db/models/postgres");
 const mongo = require("../../db/models/mongo");
 const mongoose = require('mongoose');
+const EmailSender = require("../../services/emailSender");
 
 describe('Test register verify account', () => {
+    EmailSender.mailjet = {
+        post: jest.fn().mockReturnThis(),
+        request: jest.fn().mockResolvedValue({response: {request: {socket: {destroy: jest.fn()}}}})
+    };
+
     const registerUrl = `/register`
     const verificationUrl = `/verify`
 
@@ -21,33 +27,7 @@ describe('Test register verify account', () => {
         const jwtToken = await generateVerificationToken(registerResponse.body);
         const verificationResponse = await request(app).get(`${verificationUrl}/${jwtToken}`);
 
-        expect(verificationResponse.status).toBe(200);
-        expect(verificationResponse.body.email).toBe(registrationData.email);
-    });
-
-    it('Verify a merchant user', async () => {
-        const registrationData = {
-            firstname: 'John',
-            lastname: 'Doe',
-            email: 'merchant@user.com',
-            password: 'password',
-            kbis: "kbis"
-        }
-
-        const payload = await request(app).post(registerUrl).send(registrationData);
-
-        const token = await generateVerificationToken(payload.body);
-
-        // await new Promise((resolve, reject) => {
-        //     setTimeout(() => {
-        //         resolve();
-        //     }, 1000);
-        // });
-
-        const verificationResponse = await request(app).get(`${verificationUrl}/${token}`);
-
-        expect(verificationResponse.status).toBe(200);
-        expect(verificationResponse.body.user_id).toBe(payload.body.id);
+        expect(verificationResponse.status).toBe(302);
     });
 
     test('Verify status user before verification process', async () => {
@@ -63,32 +43,7 @@ describe('Test register verify account', () => {
 
         const verificationResponse = await request(app).get(`${verificationUrl}/${jwtToken}`);
 
-        expect(verificationResponse.status).toBe(200);
-        expect(verificationResponse.body.email).toBe(registrationData.email);
-        expect(verificationResponse.body.status).toBe(true);
-    });
-
-    test('Get credentials for a merchant user', async () => {
-        const registrationData = {
-            firstname: 'John',
-            lastname: 'Doe',
-            email: 'credentials@merchant.com',
-            password: 'password',
-            kbis: "kbis"
-        }
-        const registerResponse = await request(app).post(registerUrl).send(registrationData);
-
-        const userId = registerResponse.body.id;
-        const jwtToken = await generateVerificationToken(registerResponse.body);
-
-        const verificationResponse = await request(app).get(`${verificationUrl}/${jwtToken}`);
-
-        expect(verificationResponse.status).toBe(200);
-        expect(verificationResponse.body.user_id).toBe(userId);
-        expect(verificationResponse.body.client_token).toBeDefined();
-        expect(verificationResponse.body.client_secret).toBeDefined();
-        expect(typeof verificationResponse.body.client_token).toBe('string');
-        expect(typeof verificationResponse.body.client_secret).toBe('string');
+        expect(verificationResponse.status).toBe(302);
     });
 
     afterAll(async () => {

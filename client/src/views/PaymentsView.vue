@@ -1,5 +1,5 @@
 <script setup>
-import { computed, onMounted, reactive } from 'vue'
+import { computed, onMounted, reactive, watch } from 'vue'
 import '../assets/index.css'
 import SideBar from '@/components/SideBar.vue'
 import NavBar from '@/components/NavBar.vue'
@@ -9,13 +9,18 @@ import Table from '@/components/Table.vue'
 
 onMounted(async () => {
   await getTransactions()
+  await subscribeToSSETransaction()
 })
 
 const defaultValue = {
   currentTab: 'Tous les paiements',
   tabs: ['Tous les paiements', 'Litiges', 'Toutes les transactions'],
   currentFilterAll: 'Tous',
-  filtersAll: ['Tous', 'Réussi', 'En attente', 'Échoué']
+  filtersAll: ['Tous', 'Réussi', 'En attente', 'Échoué'],
+  pager: {
+    currentPage: 1,
+    perPage: 20
+  }
 }
 
 const data = reactive({
@@ -35,17 +40,72 @@ async function getTransactions() {
   }
 }
 
+async function subscribeToSSETransaction() {
+  const params = new URLSearchParams()
+  params.set('username', 'test')
+  if (localStorage.getItem('last-id')) {
+    params.set('last-id', localStorage.getItem('last-id'))
+  }
+  const eventSource = new EventSource(
+    `${import.meta.env.VITE_API_URL}/transactions/transaction/subscribe?` + params
+  )
+  bindEventSource(eventSource)
+}
+
+function bindEventSource(eventSource) {
+  eventSource.addEventListener('transaction', (event) => {
+    const message = JSON.parse(event.data)
+    data.payments[Object.entries(data.payments).length] = message
+    localStorage.setItem('last-id', event.lastEventId)
+  })
+}
+
 // eslint-disable-next-line vue/return-in-computed-property
 const filteredPaymentsAll = computed(() => {
   switch (data.currentFilterAll) {
     case 'Tous':
-      return data.payments
+      return Object.values(data.payments)
+        .sort(
+          (firstItem, secondItem) =>
+            new Date(secondItem.createdAt).getTime() - new Date(firstItem.createdAt).getTime()
+        )
+        .slice(
+          (data.pager.currentPage - 1) * data.pager.perPage,
+          data.pager.currentPage * data.pager.perPage
+        )
     case 'Réussi':
-      return data.payments.filter((p) => p.status === 'paid')
+      return data.payments
+        .filter((p) => p.status === 'paid')
+        .sort(
+          (firstItem, secondItem) =>
+            new Date(secondItem.createdAt).getTime() - new Date(firstItem.createdAt).getTime()
+        )
+        .slice(
+          (data.pager.currentPage - 1) * data.pager.perPage,
+          data.pager.currentPage * data.pager.perPage
+        )
     case 'En attente':
-      return data.payments.filter((p) => p.status === 'pending')
+      return data.payments
+        .filter((p) => p.status === 'pending')
+        .sort(
+          (firstItem, secondItem) =>
+            new Date(secondItem.createdAt).getTime() - new Date(firstItem.createdAt).getTime()
+        )
+        .slice(
+          (data.pager.currentPage - 1) * data.pager.perPage,
+          data.pager.currentPage * data.pager.perPage
+        )
     case 'Échoué':
-      return data.payments.filter((p) => p.status === 'failed')
+      return data.payments
+        .filter((p) => p.status === 'failed')
+        .sort(
+          (firstItem, secondItem) =>
+            new Date(secondItem.createdAt).getTime() - new Date(firstItem.createdAt).getTime()
+        )
+        .slice(
+          (data.pager.currentPage - 1) * data.pager.perPage,
+          data.pager.currentPage * data.pager.perPage
+        )
   }
 })
 </script>
@@ -80,7 +140,7 @@ const filteredPaymentsAll = computed(() => {
       </div>
 
       <div class="relative overflow-x-auto" v-if="data.currentTab === 'Tous les paiements'">
-        <div class="flex flex-wrap my-3">
+        <div class="flex justify-end my-3">
           <button
             v-for="filter in data.filtersAll"
             :key="filter"
@@ -140,7 +200,7 @@ const filteredPaymentsAll = computed(() => {
               </td>
               <td class="px-6 py-4">###</td>
               <td class="px-6 py-4">
-                {{ moment(payment.created_at).format('LLLL') }}
+                {{ moment(payment.createdAt).format('LLLL') }}
               </td>
             </tr>
             <tr class="bg-white border-b" v-if="!filteredPaymentsAll.length">
@@ -151,6 +211,49 @@ const filteredPaymentsAll = computed(() => {
               >
                 Aucun paiement
               </th>
+            </tr>
+          </template>
+          <template #tfoot>
+            <tr>
+              <td colspan="3" class="px-6 py-4">
+                <span
+                  >Résultats
+                  {{ data.pager.currentPage * data.pager.perPage - data.pager.perPage + 1 }}–{{
+                    data.pager.currentPage * data.pager.perPage
+                  }}
+                  affichés sur {{ data.payments.length }} résultats</span
+                >
+              </td>
+              <td class="px-6 py-4 flex flex-end space-x-2 w-full">
+                <button
+                  @click="data.pager.currentPage--"
+                  :disabled="data.pager.currentPage === 1"
+                  :class="`border border-black-700 font-medium rounded-lg text-sm px-2 py-1 text-center ${
+                    data.pager.currentPage === 1 ? 'border-gray-200 text-gray-300' : ''
+                  }`"
+                >
+                  précédent
+                </button>
+                <button
+                  @click="data.pager.currentPage++"
+                  :disabled="
+                    data.pager.currentPage * data.pager.perPage - data.pager.perPage + 1 ===
+                      data.payments.length ||
+                    data.pager.currentPage * data.pager.perPage - data.pager.perPage + 1 <=
+                      data.payments.length
+                  "
+                  :class="`border border-black-700 font-medium rounded-lg text-sm px-2 py-1 text-center ${
+                    data.pager.currentPage * data.pager.perPage - data.pager.perPage + 1 ===
+                      data.payments.length ||
+                    data.pager.currentPage * data.pager.perPage - data.pager.perPage + 1 <=
+                      data.payments.length
+                      ? 'border-gray-200 text-gray-300'
+                      : ''
+                  }`"
+                >
+                  suivant
+                </button>
+              </td>
             </tr>
           </template>
         </Table>

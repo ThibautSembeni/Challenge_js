@@ -1,5 +1,6 @@
 const jwt = require("jsonwebtoken");
 const UnauthorizedError = require("../errors/UnauthorizedError");
+const {getUserFromJWTToken} = require("../utils/user");
 
 module.exports = (req, res, next) => {
     if (!req.headers.authorization) {
@@ -10,8 +11,7 @@ module.exports = (req, res, next) => {
         return next(new UnauthorizedError());
     }
     try {
-        const user = jwt.verify(token, process.env.JWT_SECRET);
-        req.user = user;
+        req.user = jwt.verify(token, process.env.JWT_SECRET);
     } catch (err) {
         return next(new UnauthorizedError());
     }
