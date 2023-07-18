@@ -11,7 +11,9 @@ module.exports = (connection) => {
         return code;
     }
     class Product extends Model {
-
+        static associate(models) {
+            Product.hasMany(models.CartItem, { foreignKey: 'product_id', as: 'cart_items' });
+        }
     }
 
     Product.init({
