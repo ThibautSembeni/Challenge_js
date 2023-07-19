@@ -1,11 +1,14 @@
 <script setup>
-import { computed, onMounted, reactive, watch } from 'vue'
+import { computed, onMounted, reactive } from 'vue'
 import '../assets/index.css'
 import SideBar from '@/components/SideBar.vue'
 import NavBar from '@/components/NavBar.vue'
 import moment from 'moment'
 import FormatEuro from '@/components/Payment/FormatEuro.vue'
 import Table from '@/components/Table.vue'
+import router from "@/router";
+import Dropdown from "@/components/Dropdown.vue";
+import {deleteTransaction} from "@/services/transactions";
 
 onMounted(async () => {
   await getTransactions()
@@ -166,6 +169,7 @@ const filteredPaymentsAll = computed(() => {
               <th scope="col" class="px-6 py-3">Description</th>
               <th scope="col" class="px-6 py-3">Client</th>
               <th scope="col" class="px-6 py-3">Date</th>
+              <th scope="col" class="px-6 py-3 text-center">Actions</th>
             </tr>
           </template>
           <template #tbody>
@@ -201,6 +205,16 @@ const filteredPaymentsAll = computed(() => {
               <td class="px-6 py-4">###</td>
               <td class="px-6 py-4">
                 {{ moment(payment.createdAt).format('LLLL') }}
+              </td>
+              <td class="text-center">
+                <Dropdown
+                  :actions="[
+                    { label: 'Voir', onClick: () => router.push({ name: 'paymentDetail', params: { 'reference': payment.reference } }) },
+                    { label: 'Modifier', divider: true },
+                    { label: 'Supprimer', textColor: 'text-red-600 font-bold', onDelete: () => deleteTransaction(payment.id) }
+                  ]"
+                  :dropdownId="payment.id"
+                />
               </td>
             </tr>
             <tr class="bg-white border-b" v-if="!filteredPaymentsAll.length">

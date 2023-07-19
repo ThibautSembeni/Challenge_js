@@ -20,6 +20,7 @@ import LogoutView from "@/views/auth/LogoutView.vue";
 import DashboardMerchant from "@/views/merchant/DashboardMerchant.vue";
 import SetupMerchant from "@/views/merchant/SetupMerchant.vue";
 import ProfileView from "@/views/auth/ProfileView.vue";
+import PaymentCreateView from "@/views/PaymentCreateView.vue";
 
 const customerRoutes = [
     {
@@ -56,6 +57,12 @@ const customerRoutes = [
         path: '/paiements',
         name: 'payments',
         component: PaymentView,
+        meta: {requiresAuth: true}
+    },
+    {
+        path: '/paiement/ajouter',
+        name: 'transactionAdd',
+        component: PaymentCreateView,
         meta: {requiresAuth: true}
     },
     {

@@ -7,6 +7,8 @@ import NavBar from "@/components/NavBar.vue";
 import Table from "@/components/Table.vue";
 import moment from "moment";
 import FormatEuro from "@/components/Payment/FormatEuro.vue";
+import Dropdown from "@/components/Dropdown.vue";
+import router from "@/router";
 
 onMounted(async () => {
     await getProducts()
@@ -96,6 +98,7 @@ const filteredProductsAll = computed(() => {
                             <th scope="col" class="px-6 py-3">Prix</th>
                             <th scope="col" class="px-6 py-3">Stock</th>
                             <th scope="col" class="px-6 py-3">Date</th>
+                            <th scope="col" class="px-6 py-3 text-center">Action</th>
                         </tr>
                     </template>
                     <template #tbody>
@@ -119,6 +122,16 @@ const filteredProductsAll = computed(() => {
                             </td>
                             <td class="px-6 py-4">
                                 {{ moment(product.createdAt).format('DD/MM/YYYY') }}
+                            </td>
+                            <td class="text-center">
+                                <Dropdown
+                                    :actions="[
+                                        { label: 'Voir', onClick: () => router.push({ name: 'productDetail', params: { 'reference': product.reference } }) },
+                                        { label: 'Modifier', divider: true },
+                                        { label: 'Supprimer', textColor: 'text-red-600 font-bold' }
+                                      ]"
+                                    :dropdownId="product.id"
+                                />
                             </td>
                         </tr>
                         <tr class="bg-white border-b" v-if="!filteredProductsAll.length">
