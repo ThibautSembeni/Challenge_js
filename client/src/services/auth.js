@@ -50,3 +50,7 @@ export async function changePassword(payload) {
     }
     return response
 }
+
+export async function forgotPassword(payload) {
+    return await httpClient.post('/forgot-password', payload)
+}
