@@ -15,6 +15,11 @@ export async function login(userCredentials) {
 }
 
 export async function registerUser(userCredentials) {
+    for (let key in userCredentials) {
+        if (userCredentials[key] === null || userCredentials[key] === '') {
+            delete userCredentials[key];
+        }
+    }
     const response = await httpClient.post('/register', userCredentials)
     if (response.status === 422) {
         const errorData = response.data;
