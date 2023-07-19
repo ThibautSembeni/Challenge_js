@@ -41,7 +41,7 @@ app.use("/products", checkAuth, ProductRouter);
 app.use("/credentials", checkAuth, CredentialRouter);
 
 app.get("/", (req, res) => {
-    res.status(200).json({message: "Hello World!"});
+    res.status(200).json({ message: "Hello World!" });
 });
 
 app.post("/", (req, res) => {
