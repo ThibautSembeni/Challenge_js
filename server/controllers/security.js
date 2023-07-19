@@ -1,8 +1,9 @@
-const {getUserFromJWTToken, generateVerificationToken} = require("../utils/user");
+const {getUserFromJWTToken, generateVerificationToken, generateToken} = require("../utils/user");
 const EmailSender = require("../services/emailSender");
+const ResetPasswordService = require("../services/resetPassword");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
-
+const ResetPassword = new ResetPasswordService()
 module.exports = function SecurityController(UserService) {
     return {
         login: async (req, res, next) => {
@@ -102,6 +103,44 @@ module.exports = function SecurityController(UserService) {
             }
             const updatedUser = await UserService.update({id}, {password: newPassword})
             return res.json(updatedUser[0])
+        },
+        forgotPassword: async (req, res, next) => {
+            const {email} = req.body
+            if (!email) return res.sendStatus(422)
+            const user = await UserService.findOne({email})
+            if (!user) return res.sendStatus(200)
+            const token = generateToken();
+            const confirmation_link = `${process.env.FRONT_URL}/auth/reset-password/${token}`
+            const entry = await ResetPassword.create({
+                user_id: user.id,
+                token: token
+            })
+            if (entry) await EmailSender.sendForgotPasswordEmail(user, confirmation_link)
+            return res.sendStatus(200)
+        },
+        renderResetPasswordForm: async (req, res, next) => {
+            const {token} = req.params
+            const entry = await ResetPassword.findOne({token})
+            if (!entry) return res.sendStatus(404)
+            const date = new Date();
+            const statusCode = entry.expiresAt > date ? 200 : 401
+            return res.sendStatus(statusCode)
+        },
+        resetPassword: async (req, res, next) => {
+            const {token} = req.params
+            const entry = await ResetPassword.findOne({token})
+            if (!entry) return res.sendStatus(404)
+
+            const {newPassword, confirmNewPassword} = req.body
+            if (newPassword !== confirmNewPassword) return res.sendStatus(400)
+
+            const {user_id} = entry
+
+            const user = await UserService.update({id:user_id}, {password: newPassword})
+            if (!user) return res.sendStatus(404)
+
+            await ResetPassword.delete({user_id})
+            res.sendStatus(200)
         }
     };
 };

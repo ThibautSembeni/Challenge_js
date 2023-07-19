@@ -1,4 +1,5 @@
 const jwt = require("jsonwebtoken");
+const crypto = require('crypto');
 const UnauthorizedError = require("./../errors/UnauthorizedError");
 
 const generateVerificationToken = async (user) => {
@@ -21,5 +22,15 @@ const getUserFromJWTToken = (token) => {
     }
 };
 
+const generateToken = () => {
+    const tokenLength = 64;
+    const characters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    let token = '';
+    for (let i = 0; i < tokenLength; i++) {
+        const randomIndex = Math.floor(Math.random() * characters.length);
+        token += characters.charAt(randomIndex);
+    }
+    return token
+};
 
-module.exports = {generateVerificationToken, getUserFromJWTToken};
+module.exports = {generateVerificationToken, getUserFromJWTToken, generateToken};

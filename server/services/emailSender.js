@@ -12,8 +12,8 @@ class EmailSender {
         return emailRegex.test(email);
     }
 
-    static async accountValidationEmail(user, confirmationLink) {
-        const {name, email} = user;
+    static async sendForgotPasswordEmail(user, confirmationLink) {
+        const {firstname ,lastname , email} = user;
 
         if (!email) throw new Error("Erreur : champ 'email' non défini");
         if (!confirmationLink) throw new Error("Erreur : champ 'confirmationLink' non défini");
@@ -21,7 +21,26 @@ class EmailSender {
 
         const data = {
             template_id: 4910924,
-            username: name ?? email,
+            username: `${lastname} ${firstname}`,
+            email: email,
+            confirmation_link: confirmationLink
+        }
+        try {
+            return await EmailSender.sendEmail(data);
+        } catch (err) {
+            throw err;
+        }
+    }
+    static async accountValidationEmail(user, confirmationLink) {
+        const {firstname ,lastname , email} = user;
+
+        if (!email) throw new Error("Erreur : champ 'email' non défini");
+        if (!confirmationLink) throw new Error("Erreur : champ 'confirmationLink' non défini");
+        if (!EmailSender.validateEmail(email)) throw new Error("Erreur : format d'e-mail invalide");
+
+        const data = {
+            template_id: 4910924,
+            username: `${lastname} ${firstname}`,
             email: email,
             confirmation_link: confirmationLink
         }
