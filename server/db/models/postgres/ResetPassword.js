@@ -1,13 +1,13 @@
 module.exports = (connection) => {
     const { DataTypes, Model } = require('sequelize');
 
-    class PasswordReset extends Model {
+    class ResetPassword extends Model {
         static associate(models) {
-            PasswordReset.belongsTo(models.User, { foreignKey: 'user_id', as: 'user' });
+            ResetPassword.belongsTo(models.User, { foreignKey: 'user_id', as: 'user' });
         }
     }
 
-    PasswordReset.init({
+    ResetPassword.init({
         id: {
             type: DataTypes.INTEGER,
             primaryKey: true,
@@ -24,7 +24,7 @@ module.exports = (connection) => {
     }, { sequelize: connection, tableName: 'reset_password' });
 
 
-    PasswordReset.addHook('beforeCreate', (reset) => {
+    ResetPassword.addHook('beforeCreate', (reset) => {
         const expirationHour = 24
         const expirationDurationMs = expirationHour * 60 * 60 * 1000;
         const currentTimestamp = new Date().getTime();
@@ -32,5 +32,5 @@ module.exports = (connection) => {
         reset.expiresAt = new Date(expirationTimestamp);
     });
 
-    return PasswordReset;
+    return ResetPassword;
 };
