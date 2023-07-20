@@ -73,10 +73,12 @@ const closeModal = () => {
     showModal.value = false;
 };
 
+const emit = defineEmits(['deleted']);
 const executeDelete = () => {
     if (deleteFunction.value) {
         deleteFunction.value();
         showModal.value = false;
+        emit('deleted', true);
     }
 };
 

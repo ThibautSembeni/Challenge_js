@@ -19,7 +19,11 @@ export async function getTransaction(id) {
 }
 
 export async function createTransaction(transaction) {
-    const response = await httpClient.post('/transactions', transaction);
+    const response = await httpClient.post('/transactions', transaction, {
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    });
     if (response.status === 201) {
         return response.data;
     } else {
@@ -29,7 +33,11 @@ export async function createTransaction(transaction) {
 }
 
 export async function updateTransaction(transaction) {
-    const response = await httpClient.put(`/transactions/${transaction.id}`, transaction);
+    const response = await httpClient.put(`/transactions/${transaction.id}`, transaction, {
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    });
     if (response.status === 200) {
         return response.data;
     } else {
@@ -40,7 +48,7 @@ export async function updateTransaction(transaction) {
 export async function deleteTransaction(id) {
     const response = await httpClient.delete(`/transactions/${id}`);
 
-    if (response.status === 200) {
+    if (response.status === 204) {
         return response.data;
     } else {
         throw new Error(`Error: ${response.status} - Une erreur s'est produite lors de la suppression de la transaction`);

@@ -29,11 +29,18 @@ const data = reactive({
   products: {}
 })
 
+const deleteProductRefresh = async (productId) => {
+    await deleteProduct(productId);
+    data.products = await getProducts();
+}
+
 // eslint-disable-next-line vue/return-in-computed-property
 const filteredProductsAll = computed(() => {
+  const products = data.products;
+
   switch (data.currentFilterAll) {
     case 'Tout':
-      return Object.values(data.products)
+      return Object.values(products)
         .sort(
           (firstItem, secondItem) =>
             new Date(secondItem.createdAt).getTime() - new Date(firstItem.createdAt).getTime()
@@ -43,7 +50,7 @@ const filteredProductsAll = computed(() => {
           data.pager.currentPage * data.pager.perPage
         )
     case 'Disponibles':
-      return Object.values(data.products)
+      return Object.values(products)
         .filter((p) => p.stock > 0 && p.status === 'active')
         .sort(
           (firstItem, secondItem) =>
@@ -54,7 +61,7 @@ const filteredProductsAll = computed(() => {
           data.pager.currentPage * data.pager.perPage
         )
     case 'Archivés':
-      return Object.values(data.products)
+      return Object.values(products)
         .filter((p) => p.status === 'archived')
         .sort(
           (firstItem, secondItem) =>
@@ -169,9 +176,10 @@ const filteredProductsAll = computed(() => {
                   :actions="[
                     { label: 'Voir', onClick: () => router.push({ name: 'productDetail', params: { 'reference': product.reference } }) },
                     { label: 'Modifier', onClick: () => router.push({ name: 'productUpdate', params: { 'reference': product.reference } }), divider: true },
-                    { label: 'Supprimer', textColor: 'text-red-600 font-bold', onDelete: () => deleteProduct(product.id) }
+                    { label: 'Supprimer', textColor: 'text-red-600 font-bold', onDelete: () => deleteProductRefresh(product.id) }
                   ]"
                   :dropdownId="product.id"
+                  @deleted="data.products = getProducts()"
                 />
               </td>
             </tr>

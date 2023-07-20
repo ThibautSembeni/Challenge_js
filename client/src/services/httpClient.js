@@ -4,9 +4,6 @@ import store from '@/stores/store';
 const httpClient = axios.create({
     baseURL: import.meta.env.VITE_API_URL,
     timeout: 5000,
-    headers: {
-        'Content-Type': 'application/json',
-    },
 });
 
 httpClient.interceptors.request.use(

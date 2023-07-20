@@ -103,7 +103,7 @@ async function getCustomers () {
               </td>
             </tr>
             <tr class="bg-white border-b" v-if="!data.customers.length">
-              <th colspan="4" scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap text-center">
+              <th colspan="5" scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap text-center">
                 Aucun client
               </th>
             </tr>
