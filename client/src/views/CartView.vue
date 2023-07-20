@@ -3,7 +3,6 @@ import { ref, reactive, computed, onMounted } from 'vue'
 
 const cartItems = reactive([])
 const customerName = ref('')
-const customerAddress = ref('')
 
 const total = computed(() => {
   return cartItems.reduce((total, cartItem) => total + cartItem.price * cartItem.quantity, 0)
