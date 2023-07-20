@@ -2,7 +2,12 @@
 import SideBar from '@/components/SideBar.vue'
 import NavBar from '@/components/NavBar.vue'
 import store from "@/stores/store";
-const user = store.state.user
+import {getCurrentUser} from "@/services/auth";
+import router from "@/router";
+const user = getCurrentUser()
+if (user?.role === 'merchant'){
+  router.push({path: '/merchant', replace: true})
+}
 </script>
 
 <template>

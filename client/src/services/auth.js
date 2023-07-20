@@ -31,13 +31,15 @@ export async function registerUser(userCredentials) {
     return response;
 }
 
-export async function getCurrentUser() {
+export function getCurrentUser() {
     return store.state.user
 }
 
 export function isLoggedIn() {
     return store.state.isLoggedIn
 }
+
+
 
 export async function fetchUser() {
     const userData = await httpClient.get('/me')
