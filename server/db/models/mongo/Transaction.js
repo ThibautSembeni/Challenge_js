@@ -28,6 +28,6 @@ const transactionSchema = new mongoose.Schema({
     },
     amount: Number,
     currency: String,
-});
+}, { timestamps: true });
 
 module.exports = mongoose.model("Transaction", transactionSchema);

@@ -59,6 +59,34 @@ module.exports = function transactionController(TransactionService, options = {}
                 next(error);
             }
         },
+        getTransactionsVolumeByDays: async (req, res, next) => {
+            try {
+                const start_date = new Date();
+                start_date.setHours(0, 0, 0, 0);
+                const end_date = new Date();
+                end_date.setHours(23, 59, 59, 999);
+
+                const data = {};
+                console.log(req.query);
+                if (req.query.hasOwnProperty("date")) {
+                    const { date } = req.query;
+                    const dateParts = date.split("-");
+                    data.start_date = new Date(dateParts[0], dateParts[1] - 1, dateParts[2]);
+                    data.end_date = new Date(dateParts[0], dateParts[1] - 1, dateParts[2], 23, 59, 59, 999);
+                }
+
+                console.log(data);
+                data.start_date = data.start_date || start_date;
+                data.end_date = data.end_date || end_date;
+
+                console.log(data);
+                const results = await TransactionService.getTransactionsVolumeByDays(data);
+                res.json(results);
+            } catch (error) {
+                console.error(error);
+                next(error);
+            }
+        }
     }
 
     return result;

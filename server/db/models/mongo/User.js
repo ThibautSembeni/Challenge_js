@@ -76,6 +76,6 @@ const utilisateurSchema = new mongoose.Schema({
         ],
         default: null,
     },
-});
+}, { timestamps: true });
 
 module.exports = mongoose.model("User", utilisateurSchema);

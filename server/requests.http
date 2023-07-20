@@ -143,3 +143,7 @@ Content-Type: application/json
 ###
 GET http://localhost:3000/products
 Content-Type: application/json
+
+###
+GET http://localhost:3000/transactions/stats/nbbyday?date=2023-07-18
+Content-Type: application/json

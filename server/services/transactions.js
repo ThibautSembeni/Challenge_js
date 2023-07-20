@@ -1,6 +1,7 @@
 const { Transaction } = require("../db/models/postgres");
 const Sequelize = require("sequelize");
 const ValidationError = require("../errors/ValidationError");
+const mongoDB = require('../db/models/mongo');
 
 module.exports = function TransactionService() {
     return {
@@ -64,5 +65,41 @@ module.exports = function TransactionService() {
         delete: async (filters) => {
             return Transaction.destroy({ where: filters });
         },
+        getTransactionsVolumeByDays: async (data) => {
+            try {
+                const transactions = await mongoDB.Transaction.aggregate([
+                    {
+                        '$match': {
+                            'createdAt': {
+                                '$gte': new Date(data.start_date),
+                                '$lt': new Date(data.end_date)
+                            }
+                        }
+                    }, {
+                        '$project': {
+                            'hour': {
+                                '$hour': '$createdAt'
+                            },
+                            'amount': 1
+                        }
+                    }, {
+                        '$group': {
+                            '_id': "$hour",
+                            'totalAmount': {
+                                '$sum': '$amount'
+                            }
+                        }
+                    }, {
+                        '$sort': {
+                            '_id.hour': 1
+                        }
+                    }
+                ]);
+                return transactions;
+            } catch (error) {
+                throw error;
+            }
+
+        }
     };
 };
