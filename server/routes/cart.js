@@ -12,7 +12,9 @@ module.exports = new genericRouter(
     ),
     {
         customRoutes: [
+            { method: 'get', path: '/user/:id', middleware: [], handler: 'getCartByUserId' },
             { method: 'post', path: '/add', middleware: [], handler: 'addItemToCart' },
+            { method: 'delete', path: '/remove/:cartId/:productRef', middleware: [], handler: 'removeItemFromCart' },
         ],
         defaultRoutes: {
             create: { method: 'post', path: '/', middleware: [], active: true },

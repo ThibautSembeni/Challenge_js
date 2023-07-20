@@ -10,6 +10,10 @@ module.exports = function CartService() {
             include: { 
                 model: CartItem,
                 as: 'cart_items',
+                include: {
+                    model: Product,
+                    as: 'product',
+                }
             } 
         });
 
@@ -25,6 +29,29 @@ module.exports = function CartService() {
     };
 
     return {
+        findAll: async function (filters, options = {}) {
+            let dbOptions = {
+                where: filters,
+                include: {
+                    model: CartItem,
+                    as: 'cart_items',
+                    include: {
+                        model: Product,
+                        as: 'product',
+                    }
+                },
+            };
+
+            // Check if options.order exists before trying to access it
+            if (options.order) {
+                dbOptions.order = Object.entries(options.order);
+            }
+            if (options.limit) {
+                dbOptions.limit = options.limit;
+                dbOptions.offset = options.offset;
+            }
+            return Cart.findAll(dbOptions);
+        },
         findOne: async function (filters) {
             return Cart.findOne({ where: filters });
         },
@@ -55,9 +82,6 @@ module.exports = function CartService() {
                 }
                 throw e;
             }
-        },
-        delete: async (filters) => {
-            return Cart.destroy({ where: filters });
         },
         updateCartTotalPrice: updateCartTotalPrice, 
         addItemToCart: async (cartId, productRef, quantity) => {
@@ -99,6 +123,31 @@ module.exports = function CartService() {
                 await updateCartTotalPrice(cartId);
 
                 return newCartItem;
+            }
+        },
+        removeItemFromCart: async (cartId, productRef) => {
+            const cart = await Cart.findOne({ where: { id: cartId } });
+            if (!cart) {
+                throw new ValidationError('Le panier n\'existe pas');
+            }
+
+            const product = await Product.findOne({ where: { reference: productRef } });
+            if (!product) {
+                throw new ValidationError('Le produit n\'existe pas');
+            }
+
+            const cartItem = await CartItem.findOne({ where: { cart_id: cartId, product_id: product.id } });
+            if (!cartItem) {
+                throw new ValidationError('Le produit n\'est pas dans le panier');
+            }
+
+            const deletedCartItem = await cartItem.destroy();
+
+            if (!deletedCartItem) {
+                throw new ValidationError('Le produit n\'est pas dans le panier');
+            } else {
+                await updateCartTotalPrice(cartId);
+                return deletedCartItem;
             }
         },
     };

@@ -81,3 +81,20 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NzY0LCJmdWxsT
 
 ### 
 GET http://localhost:3000/verify/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NzY0LCJmdWxsTmFtZSI6IkRvZSBKb2huIiwiaWF0IjoxNjg4ODMzNjMzLCJleHAiOjE2ODg4MzcyMzN9.nzC_gToW-c2yNvbonhlk7ElOGQ8ga4hmtsQsBcy_bZw
+
+###
+GET http://localhost:3000/cart/user/1
+
+###
+POST http://localhost:3000/cart/add
+Content-Type: application/json
+
+{
+    "cartId": 6,
+    "productRef": "prod_bfekhkegnengnjo",
+    "quantity": 55
+}
+
+###
+DELETE http://localhost:3000/cart/remove/6/prod_bfekhkegnengnjo
+Content-Type: application/json
