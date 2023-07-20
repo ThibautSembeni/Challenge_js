@@ -132,7 +132,7 @@ module.exports = function SecurityController(UserService) {
             if (!entry) return res.sendStatus(404)
 
             const {newPassword, confirmNewPassword} = req.body
-            if (newPassword !== confirmNewPassword) return res.sendStatus(422)
+            if (newPassword !== confirmNewPassword) return res.sendStatus(400)
 
             const {user_id} = entry
 
