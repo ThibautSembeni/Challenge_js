@@ -1,5 +1,4 @@
 const jwt = require("jsonwebtoken");
-const crypto = require('crypto');
 const UnauthorizedError = require("./../errors/UnauthorizedError");
 
 const generateVerificationToken = async (user) => {
