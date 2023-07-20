@@ -39,6 +39,7 @@ export async function updateTransaction(transaction) {
 
 export async function deleteTransaction(id) {
     const response = await httpClient.delete(`/transactions/${id}`);
+
     if (response.status === 200) {
         return response.data;
     } else {

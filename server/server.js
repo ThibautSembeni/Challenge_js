@@ -33,8 +33,7 @@ app.use("/template", checkAuth, TemplateRouter);
 
 app.use("/users", checkAuth, UserRouter);
 
-// app.use("/transactions", checkAuth, TransactionRouter);
-app.use("/transactions", TransactionRouter);
+app.use("/transactions", checkAuth, TransactionRouter);
 
 app.use("/products", checkAuth, ProductRouter);
 

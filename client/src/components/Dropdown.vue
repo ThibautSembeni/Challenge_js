@@ -25,7 +25,7 @@
 
         <Modal :open="showModal" @update:open="showModal = $event">
             <p class="text-base leading-relaxed text-gray-500">
-                Suppression du produit. Êtes-vous sûr de vouloir continuer ?
+                Suppression. Êtes-vous sûr de vouloir continuer ?
             </p>
             <template #footer>
                 <button @click="executeDelete" type="button" class="text-white bg-red-700 hover:bg-blue-800 focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center">Supprimer</button>

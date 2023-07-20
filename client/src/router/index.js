@@ -1,8 +1,8 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 import LoginView from '../views/auth/LoginView.vue'
-import PaymentView from '@/views/PaymentsView.vue'
-import PaymentDetailView from '@/views/PaymentDetailView.vue'
+import PaymentView from '@/views/transactions/PaymentsView.vue'
+import PaymentDetailView from '@/views/transactions/PaymentDetailView.vue'
 import CustomersView from '@/views/CustomersView.vue'
 import CustomerDetailView from '@/views/CustomerDetailView.vue'
 import ProductsView from '@/views/products/ProductsView.vue'
@@ -21,7 +21,7 @@ import LogoutView from "@/views/auth/LogoutView.vue";
 import DashboardMerchant from "@/views/merchant/DashboardMerchant.vue";
 import SetupMerchant from "@/views/merchant/SetupMerchant.vue";
 import ProfileView from "@/views/auth/ProfileView.vue";
-import PaymentCreateView from "@/views/PaymentCreateView.vue";
+import PaymentCreateView from "@/views/transactions/PaymentCreateView.vue";
 
 const customerRoutes = [
     {

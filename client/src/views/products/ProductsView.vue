@@ -6,8 +6,9 @@ import NavBar from '@/components/NavBar.vue'
 import Table from '@/components/Table.vue'
 import moment from 'moment'
 import FormatEuro from '@/components/Payment/FormatEuro.vue'
-import { getProducts } from '@/services/products'
-import ActionsButton from '../../components/table/ActionsButton.vue'
+import {deleteProduct, getProducts} from '@/services/products'
+import router from "@/router";
+import Dropdown from "@/components/Dropdown.vue";
 onMounted(async () => {
   data.products = await getProducts()
 })
@@ -128,7 +129,7 @@ const filteredProductsAll = computed(() => {
               <th scope="col" class="px-6 py-3">Stock</th>
               <th scope="col" class="px-6 py-3">Date de création</th>
               <th scope="col" class="px-6 py-3">date de mise à jour</th>
-              <th></th>
+              <th scope="col" class="px-6 py-3 text-center">Action</th>
             </tr>
           </template>
           <template #tbody>
@@ -163,13 +164,15 @@ const filteredProductsAll = computed(() => {
               <td class="px-6 py-4">
                 {{ moment(product.updatedAt).format('DD/MM/YYYY') }}
               </td>
-              <td class="py-4">
-                <!-- <ActionsButton /> -->
-                <router-link
-                  :to="{ name: 'productUpdate', params: { reference: product.reference } }"
-                >
-                  edit
-                </router-link>
+              <td class="py-4 text-center">
+                <Dropdown
+                  :actions="[
+                    { label: 'Voir', onClick: () => router.push({ name: 'productDetail', params: { 'reference': product.reference } }) },
+                    { label: 'Modifier', onClick: () => router.push({ name: 'productUpdate', params: { 'reference': product.reference } }), divider: true },
+                    { label: 'Supprimer', textColor: 'text-red-600 font-bold', onDelete: () => deleteProduct(product.id) }
+                  ]"
+                  :dropdownId="product.id"
+                />
               </td>
             </tr>
             <tr class="bg-white border-b" v-if="!filteredProductsAll.length">

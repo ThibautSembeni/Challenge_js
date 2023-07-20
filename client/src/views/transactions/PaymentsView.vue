@@ -1,6 +1,6 @@
 <script setup>
 import { computed, onMounted, reactive } from 'vue'
-import '../assets/index.css'
+import '../../assets/index.css'
 import SideBar from '@/components/SideBar.vue'
 import NavBar from '@/components/NavBar.vue'
 import moment from 'moment'
@@ -8,10 +8,10 @@ import FormatEuro from '@/components/Payment/FormatEuro.vue'
 import Table from '@/components/Table.vue'
 import router from "@/router";
 import Dropdown from "@/components/Dropdown.vue";
-import {deleteTransaction} from "@/services/transactions";
+import {deleteTransaction, getTransactions} from "@/services/transactions";
 
 onMounted(async () => {
-  await getTransactions()
+  data.payments = await getTransactions()
   await subscribeToSSETransaction()
 })
 
@@ -30,18 +30,6 @@ const data = reactive({
   ...defaultValue,
   payments: {}
 })
-
-async function getTransactions() {
-  const response = await fetch(`${import.meta.env.VITE_API_URL}/transactions`, {
-    method: 'GET',
-    headers: {
-      'Content-type': 'application/json'
-    }
-  })
-  if (response.ok) {
-    data.payments = await response.json()
-  }
-}
 
 async function subscribeToSSETransaction() {
   const params = new URLSearchParams()
@@ -219,7 +207,7 @@ const filteredPaymentsAll = computed(() => {
             </tr>
             <tr class="bg-white border-b" v-if="!filteredPaymentsAll.length">
               <th
-                colspan="4"
+                colspan="5"
                 scope="row"
                 class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap text-center"
               >
