@@ -13,6 +13,8 @@ const checkFormat = require("./middlewares/check-format");
 const errorHandler = require("./middlewares/error-handler");
 const checkAuth = require("./middlewares/check-auth");
 
+const CronService = require("./utils/cron");
+
 const app = express();
 
 app.use(cors(
@@ -46,5 +48,8 @@ app.post("/", (req, res) => {
 });
 
 app.use(errorHandler);
+
+const cronService = new CronService();
+cronService.start();
 
 module.exports = app;

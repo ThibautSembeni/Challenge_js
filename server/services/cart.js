@@ -28,6 +28,63 @@ module.exports = function CartService() {
         await Cart.update({ total_price: totalPrice }, { where: { id: cartId } });
     };
 
+    async function removeProductFromCartAfterTime(cartItemId) {
+        try {
+            const cartItem = await CartItem.findOne({ 
+                where: { id: cartItemId },
+                include: {
+                    model: Product,
+                    as: 'product',
+                },
+            });
+            if (!cartItem) {
+                throw new ValidationError('Le produit n\'est pas dans le panier');
+            }
+
+            const now = new Date();
+            const cartItemTimestamp = new Date(cartItem.updatedAt);
+            const timeDiffMinutes = Math.floor((now - cartItemTimestamp) / (1000 * 60));
+
+            if(timeDiffMinutes >= 30) {
+                await cartItem.destroy();
+                const product = cartItem.product;
+                const newStock = product.stock + cartItem.quantity;
+                await product.update({ stock: newStock });
+            }
+        } catch (e) {
+            if (e instanceof Sequelize.ValidationError) {
+                throw ValidationError.fromSequelizeValidationError(e);
+            }
+            throw e;
+        }
+    };
+
+    async function removeExpiredItemsFromAllCarts() {
+        try {
+            const allCarts = await Cart.findAll({
+                include: {
+                    model: CartItem,
+                    as: 'cart_items',
+                    include: {
+                        model: Product,
+                        as: 'product',
+                    }
+                },
+            });
+
+            for (const cart of allCarts) {
+                for (const cartItem of cart.cart_items) {
+                    await removeProductFromCartAfterTime(cartItem.id);
+                }
+            }
+        } catch (e) { 
+            if (e instanceof Sequelize.ValidationError) {
+                throw ValidationError.fromSequelizeValidationError(e);
+            }
+            throw e;
+        }
+    }
+
     return {
         findAll: async function (filters, options = {}) {
             let dbOptions = {
@@ -83,7 +140,9 @@ module.exports = function CartService() {
                 throw e;
             }
         },
-        updateCartTotalPrice: updateCartTotalPrice, 
+        updateCartTotalPrice: updateCartTotalPrice,
+        removeProductFromCartAfterTime: removeProductFromCartAfterTime, 
+        removeExpiredItemsFromAllCarts: removeExpiredItemsFromAllCarts,
         addItemToCart: async (cartId, productRef, quantity) => {
             const cart = await Cart.findOne({ where: { id: cartId } });
             if (!cart) {
@@ -111,6 +170,13 @@ module.exports = function CartService() {
 
                 await updateCartTotalPrice(cartId);
 
+                await cartItem.update({ updatedAt: new Date() });
+                
+                await removeProductFromCartAfterTime(cartItem.id);
+
+                const updatedStock = product.stock - quantity;
+                await product.update({ stock: updatedStock });
+
                 return cartItem;
             } else {
                 const newCartItem = await CartItem.create({ 
@@ -118,9 +184,15 @@ module.exports = function CartService() {
                     product_id: product.id, 
                     quantity: quantity,
                     price: product.price,
+                    updatedAt: new Date(),
                 });
 
                 await updateCartTotalPrice(cartId);
+                
+                await removeProductFromCartAfterTime(newCartItem.id);
+
+                const updatedStock = product.stock - quantity;
+                await product.update({ stock: updatedStock });
 
                 return newCartItem;
             }

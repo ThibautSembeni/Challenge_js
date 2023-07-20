@@ -91,7 +91,7 @@ Content-Type: application/json
 
 {
     "cartId": 6,
-    "productRef": "prod_bfekhkegnengnjo",
+    "productRef": "prod_bfekhkegnegukfzu",
     "quantity": 55
 }
 
