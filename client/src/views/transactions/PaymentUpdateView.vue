@@ -107,6 +107,8 @@ const submitForm = async () => {
     if (result && result.reference) {
         returnData.flashMessage = `La transaction ${result.reference} a été modifiéée avec succès. Cliquez ici pour la voir.`
         returnData.transaction = result
+
+        window.scrollTo({ top: 0, behavior: 'smooth' })
     }
 }
 

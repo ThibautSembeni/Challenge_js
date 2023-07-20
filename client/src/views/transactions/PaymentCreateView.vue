@@ -109,6 +109,8 @@ const submitForm = async () => {
         returnData.transaction = result
 
         resetForm()
+
+        window.scrollTo({ top: 0, behavior: 'smooth' })
     }
 }
 </script>
