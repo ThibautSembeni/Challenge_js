@@ -2,12 +2,10 @@
 import {defineEmits, reactive, toRefs, watch} from 'vue'
 import TextInput from '@/components/form/TextInput.vue'
 
-defineProps({
+const props = defineProps({
     modelValue: Object,
     error: Object
 })
-
-const emit = defineEmits(['update:modelValue'])
 
 const state = reactive({
     name: '',
@@ -15,9 +13,15 @@ const state = reactive({
     phoneNumber: ''
 })
 
+const emit = defineEmits(['update:modelValue'])
+
+watch(() => props.modelValue, (newVal) => {
+    Object.assign(state, newVal);
+}, { deep: true });
+
 watch(() => state, (newVal) => {
-    emit('update:modelValue', newVal)
-}, {deep: true})
+    emit('update:modelValue', {...newVal});
+}, { deep: true });
 
 const {name, email, phoneNumber} = toRefs(state)
 </script>

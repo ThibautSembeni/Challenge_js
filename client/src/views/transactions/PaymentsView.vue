@@ -198,7 +198,7 @@ const filteredPaymentsAll = computed(() => {
                 <Dropdown
                   :actions="[
                     { label: 'Voir', onClick: () => router.push({ name: 'paymentDetail', params: { 'reference': payment.reference } }) },
-                    { label: 'Modifier', divider: true },
+                    { label: 'Modifier', onClick: () => router.push({ name: 'paymentUpdate', params: { 'reference': payment.reference } }), divider: true },
                     { label: 'Supprimer', textColor: 'text-red-600 font-bold', onDelete: () => deleteTransaction(payment.id) }
                   ]"
                   :dropdownId="payment.id"

@@ -1,24 +1,30 @@
 <script setup>
-import { reactive, computed, toRefs } from 'vue'
+import {reactive, computed, toRefs, onMounted} from 'vue'
 import '../../assets/index.css'
 import SideBar from '@/components/SideBar.vue'
 import NavBar from '@/components/NavBar.vue'
 import TextInput from '@/components/form/TextInput.vue'
 import SelectInput from '@/components/form/SelectInput.vue'
-import { createTransaction } from '@/services/transactions'
+import {getTransaction, updateTransaction} from '@/services/transactions'
 import ClientInfo from "@/components/Payment/ClientInfo.vue"
 import BillingInfo from "@/components/Payment/BillingInfo.vue"
 import ShippingInfo from "@/components/Payment/ShippingInfo.vue"
 import Cart from "@/components/Payment/Cart.vue"
+import {useRoute} from "vue-router";
+
+onMounted(async () => {
+    await paymentSetup()
+})
 
 const formData = reactive({
-    client_info: {},
     billing_info: {},
     shipping_info: {},
+    client_info: {},
     cart: {},
     amount: '',
     currency: '',
-    status: 'pending',
+    status: '',
+    reference: ''
 })
 
 const returnData = reactive({
@@ -48,7 +54,13 @@ const errors = reactive({
     currency: null
 })
 
-const { client_info, billing_info, shipping_info, currency, cart, status, amount } = toRefs(formData)
+async function paymentSetup() {
+    const response = await getTransaction(useRoute().params.reference)
+
+    Object.assign(formData, response)
+}
+
+const { billing_info, shipping_info, client_info, currency, cart, status, amount } = toRefs(formData)
 const { flashMessage, transaction } = toRefs(returnData)
 
 const validateField = (objectKey, fieldKey, errorCondition, errorMessage) => {
@@ -83,16 +95,6 @@ const isFormValid = computed(() => {
     return true
 })
 
-const resetForm = () => {
-    formData.client_info = {}
-    formData.billing_info = {}
-    formData.shipping_info = {}
-    formData.cart = {}
-    formData.amount = ''
-    formData.currency = ''
-    formData.status = 'pending'
-}
-
 const copyShippingToBilling = () => {
     formData.billing_info = { ...formData.shipping_info }
 }
@@ -100,17 +102,14 @@ const copyShippingToBilling = () => {
 const submitForm = async () => {
     if (!isFormValid.value) return
 
-    const result = await createTransaction(formData)
-
-    //TODO: la reference n'est pas rendu dans le template
+    const result = await updateTransaction(formData)
 
     if (result && result.reference) {
-        returnData.flashMessage = `La transaction ${result.reference} a été créée avec succès. Cliquez ici pour la voir.`
+        returnData.flashMessage = `La transaction ${result.reference} a été modifiéée avec succès. Cliquez ici pour la voir.`
         returnData.transaction = result
-
-        resetForm()
     }
 }
+
 </script>
 
 <template>
@@ -147,7 +146,7 @@ const submitForm = async () => {
                                 </svg>
                             </div>
                             <div>
-                                <p class="font-bold">Transaction correctement ajoutée !</p>
+                                <p class="font-bold">Transaction correctement modifiée !</p>
                                 <router-link
                                     :to="{ name: 'paymentDetail', params: { reference: transaction.reference } }"
                                     class="text-sm"
@@ -220,7 +219,7 @@ const submitForm = async () => {
                                     type="submit"
                                     class="ml-3 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                                 >
-                                    Ajouter la transaction
+                                    Mettre à jour la transaction
                                 </button>
                             </div>
                         </div>
