@@ -20,6 +20,7 @@ import LogoutView from "@/views/auth/LogoutView.vue";
 import DashboardMerchant from "@/views/merchant/DashboardMerchant.vue";
 import SetupMerchant from "@/views/merchant/SetupMerchant.vue";
 import ProfileView from "@/views/auth/ProfileView.vue";
+import ShoppingCartView from '@/views/ShoppingCartView.vue';
 
 const customerRoutes = [
     {
@@ -98,6 +99,12 @@ const customerRoutes = [
         path: '/about',
         name: 'about',
         component: () => import('../views/AboutView.vue')
+    },
+    {
+      path: '/cart',
+      name: 'cart',
+      component: ShoppingCartView,
+      meta: { requiresAuth: false }
     }
 ]
 
