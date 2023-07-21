@@ -2,6 +2,8 @@
 import { onMounted, defineProps, reactive, ref } from 'vue'
 import httpClient from '@/services/httpClient'
 import ChartGraph from '@/components/charts/ChartGraph.vue'
+import store from '@/stores/store'
+const user = store.state.user
 
 defineProps({
   width: {
@@ -82,8 +84,29 @@ const inputData = reactive({
   date: new Date().toISOString().split('T')[0]
 })
 
+async function subscribeToSSETransaction() {
+  const params = new URLSearchParams()
+  params.set('id', user.id)
+  const eventSource = new EventSource(
+    `${import.meta.env.VITE_API_URL}/transactions/stats/subscribe?` + params
+  )
+  bindEventSource(eventSource)
+}
+
+function bindEventSource(eventSource) {
+  eventSource.addEventListener('transaction', (event) => {
+    if (inputData.date === new Date().toISOString().split('T')[0]) {
+      const message = JSON.parse(event.data)
+      console.log(event)
+      const responseData = generateHourlyData(message)
+      config.data.datasets[0].data = responseData
+    }
+  })
+}
+
 onMounted(async () => {
   await getStats(inputData.date)
+  await subscribeToSSETransaction()
 })
 
 async function getStats(date) {
@@ -98,6 +121,8 @@ async function getStats(date) {
     )
   }
 }
+
+console.log(inputData.date)
 
 function generateHourlyData(data) {
   const result = []

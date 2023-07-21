@@ -1,8 +1,22 @@
 module.exports = function transactionController(TransactionService, options = {}) {
     const { notifyUser, notify } = require("../utils/notify.sse");
+    const db = require('../db/models/mongo')
     const eventsSent = [];
     const subscribers = {};
+    const mongoSubscribers = {};
     const messages = [];
+
+    console.log("watch", db);
+    db.Transaction.watch().on('change', async (data) => {
+        console.log(data);
+        const payload = {}
+        payload.start_date = new Date();
+        payload.start_date.setHours(0, 0, 0, 0);
+        payload.end_date = new Date();
+        payload.end_date.setHours(23, 59, 59, 999);
+        const results = await TransactionService.getTransactionsVolumeByDays(payload);
+        notify({ id: Math.random(), name: "transaction", data: results }, true, mongoSubscribers, eventsSent);
+    });
 
     let result = {
         getOne: async function (req, res, next) {
@@ -67,7 +81,6 @@ module.exports = function transactionController(TransactionService, options = {}
                 end_date.setHours(23, 59, 59, 999);
 
                 const data = {};
-                console.log(req.query);
                 if (req.query.hasOwnProperty("date")) {
                     const { date } = req.query;
                     const dateParts = date.split("-");
@@ -75,17 +88,25 @@ module.exports = function transactionController(TransactionService, options = {}
                     data.end_date = new Date(dateParts[0], dateParts[1] - 1, dateParts[2], 23, 59, 59, 999);
                 }
 
-                console.log(data);
                 data.start_date = data.start_date || start_date;
                 data.end_date = data.end_date || end_date;
 
-                console.log(data);
                 const results = await TransactionService.getTransactionsVolumeByDays(data);
                 res.json(results);
             } catch (error) {
                 console.error(error);
                 next(error);
             }
+        },
+        subscribeTransactionsVolumeByDays: async (req, res, next) => {
+            const id = req.query.id;
+            mongoSubscribers[id] = res;
+            const headers = {
+                'Content-Type': 'text/event-stream',
+                'Connection': 'keep-alive',
+                'Cache-Control': 'no-cache'
+            };
+            res.writeHead(200, headers);
         }
     }
 

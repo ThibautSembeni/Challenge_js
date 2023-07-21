@@ -6,6 +6,9 @@ import NavBar from '@/components/NavBar.vue'
 import moment from 'moment'
 import FormatEuro from '@/components/Payment/FormatEuro.vue'
 import Table from '@/components/Table.vue'
+import store from '@/stores/store'
+
+const user = store.state.user
 
 onMounted(async () => {
   await getTransactions()
@@ -42,7 +45,7 @@ async function getTransactions() {
 
 async function subscribeToSSETransaction() {
   const params = new URLSearchParams()
-  params.set('username', 'test')
+  params.set('username', user.id)
   if (localStorage.getItem('last-id')) {
     params.set('last-id', localStorage.getItem('last-id'))
   }

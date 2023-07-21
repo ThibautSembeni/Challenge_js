@@ -16,6 +16,7 @@ module.exports = new genericRouter(
             { method: 'get', path: '/transaction/user/:id', middleware: [], handler: 'getTransactionsByUserId' },
             { method: 'get', path: '/transaction/subscribe', middleware: [], handler: 'subscribe' },
             { method: 'post', path: '/', middleware: [], handler: 'transaction' },
+            { method: 'get', path: '/stats/subscribe', middleware: [], handler: 'subscribeTransactionsVolumeByDays' },
             { method: 'get', path: '/stats/nbbyday', middleware: [], handler: 'getTransactionsVolumeByDays' },
         ],
         defaultRoutes: {
