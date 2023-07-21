@@ -53,10 +53,7 @@ const validEdit = async () => {
     delete userDetails.phone_number
   }
   try {
-    const response = await updateUser(currentUser.value.id, userDetails)
-    if (response) {
-      currentUser.value = response
-    }
+    await updateUser(currentUser.id, userDetails)
   } catch (e) {
     console.error(e)
   }
@@ -71,9 +68,8 @@ const sendRequest = async (payload) => {
 }
 
 const confirmRegenerate = async () => {
-  console.log("ok")
   const newCredentials = await regenerateCredentials()
-  store.commit('setCredentials', newCredentials)
+  store.commit('setCredentials', null)
   currentCredentials.value = newCredentials
   regenerateMode.value = false
 }
