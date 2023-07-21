@@ -38,8 +38,10 @@ app.use("/template", checkAuth, TemplateRouter);
 
 app.use("/users", checkAuth, UserRouter);
 
-// app.use("/transactions", checkAuth, TransactionRouter);
 app.use("/transactions", TransactionRouter);
+
+// Pour activer la vérification des credentials pour les marchands
+// app.use("/transactions", verifyCredentials, TransactionRouter);
 
 app.use("/products", checkAuth, ProductRouter);
 
