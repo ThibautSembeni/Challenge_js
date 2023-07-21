@@ -39,8 +39,6 @@ export function isLoggedIn() {
     return store.state.isLoggedIn
 }
 
-
-
 export async function fetchUser() {
     const userData = await httpClient.get('/me')
     store.commit('setUser', userData.data)
