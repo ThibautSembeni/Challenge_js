@@ -4,9 +4,6 @@ import store from '@/stores/store';
 const httpClient = axios.create({
     baseURL: import.meta.env.VITE_API_URL,
     timeout: 5000,
-    headers: {
-        'Content-Type': 'application/json',
-    },
 });
 
 httpClient.interceptors.request.use(
@@ -82,14 +79,29 @@ httpClient.get = async function (url, config) {
 };
 
 httpClient.post = async function (url, data, config) {
+    const headers = { 'Content-Type': 'application/json', ...config?.headers };
+    config = {
+        ...config,
+        headers
+    };
     return makeRequest('post', url, data, config);
 };
 
 httpClient.put = async function (url, data, config) {
+    const headers = { 'Content-Type': 'application/json', ...config?.headers };
+    config = {
+        ...config,
+        headers
+    };
     return makeRequest('put', url, data, config);
 };
 
 httpClient.patch = async function (url, data, config) {
+    const headers = { 'Content-Type': 'application/json', ...config?.headers };
+    config = {
+        ...config,
+        headers
+    };
     return makeRequest('patch', url, data, config);
 };
 

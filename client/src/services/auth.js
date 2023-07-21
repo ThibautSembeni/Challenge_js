@@ -3,15 +3,18 @@ import httpClient from '@/services/httpClient'
 
 export async function login(userCredentials) {
     const response = await httpClient.post('/login', userCredentials)
-    if (response.status > 401) {
-        throw new Error(response.data)
-    } else if (response.status === 401) {
-        throw new Error("Le mot de passe ou l'adresse email ne sont pas corrects")
+    if (response.status === 200) {
+        const {token} = response.data
+        localStorage.setItem('access_token', token)
+        store.commit('setLoggedIn', true)
+        return token
     }
-    const {token} = response.data
-    localStorage.setItem('access_token', token)
-    store.commit('setLoggedIn', true)
-    return token
+    else if (response.status === 401) {
+        throw new Error("Le mot de passe ou l'adresse email ne sont pas corrects")
+    } else {
+        throw new Error("Error server")
+    }
+
 }
 
 export async function registerUser(userCredentials) {
@@ -31,7 +34,7 @@ export async function registerUser(userCredentials) {
     return response;
 }
 
-export async function getCurrentUser() {
+export function getCurrentUser() {
     return store.state.user
 }
 
@@ -46,11 +49,10 @@ export async function fetchUser() {
 }
 
 export async function changePassword(payload) {
-    const response = await httpClient.post('/change-password',payload)
+    const response = await httpClient.post('/change-password', payload)
     if (response.status > 401) {
         throw new Error(response.data)
-    }
-    else if(response.status === 401){
+    } else if (response.status === 401) {
         throw new Error(`Password Invalid`);
     }
     return response

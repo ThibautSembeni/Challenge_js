@@ -3,10 +3,13 @@ import SideBar from '@/components/SideBar.vue'
 import NavBar from '@/components/NavBar.vue'
 import TabPanel from '@/components/TabPanel.vue'
 import {changePassword, getCurrentUser} from '@/services/auth'
-import {onMounted, reactive, ref} from 'vue'
+import {reactive, ref} from 'vue'
 import Input from '@/components/form/Input.vue'
 import EditPasswordSection from "@/components/EditPasswordSection.vue";
 import {updateUser} from "@/services/users";
+import {getCurrentCredentials, regenerateCredentials} from "@/services/credentials";
+import CopyToClipboard from "@/components/CopyToClipboard.vue";
+import store from "@/stores/store";
 
 const tabs = [
   {title: 'My details', name: 'details'},
@@ -14,9 +17,12 @@ const tabs = [
   {title: 'My orders', name: 'orders'}
 ]
 
-const currentUser = ref(null)
+const currentUser = getCurrentUser()
+const currentCredentials = ref(getCurrentCredentials())
+
 const isDisabled = ref(true)
 const editMode = ref(false)
+const regenerateMode = ref(false)
 const userDetails = reactive({
   lastname: "",
   firstname: "",
@@ -24,17 +30,15 @@ const userDetails = reactive({
   phone_number: null
 });
 
-onMounted(async () => {
-  currentUser.value = await getCurrentUser()
-  if (currentUser) {
-    Object.assign(userDetails, {
-      lastname: currentUser.value.lastname,
-      firstname: currentUser.value.firstname,
-      email: currentUser.value.email,
-      phone_number: currentUser.value.phone_number
-    });
-  }
-})
+if (currentUser) {
+  Object.assign(userDetails, {
+    lastname: currentUser.lastname,
+    firstname: currentUser.firstname,
+    email: currentUser.email,
+    phone_number: currentUser.phone_number
+  });
+}
+
 
 const editProfile = () => {
   isDisabled.value = !isDisabled.value
@@ -64,6 +68,14 @@ const sendRequest = async (payload) => {
   } catch (error) {
     console.error(`Error lors de changement de votre mot de passe : ${error}`)
   }
+}
+
+const confirmRegenerate = async () => {
+  console.log("ok")
+  const newCredentials = await regenerateCredentials()
+  store.commit('setCredentials', newCredentials)
+  currentCredentials.value = newCredentials
+  regenerateMode.value = false
 }
 
 </script>
@@ -155,8 +167,53 @@ const sendRequest = async (payload) => {
         <template #orders> orders</template>
 
         <template #security>
-          <div>
-            <EditPasswordSection @passwordEvent="sendRequest"/>
+          <EditPasswordSection @passwordEvent="sendRequest"/>
+
+          <div v-if="currentUser.role === 'merchant'">
+            <div class="flex items-center">
+              <h2 class="text-2xl font-bold my-4">Credentials Merchant</h2>
+              <button
+                  class="ml-4 px-3 py-2 text-xs font-medium inline-flex text-white bg-blue-700 rounded-lg hover:bg-blue-800"
+                  v-if="regenerateMode === false"
+                  @click="() => regenerateMode = true"
+              >
+                Regenerer votre credentials
+              </button>
+              <button
+                  class="ml-4 px-3 py-2 text-xs font-medium inline-flex items-center rounded-lg bg-green-500 hover:bg-green-800 text-white"
+                  v-if="regenerateMode === true"
+                  @click="confirmRegenerate"
+              >
+                <i class="far fa-check-circle mr-2"></i>
+
+                Confirmer
+              </button>
+
+
+              <button
+                  class="ml-4 px-3 py-2 text-xs font-medium inline-flex items-center rounded-lg bg-blue-500 text-white hover:bg-blue-600 transition-colors duration-300"
+                  @click="()=>regenerateMode = false"
+                  v-if="regenerateMode === true"
+              >
+                <svg class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M6 18L18 6M6 6l12 12"
+                  />
+                </svg>
+                Cancel
+              </button>
+            </div>
+            <div class="flex flex-row mb-4">
+              <div class="flex-1 mr-2">
+                <CopyToClipboard label="Client Token" :text-to-copy="currentCredentials.client_token"/>
+              </div>
+              <div class="flex-1 ml-2">
+                <CopyToClipboard label="Client Secret" :text-to-copy="currentCredentials.client_secret"/>
+              </div>
+            </div>
           </div>
         </template>
       </TabPanel>
