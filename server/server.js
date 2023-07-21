@@ -6,7 +6,6 @@ const SecurityRouter = require("./routes/security");
 const TemplateRouter = require("./routes/route.template");
 const TransactionRouter = require("./routes/transactions");
 const ProductRouter = require("./routes/products");
-const MerchantRouter = require("./routes/merchant");
 const CartRouter = require("./routes/cart");
 const AdminRouter = require("./routes/admin");
 const CredentialRouter = require("./routes/credentials");
@@ -21,9 +20,11 @@ const CronService = require("./utils/cron");
 
 const app = express();
 
-app.use(cors({
-    origin: process.env.FRONT_URL
-}))
+app.use(
+  cors({
+    origin: process.env.FRONT_URL,
+  })
+);
 
 app.use(checkFormat);
 
@@ -47,11 +48,11 @@ app.use("/cart", CartRouter);
 app.use("/credentials", checkAuth, CredentialRouter);
 
 app.get("/", (req, res) => {
-    res.status(200).json({message: "Hello World!"});
+  res.status(200).json({ message: "Hello World!" });
 });
 
 app.post("/", (req, res) => {
-    res.json(req.body);
+  res.json(req.body);
 });
 
 app.use(errorHandler);
