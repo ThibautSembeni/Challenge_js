@@ -20,24 +20,21 @@ import LogoutView from "@/views/auth/LogoutView.vue";
 import DashboardMerchant from "@/views/merchant/DashboardMerchant.vue";
 import SetupMerchant from "@/views/merchant/SetupMerchant.vue";
 import ProfileView from "@/views/auth/ProfileView.vue";
+import ForgotPassword from "@/views/auth/ForgotPassword.vue";
+import ResetPassword from "@/views/auth/ResetPassword.vue";
+import ShoppingCartView from '@/views/ShoppingCartView.vue';
 
-const customerRoutes = [
+const authRoutes = [
     {
-        path: '/',
-        name: 'home',
-        component: HomeView,
-        meta: {requiresAuth: true}
-    },
-    {
-        path: '/login',
+        path: '/auth/login',
         name: 'login',
         component: LoginView,
         meta: {requiresAuth: false}
     },
     {
-        path: '/profile',
-        name: 'profile',
-        component: ProfileView,
+        path: '/auth/register',
+        name: 'register',
+        component: () => import('../views/auth/RegisterView.vue'),
         meta: {requiresAuth: false}
     },
     {
@@ -47,9 +44,31 @@ const customerRoutes = [
         meta: {requiresAuth: false}
     },
     {
-        path: '/register',
-        name: 'register',
-        component: () => import('../views/auth/RegisterView.vue'),
+        path: '/auth/forgot-password',
+        name: 'forgotPassword',
+        component: ForgotPassword,
+        meta: {requiresAuth: true}
+    },
+    {
+        path: '/auth/reset-password/:token',
+        name: 'resetPassword',
+        component: ResetPassword,
+        meta: {requiresAuth: true}
+    },
+]
+
+const customerRoutes = [
+    {
+        path: '/',
+        name: 'home',
+        component: HomeView,
+        meta: {requiresAuth: true}
+    },
+
+    {
+        path: '/profile',
+        name: 'profile',
+        component: ProfileView,
         meta: {requiresAuth: false}
     },
     {
@@ -98,6 +117,12 @@ const customerRoutes = [
         path: '/about',
         name: 'about',
         component: () => import('../views/AboutView.vue')
+    },
+    {
+      path: '/cart',
+      name: 'cart',
+      component: ShoppingCartView,
+      meta: { requiresAuth: false }
     }
 ]
 
@@ -169,6 +194,7 @@ const errorRoutes = [
 ];
 
 const routes = [
+    ...authRoutes,
     ...adminRoutes,
     ...merchantRoutes,
     ...customerRoutes,

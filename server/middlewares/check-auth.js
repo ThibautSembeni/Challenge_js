@@ -1,4 +1,3 @@
-const jwt = require("jsonwebtoken");
 const UnauthorizedError = require("../errors/UnauthorizedError");
 const {getUserFromJWTToken} = require("../utils/user");
 
@@ -11,7 +10,7 @@ module.exports = (req, res, next) => {
         return next(new UnauthorizedError());
     }
     try {
-        req.user = jwt.verify(token, process.env.JWT_SECRET);
+        req.user = getUserFromJWTToken(token);
     } catch (err) {
         return next(new UnauthorizedError());
     }

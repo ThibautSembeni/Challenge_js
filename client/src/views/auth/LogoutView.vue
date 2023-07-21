@@ -13,7 +13,7 @@ store.commit('setLoggedIn', false)
   <br>
   <div>
 
-    <RouterLink to="login">
+    <RouterLink :to="{ name: 'login' }">
 
       Go pour login page
     </RouterLink>

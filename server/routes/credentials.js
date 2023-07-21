@@ -15,6 +15,7 @@ module.exports = new genericRouter(
         // `customRoutes` is optional is for add others custom routes
         customRoutes: [
             { handler: 'verify', method: 'post', path: '/verify', middleware: [] },
+            { handler: 'regenerate', method: 'get', path: '/regenerate', middleware: [] },
         ],
         // `defaultRoutes` is all resfull routes
         // to desactivate resfull routes set default routes to false like ``defaultRoutes: false``

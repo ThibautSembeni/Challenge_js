@@ -4,6 +4,7 @@ module.exports = (connection) => {
     class Cart extends Model {
         static associate(models) {
             Cart.belongsTo(models.User, { foreignKey: 'user_id', as: 'user' });
+            Cart.hasMany(models.CartItem, { foreignKey: 'cart_id', as: 'cart_items' });
         }
     }
 
@@ -13,12 +14,12 @@ module.exports = (connection) => {
             primaryKey: true,
             autoIncrement: true,
         },
-        quantity: {
+        total_price: {
             type: DataTypes.INTEGER,
             allowNull: false,
             validate: {
                 notNull: {
-                    msg: "La quantité est obligatoire"
+                    msg: "Le prix total est obligatoire"
                 },
             }
         },
