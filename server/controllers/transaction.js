@@ -1,9 +1,14 @@
-module.exports = function transactionController(transactionService, options = {}) {
+module.exports = function transactionController(TransactionService, options = {}) {
+    const { notifyUser, notify } = require("../utils/notify.sse");
+    const eventsSent = [];
+    const subscribers = {};
+    const messages = [];
+
     let result = {
         getOne: async function (req, res, next) {
             try {
                 const reference = req.params.reference
-                const transaction = await transactionService.findOne({ reference: reference })
+                const transaction = await TransactionService.findOne({ reference: reference })
                 if (transaction) {
                     res.json(transaction)
                 } else {
@@ -16,7 +21,7 @@ module.exports = function transactionController(transactionService, options = {}
         getTransactionsByUserId: async (req, res, next) => {
             try {
                 const id = req.params.id
-                const results = await transactionService.findAll( { user_id: id } )
+                const results = await TransactionService.findAll({ user_id: id })
                 if (results) {
                     res.json(results)
                 } else {
@@ -25,11 +30,35 @@ module.exports = function transactionController(transactionService, options = {}
             } catch (e) {
                 next(e)
             }
-        }
-    }
-
-    if (options.hasOwnProperty('customController')) {
-        result = { ...result, ...options.customController(transactionService) }
+        },
+        subscribe: async (req, res, next) => {
+            const username = req.query.username;
+            subscribers[username] = res;
+            const headers = {
+                'Content-Type': 'text/event-stream',
+                'Connection': 'keep-alive',
+                'Cache-Control': 'no-cache'
+            };
+            res.writeHead(200, headers);
+            const lastId = req.query["last-id"];
+            if (lastId) {
+                eventsSent
+                    .filter((m) => m.id > parseInt(lastId))
+                    .forEach((m) => notifyUser(m, res));
+            }
+        },
+        transaction: async (req, res, next) => {
+            try {
+                const transaction = req.body;
+                const results = await TransactionService.create(transaction);
+                messages.push(results);
+                notify({ id: results.id, name: "transaction", data: results }, false, subscribers, eventsSent);
+                res.status(201).json(transaction);
+            } catch (error) {
+                console.error(error);
+                next(error);
+            }
+        },
     }
 
     return result;

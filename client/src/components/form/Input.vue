@@ -74,7 +74,7 @@ const handleInput = (event) => {
       v-model="inputValue"
       :type="type"
       @input="handleInput"
-      :class="{ 'is-invalid': showError }"
+      :class="{ 'is-invalid': showError, 'disabled-input': disabled }"
       :placeholder="placeholder"
       :disabled="disabled"
       :required="required"
@@ -125,5 +125,10 @@ input.is-invalid {
   color: red;
   padding: 5px 0;
   font-size: 14px;
+}
+
+.disabled-input {
+  opacity: 0.4;
+  cursor: not-allowed;
 }
 </style>

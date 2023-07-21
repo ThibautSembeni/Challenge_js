@@ -82,6 +82,10 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NzY0LCJmdWxsT
 ### 
 GET http://localhost:3000/verify/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NzY0LCJmdWxsTmFtZSI6IkRvZSBKb2huIiwiaWF0IjoxNjg4ODMzNjMzLCJleHAiOjE2ODg4MzcyMzN9.nzC_gToW-c2yNvbonhlk7ElOGQ8ga4hmtsQsBcy_bZw
 
+############
+### Cart ###
+############
+
 ###
 GET http://localhost:3000/cart/user/1
 
@@ -98,3 +102,58 @@ Content-Type: application/json
 ###
 DELETE http://localhost:3000/cart/remove/6/prod_bfekhkegnengnjo
 Content-Type: application/json
+
+####################
+### Transactions ###
+####################
+
+GET http://localhost:3000/transactions
+Content-Type: application/json
+
+###
+GET http://localhost:3000/transactions/transaction/subscribe?username=John
+Accept: text/event-stream
+
+###
+POST http://localhost:3000/transactions
+Content-Type: application/json
+
+{
+   "client_info": {
+        "name": "Michel Chemlal le petit vieux",
+        "address": "2T route de villechavant, Villebougis, 89150 France"
+    },
+    "billing_info": {
+        "zipcode": "89100",
+        "country":  "FRANCE",
+        "card_type": "Visa",
+        "card_bank": "Stripe Payments UK Limited",
+        "card_number": "4141414141414142",
+        "expiration_date": "04 / 2024",
+        "cvc": true,
+        "IP": "192.168.1.1",
+        "device": "Ordinateur"       
+    },
+    "shipping_info": {
+        "amount": 9,
+        "costs": 10000,
+        "net": 200000,
+        "currency": "EUR",
+        "payment_type": "Carte de crédit"
+    },
+    "cart": {
+        "card_number": "4141414141414141"
+    },
+    "amount": 9,
+    "currency": "EUR"
+}
+
+###
+POST http://localhost:3000/transactions
+Content-Type: application/json
+
+{
+    "amount": 210000.45,
+    "currency": "EUR"
+}
+

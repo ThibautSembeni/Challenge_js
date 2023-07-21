@@ -1,6 +1,7 @@
-const {getUserFromJWTToken, generateVerificationToken, checkTokenMiddleware} = require("../utils/user");
+const {getUserFromJWTToken, generateVerificationToken} = require("../utils/user");
 const EmailSender = require("../services/emailSender");
 const jwt = require("jsonwebtoken");
+const bcrypt = require("bcryptjs");
 
 module.exports = function SecurityController(UserService) {
     return {
@@ -27,9 +28,9 @@ module.exports = function SecurityController(UserService) {
                 const token = await generateVerificationToken(user)
                 const confirmationLink = `${process.env.API_URL}/verify/${token}`
                 if (user.role === 'customer') {
-                    // await EmailSender.accountValidationEmail(user, confirmationLink)
+                    await EmailSender.accountValidationEmail(user, confirmationLink)
                 } else if (user.role === 'merchant') {
-                    // await EmailSender.sendPendingValidationEmail(user)
+                    await EmailSender.sendPendingValidationEmail(user)
                 }
                 return res.status(201).json(user);
             } catch (error) {
@@ -52,8 +53,7 @@ module.exports = function SecurityController(UserService) {
                 if (updatedUser.length === 0) {
                     return res.sendStatus(404);
                 }
-                const user = updatedUser[0];
-                return res.status(200).json(user);
+                return res.redirect(process.env.FRONT_URL)
             } catch (error) {
                 if (error.name === 'ValidationError') {
                     res.status(422).json(error.errors);
@@ -90,6 +90,18 @@ module.exports = function SecurityController(UserService) {
             } catch (e) {
                 next(e)
             }
+        },
+        changePassword: async (req, res, next) => {
+            const {currentPassword, newPassword} = req.body
+            const {id} = req.user;
+            const user = await UserService.findOne({id})
+            const hashedPassword = user.password
+            const result = await bcrypt.compare(currentPassword, hashedPassword);
+            if (!result) {
+                return res.sendStatus(401)
+            }
+            const updatedUser = await UserService.update({id}, {password: newPassword})
+            return res.json(updatedUser[0])
         }
     };
 };

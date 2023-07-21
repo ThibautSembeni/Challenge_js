@@ -1,5 +1,6 @@
 const { DataTypes } = require("sequelize");
 module.exports = (connection) => {
+    const mongo = require('../mongo')
     const { DataTypes, Model } = require('sequelize');
 
     function uniqueRef() {
@@ -101,6 +102,14 @@ module.exports = (connection) => {
             }
         },
     }, { sequelize: connection, tableName: 'transactions' });
+
+    Transaction.addHook("afterCreate", (transaction) => {
+        mongo.Transaction.create(transaction.dataValues).catch((error) => {
+            if (error.name === 'MongoServerError' && error.code === 11000) {
+                console.log('duplicate key error');
+            }
+        });
+    });
 
     return Transaction;
 };
