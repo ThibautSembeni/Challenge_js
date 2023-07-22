@@ -1,0 +1,54 @@
+name: CD
+
+on:
+  push:
+    branches:
+      - main
+      - feature/production_mode
+
+jobs:
+  upload_files:
+    runs-on: ubuntu-latest
+
+    env:
+      PROD_HOST: ${{ secrets.PROD_HOST }}
+      PROD_USER: ${{ secrets.PROD_USER }}
+      PROD_PASSWORD: ${{ secrets.PROD_PASSWORD }}
+      PROD_PATH: ${{ secrets.PROD_PATH }}
+      POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
+      POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+      POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
+      JWT_SECRET: ${{ secrets.JWT_SECRET }}
+      MONGO_URL: ${{ secrets.MONGO_URL }}
+      SCRAPPING_API_KEY: ${{ secrets.SCRAPPING_API_KEY }}
+      MAILJET_PK: ${{ secrets.MAILJET_PK }}
+      MAILJET_SK: ${{ secrets.MAILJET_SK }}
+      EMAIL_SENDER: ${{ secrets.EMAIL_SENDER }}
+      PROJECT_NAME: ${{ secrets.PROJECT_NAME }}
+
+    name: Deploy application
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Upload Files
+        id: upload
+        uses: Creepios/sftp-action@v1.0.3
+        with:
+          host: ${{ secrets.PROD_HOST }}
+          port: 22
+          username: ${{ secrets.PROD_USER }}
+          password: ${{ secrets.PROD_PASSWORD }}
+          localPath: "./"
+          remotePath: ${{ secrets.PROD_PATH }}
+
+      - name: launch application
+        uses: garygrossgarten/github-action-ssh@release
+        with:
+          host: ${{ secrets.PROD_HOST }}
+          username: ${{ secrets.PROD_USER }}
+          password: ${{ secrets.PROD_PASSWORD }}
+          command: |
+            cd ${{ secrets.PROD_PATH }}
+            docker compose -f docker-compose.prod.yml down --remove-orphans
+            EMAIL_SENDER=${{ secrets.EMAIL_SENDER }} PROJECT_NAME=${{ secrets.PROJECT_NAME }} MAILJET_SK=${{ secrets.MAILJET_SK }} MAILJET_PK=${{ secrets.MAILJET_PK }} SCRAPPING_API_KEY=${{ secrets.SCRAPPING_API_KEY }} MONGO_URL="${{ secrets.MONGO_URL }}" POSTGRES_USER=${{ secrets.POSTGRES_USER }} POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }} POSTGRES_DB=${{ secrets.POSTGRES_DB }} JWT_SECRET=${{ secrets.JWT_SECRET }} DATABASE_URL=postgres://${{ secrets.POSTGRES_USER }}:${{ secrets.POSTGRES_PASSWORD }}@database:5432/${{ secrets.POSTGRES_DB }} docker compose -f docker-compose.prod.yml build --no-cache
+            EMAIL_SENDER=${{ secrets.EMAIL_SENDER }} PROJECT_NAME=${{ secrets.PROJECT_NAME }} MAILJET_SK=${{ secrets.MAILJET_SK }} MAILJET_PK=${{ secrets.MAILJET_PK }} SCRAPPING_API_KEY=${{ secrets.SCRAPPING_API_KEY }} MONGO_URL="${{ secrets.MONGO_URL }}" POSTGRES_USER=${{ secrets.POSTGRES_USER }} POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }} POSTGRES_DB=${{ secrets.POSTGRES_DB }} JWT_SECRET=${{ secrets.JWT_SECRET }} DATABASE_URL=postgres://${{ secrets.POSTGRES_USER }}:${{ secrets.POSTGRES_PASSWORD }}@database:5432/${{ secrets.POSTGRES_DB }} docker compose -f docker-compose.prod.yml up -d

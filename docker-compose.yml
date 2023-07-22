@@ -23,7 +23,7 @@ services:
     working_dir: /usr/local/app
     ports:
       - 127.0.0.1:3000:3000
-    command: npm run start
+    command: npm run watch
     env_file:
       - web-variables.env
 
@@ -39,6 +39,11 @@ services:
       POSTGRES_USER: root
       POSTGRES_PASSWORD: password
       POSTGRES_DB: app
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -h localhost -p 5432 -U root"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
 
 volumes:
   mongo-data: {}

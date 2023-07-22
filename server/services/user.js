@@ -1,12 +1,12 @@
-const { User } = require("../db");
+const { User } = require("../db/models/postgres");
 const Sequelize = require("sequelize");
 const ValidationError = require("../errors/ValidationError");
 const UnauthorizedError = require("../errors/UnauthorizedError");
 const UniqueConstraintError = require("../errors/UniqueConstraintError");
-const sendAccountValidationEmail = require("./emailSender");
 const { generateVerificationToken } = require("../utils/user");
+const UserMongoService = require('./mongo/user')
 
-module.exports = function UserService() {
+module.exports = function UserService(MongoService) {
     return {
         findAll: async function (filters, options) {
             let dbOptions = {
@@ -29,10 +29,8 @@ module.exports = function UserService() {
         create: async function (data) {
             try {
                 const user = await User.create(data);
-                const token = generateVerificationToken(user)
-                const confirmationLink = `${process.env.API_URL}/verify/${token}`
-                await sendAccountValidationEmail(user, confirmationLink)
-                return user
+
+                return user;
             } catch (e) {
                 if (e instanceof Sequelize.UniqueConstraintError) {
                     throw UniqueConstraintError.fromSequelizeUniqueConstraintError(e);
@@ -40,6 +38,7 @@ module.exports = function UserService() {
                 if (e instanceof Sequelize.ValidationError) {
                     throw ValidationError.fromSequelizeValidationError(e);
                 }
+
                 throw e;
             }
         },
@@ -81,7 +80,6 @@ module.exports = function UserService() {
                     throw new UnauthorizedError();
                 }
                 const isPasswordValid = await user.isPasswordValid(password);
-                console.log(isPasswordValid)
                 if (!isPasswordValid) {
                     throw new UnauthorizedError();
                 }
@@ -93,5 +91,11 @@ module.exports = function UserService() {
                 throw error;
             }
         },
+        count:async function (filters){
+            const dbOptions = {
+                where: filters
+            }
+            return User.count(dbOptions);
+        }
     };
 };

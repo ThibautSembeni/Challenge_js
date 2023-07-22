@@ -1,0 +1,32 @@
+# étape de build
+FROM node:lts-alpine as build-stage
+
+WORKDIR /app
+
+COPY package*.json ./
+
+RUN npm install
+
+ENV NODE_ENV=production
+
+ENV JWT_SECRET=$JWT_SECRET
+
+ENV DATABASE_URL=$DATABASE_URL
+
+ENV SCRAPPING_API_KEY=$SCRAPPING_API_KEY
+
+ENV PROJECT_NAME=$PROJECT_NAME
+
+ENV EMAIL_SENDER=$EMAIL_SENDER
+
+ENV MAILJET_PK=$MAILJET_PK
+
+ENV MAILJET_SK=$MAILJET_SK
+
+ENV MONGO_URL=$MONGO_URL
+
+COPY . .
+
+EXPOSE 3000
+
+CMD ["npm", "run", "start"]

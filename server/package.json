@@ -4,11 +4,11 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node --watch index.js",
+    "start": "node index.js",
     "watch": "node --watch index.js",
     "d:s:u": "node migration.js",
-    "test:dev": "jest --verbose ./tests --watch --detectOpenHandles",
-    "test": "jest --verbose ./tests --detectOpenHandles"
+    "test:dev": "jest --verbose ./tests --watch --runInBand --detectOpenHandles",
+    "test": "jest --verbose ./tests --runInBand --forceExit"
   },
   "keywords": [],
   "author": "",
@@ -19,6 +19,8 @@
     "cors": "^2.8.5",
     "express": "^4.18.2",
     "jsonwebtoken": "^9.0.0",
+    "mongoose": "^7.3.1",
+    "node-cron": "^3.0.2",
     "node-mailjet": "^6.0.2",
     "pg": "^8.11.0",
     "sequelize": "^6.32.1"
