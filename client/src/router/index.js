@@ -1,14 +1,15 @@
-import {createRouter, createWebHistory} from 'vue-router'
+import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 import LoginView from '../views/auth/LoginView.vue'
-import PaymentView from '@/views/PaymentsView.vue'
-import PaymentDetailView from '@/views/PaymentDetailView.vue'
+import PaymentView from '@/views/transactions/PaymentsView.vue'
+import PaymentDetailView from '@/views/transactions/PaymentDetailView.vue'
 import CustomersView from '@/views/CustomersView.vue'
 import CustomerDetailView from '@/views/CustomerDetailView.vue'
-import ProductsView from '@/views/ProductsView.vue'
-import ProductDetailView from '@/views/ProductDetailView.vue'
-import ProductCreateView from '@/views/ProductCreateView.vue'
-import {canUserAccess} from "@/utils/auth";
+import ProductsView from '@/views/products/ProductsView.vue'
+import ProductDetailView from '@/views/products/ProductDetailView.vue'
+import ProductUpdateView from '@/views/products/ProductUpdateView.vue'
+import ProductCreateView from '@/views/products/ProductCreateView.vue'
+import { canUserAccess } from "@/utils/auth";
 import ForbiddenView from "@/views/errors/ForbiddenView.vue";
 import NotFoundView from "@/views/errors/NotFoundView.vue";
 import DashboardView from "@/views/admin/DashboardView.vue";
@@ -20,6 +21,8 @@ import LogoutView from "@/views/auth/LogoutView.vue";
 import DashboardMerchant from "@/views/merchant/DashboardMerchant.vue";
 import SetupMerchant from "@/views/merchant/SetupMerchant.vue";
 import ProfileView from "@/views/auth/ProfileView.vue";
+import PaymentCreateView from "@/views/transactions/PaymentCreateView.vue";
+import PaymentUpdateView from "@/views/transactions/PaymentUpdateView.vue";
 import ForgotPassword from "@/views/auth/ForgotPassword.vue";
 import ResetPassword from "@/views/auth/ResetPassword.vue";
 import ShoppingCartView from '@/views/ShoppingCartView.vue';
@@ -29,7 +32,7 @@ const authRoutes = [
         path: '/auth/login',
         name: 'login',
         component: LoginView,
-        meta: {requiresAuth: false}
+        meta: { requiresAuth: false }
     },
     {
         path: '/auth/register',
@@ -41,7 +44,7 @@ const authRoutes = [
         path: '/logout',
         name: 'logout',
         component: LogoutView,
-        meta: {requiresAuth: false}
+        meta: { requiresAuth: false }
     },
     {
         path: '/auth/forgot-password',
@@ -75,43 +78,61 @@ const customerRoutes = [
         path: '/paiements',
         name: 'payments',
         component: PaymentView,
+        meta: { requiresAuth: true }
+    },
+    {
+        path: '/paiement/ajouter',
+        name: 'transactionAdd',
+        component: PaymentCreateView,
         meta: {requiresAuth: true}
     },
     {
         path: '/paiement/:reference',
         name: 'paymentDetail',
         component: PaymentDetailView,
-        meta: {requiresAuth: true}
+        meta: { requiresAuth: true }
+    },
+    {
+        path: '/paiement/:reference/update',
+        name: 'paymentUpdate',
+        component: PaymentUpdateView,
+        meta: { requiresAuth: true }
     },
     {
         path: '/clients',
         name: 'customers',
         component: CustomersView,
-        meta: {requiresAuth: true}
+        meta: { requiresAuth: true }
     },
     {
         path: '/client/:id',
         name: 'customerDetail',
         component: CustomerDetailView,
-        meta: {requiresAuth: true}
+        meta: { requiresAuth: true }
     },
     {
         path: '/produits',
         name: 'products',
         component: ProductsView,
-        meta: {requiresAuth: true}
+        meta: { requiresAuth: true }
     },
     {
         path: '/produit/ajouter',
         name: 'productAdd',
         component: ProductCreateView,
-        meta: {requiresAuth: true}
+        meta: { requiresAuth: true }
     },
     {
         path: '/produit/:reference',
         name: 'productDetail',
         component: ProductDetailView,
-        meta: {requiresAuth: true}
+        meta: { requiresAuth: true }
+    },
+    {
+        path: '/produit/:reference/update',
+        name: 'productUpdate',
+        component: ProductUpdateView,
+        meta: { requiresAuth: true }
     },
     {
         path: '/about',
@@ -131,37 +152,37 @@ const adminRoutes = [
         path: '/admin',
         name: 'adminDashboard',
         component: DashboardView,
-        meta: {requiresAuth: true, requiresAdminAccess: true}
+        meta: { requiresAuth: true, requiresAdminAccess: true }
     },
     {
         path: '/admin/users',
         name: 'UsersView',
         component: UsersView,
-        meta: {requiresAuth: true, requiresAdminAccess: true},
+        meta: { requiresAuth: true, requiresAdminAccess: true },
     },
     {
         path: '/admin/users',
         name: 'UsersView',
         component: UsersView,
-        meta: {requiresAuth: true, requiresAdminAccess: true},
+        meta: { requiresAuth: true, requiresAdminAccess: true },
     },
     {
         path: '/admin/users/:userId(\\d+)',
         name: 'adminUserDetails',
         component: UsersDetails,
-        meta: {requiresAuth: true, requiresAdminAccess: true},
+        meta: { requiresAuth: true, requiresAdminAccess: true },
     },
     {
         path: '/admin/users/edit/:userId(\\d+)',
         name: 'editUser',
         component: EditUserView,
-        meta: {requiresAuth: true, requiresAdminAccess: true},
+        meta: { requiresAuth: true, requiresAdminAccess: true },
     },
     {
         path: '/admin/users/pending',
         name: 'adminPendingUsers',
         component: PendingMerchants,
-        meta: {requiresAuth: true, requiresAdminAccess: true},
+        meta: { requiresAuth: true, requiresAdminAccess: true },
     },
 ]
 
@@ -170,13 +191,13 @@ const merchantRoutes = [
         path: '/merchant',
         name: 'merchant',
         component: DashboardMerchant,
-        meta: {requiresAuth: true, requiresMerchantAccess: true}
+        meta: { requiresAuth: true, requiresMerchantAccess: true }
     },
     {
         path: '/merchant/setup',
         name: 'setupMerchant',
         component: SetupMerchant,
-        meta: {requiresAuth: true, requiresMerchantAccess: true}
+        meta: { requiresAuth: true, requiresMerchantAccess: true }
     },
 ];
 

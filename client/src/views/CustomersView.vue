@@ -6,6 +6,8 @@ import SideBar from "@/components/SideBar.vue";
 import NavBar from "@/components/NavBar.vue";
 import Table from "@/components/Table.vue";
 import moment from "moment";
+import router from "@/router";
+import Dropdown from "@/components/Dropdown.vue";
 
 onMounted(async () => {
   await getCustomers()
@@ -66,6 +68,7 @@ async function getCustomers () {
               <th scope="col" class="px-6 py-3">Email</th>
               <th scope="col" class="px-6 py-3">Moyen de paiement par défaut</th>
               <th scope="col" class="px-6 py-3">Crée le</th>
+              <th scope="col" class="px-6 py-3 text-center">Actions</th>
             </tr>
           </template>
           <template #tbody>
@@ -88,9 +91,19 @@ async function getCustomers () {
               <td class="px-6 py-4">
                 {{ moment(customer.created_at).format('LLLL') }}
               </td>
+              <td class="text-center">
+                <Dropdown
+                  :actions="[
+                    { label: 'Voir', onClick: () => router.push({ name: 'customerDetail', params: { 'id': customer.id } }) },
+                    { label: 'Modifier', divider: true },
+                    { label: 'Supprimer', textColor: 'text-red-600 font-bold' }
+                  ]"
+                  :dropdownId="customer.id"
+                />
+              </td>
             </tr>
             <tr class="bg-white border-b" v-if="!data.customers.length">
-              <th colspan="4" scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap text-center">
+              <th colspan="5" scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap text-center">
                 Aucun client
               </th>
             </tr>
