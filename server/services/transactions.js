@@ -56,11 +56,12 @@ module.exports = function TransactionService() {
         validateData(data);
 
         const createdTransaction = await Transaction.create(data);
+
         await Operation.create({
           type: "capture",
           amount: data.amount,
           currency: data.currency,
-          status: "pending",
+          status: data.status,
           transaction_id: createdTransaction.id,
         });
 
