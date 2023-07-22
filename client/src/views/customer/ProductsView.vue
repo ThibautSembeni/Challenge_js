@@ -63,11 +63,9 @@ async function addToCart(product) {
     const existingCartId = await getCartIdByUser()
     if (existingCartId) {
       cartId = existingCartId
-      console.log('cartId1', cartId)
     } else {
       const newCart = await createCart(product.price * product.quantity, user)
       cartId = newCart.id
-      console.log('cartId2', cartId)
     }
 
     const response = await fetch(`${import.meta.env.VITE_API_URL}/cart/add`, {

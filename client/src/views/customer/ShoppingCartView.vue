@@ -1,9 +1,9 @@
 <script setup>
-import { ref, reactive, computed, onMounted } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { getCurrentUser } from '../../services/auth'
 import NavBar from '../../components/NavBar.vue'
 
-const cartItems = reactive([])
+const cartItems = ref([])
 const customerAddress = ref('')
 const customerCity = ref('')
 const customerPostalCode = ref('')
@@ -13,7 +13,7 @@ const currentUser = getCurrentUser()
 const user = currentUser.id
 
 const subtotal = computed(() => {
-  return cartItems.reduce((total, cartItem) => total + cartItem.price * cartItem.quantity, 0)
+  return cartItems.value.reduce((total, cartItem) => total + cartItem.price * cartItem.quantity, 0)
 })
 
 const shipping = computed(() => {
@@ -35,7 +35,7 @@ const removeItem = async (cartItem) => {
       }
     )
     if (response.status === 204) {
-      cartItems.filter((item) => item.id !== cartItem.id)
+      await getCartByUser()
     } else {
       const data = await response.json()
       console.error('Error removing item:', data.error)
@@ -52,8 +52,9 @@ async function getCartByUser() {
       'Content-type': 'application/json'
     }
   })
+  cartItems.value = []
   const data = await response.json()
-  cartItems.push(...data[0].cart_items)
+  cartItems.value.push(...data[0].cart_items)
 }
 
 onMounted(async () => {
