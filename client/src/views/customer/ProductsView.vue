@@ -1,9 +1,10 @@
 <script setup>
-import { reactive, onMounted } from 'vue'
+import { ref, onMounted } from 'vue'
 import NavBar from '../../components/NavBar.vue'
 import { getCurrentUser } from '../../services/auth'
+import httpClient from '../../services/httpClient'
 
-const products = reactive([])
+const products = ref([])
 const currentUser = getCurrentUser()
 const user = currentUser.id
 let cartId = null
@@ -29,8 +30,10 @@ async function getCartIdByUser() {
     const data = await response.json()
     if (data.length > 0) {
       cartId = data[0].id
+      return cartId
     }
-    return cartId
+
+    return null
   } catch (error) {
     console.error('Error fetching cart:', error)
   }
@@ -49,7 +52,7 @@ async function createCart(totalPrice, userId) {
       })
     })
     const data = await response.json()
-    return data.id
+    return data
   } catch (error) {
     console.error('Error creating cart:', error)
   }
@@ -57,14 +60,14 @@ async function createCart(totalPrice, userId) {
 
 async function addToCart(product) {
   try {
-    if (cartId === null) {
-      const existingCartId = await getCartIdByUser()
-      if (existingCartId) {
-        cartId = existingCartId
-      } else {
-        const newCart = await createCart(product.price * product.quantity, user)
-        cartId = newCart.id
-      }
+    const existingCartId = await getCartIdByUser()
+    if (existingCartId) {
+      cartId = existingCartId
+      console.log('cartId1', cartId)
+    } else {
+      const newCart = await createCart(product.price * product.quantity, user)
+      cartId = newCart.id
+      console.log('cartId2', cartId)
     }
 
     const response = await fetch(`${import.meta.env.VITE_API_URL}/cart/add`, {
@@ -79,6 +82,7 @@ async function addToCart(product) {
       })
     })
     if (response.status === 200) {
+      await getProducts()
       console.log('Item added to cart')
     } else {
       const data = await response.json()
@@ -89,20 +93,18 @@ async function addToCart(product) {
   }
 }
 
+async function getProducts() {
+  const response = await httpClient.get('/products')
+  products.value = []
+  response.data.forEach((product) => {
+    product.quantity = 0
+    products.value.push(product)
+  })
+}
+
 onMounted(async () => {
   try {
-    const response = await fetch(`${import.meta.env.VITE_API_URL}/products`, {
-      method: 'GET',
-      headers: {
-        'Content-type': 'application/json',
-        Authorization: 'Bearer ' + localStorage.getItem('access_token')
-      }
-    })
-    const data = await response.json()
-    data.forEach((product) => {
-      product.quantity = 0
-      products.push(product)
-    })
+    await getProducts()
   } catch (error) {
     console.error('Error fetching products:', error)
   }
