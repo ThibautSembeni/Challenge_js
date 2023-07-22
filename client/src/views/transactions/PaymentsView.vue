@@ -1,6 +1,6 @@
 <script setup>
 import { computed, onMounted, onUnmounted, reactive, ref } from 'vue'
-import '../assets/index.css'
+import '../../assets/index.css'
 import SideBar from '@/components/SideBar.vue'
 import NavBar from '@/components/NavBar.vue'
 import moment from 'moment'
@@ -184,7 +184,7 @@ const filteredPaymentsAll = computed(() => {
           </template>
           <template #tbody>
             <tr v-for="payment in filteredPaymentsAll" :key="payment.id" class="bg-white border-b">
-              <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
+              <td scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
                 <router-link
                   :to="{ name: 'paymentDetail', params: { reference: payment.reference } }"
                 >
@@ -207,7 +207,7 @@ const filteredPaymentsAll = computed(() => {
                     }}</span
                   >
                 </router-link>
-              </th>
+              </td>
               <td class="px-6 py-4">
                 Achat par :
                 {{ payment.client_info.name }}
@@ -257,50 +257,41 @@ const filteredPaymentsAll = computed(() => {
               </th>
             </tr>
           </template>
-          <template #tfoot>
-            <tr>
-              <td colspan="3" class="px-6 py-4">
-                <span
-                  >Résultats
-                  {{ data.pager.currentPage * data.pager.perPage - data.pager.perPage + 1 }}–{{
-                    data.pager.currentPage * data.pager.perPage
-                  }}
-                  affichés sur {{ data.payments.length }} résultats</span
-                >
-              </td>
-              <td class="px-6 py-4 flex flex-end space-x-2 w-full">
-                <button
-                  @click="data.pager.currentPage--"
-                  :disabled="data.pager.currentPage === 1"
-                  :class="`border border-black-700 font-medium rounded-lg text-sm px-2 py-1 text-center ${
-                    data.pager.currentPage === 1 ? 'border-gray-200 text-gray-300' : ''
-                  }`"
-                >
-                  précédent
-                </button>
-                <button
-                  @click="data.pager.currentPage++"
-                  :disabled="
-                    data.pager.currentPage * data.pager.perPage - data.pager.perPage + 1 ===
-                      data.payments.length ||
-                    data.pager.currentPage * data.pager.perPage - data.pager.perPage + 1 <=
-                      data.payments.length
-                  "
-                  :class="`border border-black-700 font-medium rounded-lg text-sm px-2 py-1 text-center ${
-                    data.pager.currentPage * data.pager.perPage - data.pager.perPage + 1 ===
-                      data.payments.length ||
-                    data.pager.currentPage * data.pager.perPage - data.pager.perPage + 1 <=
-                      data.payments.length
-                      ? 'border-gray-200 text-gray-300'
-                      : ''
-                  }`"
-                >
-                  suivant
-                </button>
-              </td>
-            </tr>
-          </template>
         </Table>
+        <div class="w-full px-6 py-4 flex justify-between items-center">
+          <span class="w-max"
+            >Résultats {{ data.pager.currentPage * data.pager.perPage - data.pager.perPage + 1 }}–{{
+              data.pager.currentPage * data.pager.perPage
+            }}
+            affichés sur {{ data.payments.length }} résultats</span
+          >
+          <div class="px-6 py-4 flex space-x-2 w-max">
+            <button
+              @click="data.pager.currentPage--"
+              :disabled="data.pager.currentPage === 1"
+              :class="`border border-black-700 font-medium rounded-lg text-sm px-2 py-1 text-center ${
+                data.pager.currentPage === 1 ? 'border-gray-200 text-gray-300' : ''
+              }`"
+            >
+              précédent
+            </button>
+            <button
+              @click="data.pager.currentPage++"
+              :disabled="
+                data.pager.currentPage * data.pager.perPage - data.pager.perPage + 1 ===
+                  data.payments.length || filteredPaymentsAll.length < data.pager.perPage
+              "
+              :class="`border border-black-700 font-medium rounded-lg text-sm px-2 py-1 text-center ${
+                data.pager.currentPage * data.pager.perPage - data.pager.perPage + 1 ===
+                  data.payments.length || filteredPaymentsAll.length < data.pager.perPage
+                  ? 'border-gray-200 text-gray-300'
+                  : ''
+              }`"
+            >
+              suivant
+            </button>
+          </div>
+        </div>
       </div>
 
       <div class="relative overflow-x-auto" v-if="data.currentTab === 'Toutes les transactions'">

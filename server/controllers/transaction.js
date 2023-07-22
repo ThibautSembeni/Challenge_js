@@ -104,7 +104,7 @@ module.exports = function transactionController(TransactionService, options = {}
                 const results = await TransactionService.create(transaction);
                 messages.push(results);
                 notify({ id: results.id, name: "transaction", data: results }, false, subscribers, eventsSent);
-                res.status(201).json(transaction);
+                res.status(201).json(results);
             } catch (error) {
                 console.error(error);
                 next(error);
