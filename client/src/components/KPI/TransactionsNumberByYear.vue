@@ -87,12 +87,18 @@ function onSelectDate(date) {
 </script>
 
 <template>
-  <VueDatePicker
-    class="max-w-xs"
-    v-model="dateInput"
-    year-picker
-    @update:model-value="onSelectDate"
-  />
-
-  <ChartGraph :config="config" :loading="false" :width="width" :height="height" />
+  <article>
+    <div class="flex items-center space-x-2">
+      <label for="date" class="block text-sm font-medium text-gray-700"
+        >Filtrer sur l'année :</label
+      >
+      <VueDatePicker
+        class="max-w-xs"
+        v-model="dateInput"
+        year-picker
+        @update:model-value="onSelectDate"
+      />
+    </div>
+    <ChartGraph :config="config" :loading="false" :width="width" :height="height" />
+  </article>
 </template>

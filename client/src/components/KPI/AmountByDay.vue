@@ -116,12 +116,17 @@ async function handleDateChange(event) {
 </script>
 
 <template>
-  <VueDatePicker
-    class="max-w-xs"
-    v-model="inputData.date"
-    @update:model-value="handleDateChange"
-    format="yyyy-MM-dd"
-  />
+  <article>
+    <div class="flex items-center space-x-2">
+      <label for="date" class="block text-sm font-medium text-gray-700">Filtrer le:</label>
+      <VueDatePicker
+        class="max-w-xs"
+        v-model="inputData.date"
+        @update:model-value="handleDateChange"
+        format="yyyy-MM-dd"
+      />
+    </div>
 
-  <ChartGraph :config="config" :loading="false" :width="width" :height="height" />
+    <ChartGraph :config="config" :loading="false" :width="width" :height="height" />
+  </article>
 </template>

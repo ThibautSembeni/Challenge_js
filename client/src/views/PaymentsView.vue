@@ -1,5 +1,5 @@
 <script setup>
-import { computed, onMounted, reactive, watch } from 'vue'
+import { computed, onMounted, onUnmounted, reactive, ref } from 'vue'
 import '../assets/index.css'
 import SideBar from '@/components/SideBar.vue'
 import NavBar from '@/components/NavBar.vue'
@@ -13,6 +13,12 @@ const user = store.state.user
 onMounted(async () => {
   await getTransactions()
   await subscribeToSSETransaction()
+})
+
+onUnmounted(async () => {
+  if (eventSource.value) {
+    eventSource.value.close()
+  }
 })
 
 const defaultValue = {
@@ -30,6 +36,8 @@ const data = reactive({
   ...defaultValue,
   payments: {}
 })
+
+const eventSource = ref(null)
 
 async function getTransactions() {
   const response = await fetch(`${import.meta.env.VITE_API_URL}/transactions`, {
@@ -49,10 +57,10 @@ async function subscribeToSSETransaction() {
   if (localStorage.getItem('last-id')) {
     params.set('last-id', localStorage.getItem('last-id'))
   }
-  const eventSource = new EventSource(
+  eventSource.value = new EventSource(
     `${import.meta.env.VITE_API_URL}/transactions/transaction/subscribe?` + params
   )
-  bindEventSource(eventSource)
+  bindEventSource(eventSource.value)
 }
 
 function bindEventSource(eventSource) {

@@ -12,6 +12,10 @@ const user = store.state.user
   <SideBar />
   <div class="sm:ml-64">
     <NavBar />
-    <DashboardKPIS />
+    <div class="p-4 lg:p-10">
+      <h1 class="text-3xl font-bold p-4"><i class="fa-solid fa-house"></i> Rapport Analytique</h1>
+      <div class="border-b border-gray-200 w-full"></div>
+      <DashboardKPIS />
+    </div>
   </div>
 </template>
