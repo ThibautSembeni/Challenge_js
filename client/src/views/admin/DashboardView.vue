@@ -8,6 +8,11 @@ import NavBar from '@/components/NavBar.vue'
   <div class="sm:ml-64">
     <NavBar />
     Hello Admin
-    Voir les demandes marchand <RouterLink to="/admin/users">hhiihihi</RouterLink>
+    Voir les demandes marchand
+
+    <br>
+    <br>
+    <RouterLink to="/admin/users">Users View</RouterLink>
+    <RouterLink to="/admin/users/pending">Merchant View</RouterLink>
   </div>
 </template>

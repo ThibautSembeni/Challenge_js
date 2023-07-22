@@ -23,26 +23,22 @@ import SetupMerchant from "@/views/merchant/SetupMerchant.vue";
 import ProfileView from "@/views/auth/ProfileView.vue";
 import PaymentCreateView from "@/views/transactions/PaymentCreateView.vue";
 import PaymentUpdateView from "@/views/transactions/PaymentUpdateView.vue";
+import ForgotPassword from "@/views/auth/ForgotPassword.vue";
+import ResetPassword from "@/views/auth/ResetPassword.vue";
 import ShoppingCartView from '@/views/ShoppingCartView.vue';
 
-const customerRoutes = [
+const authRoutes = [
     {
-        path: '/',
-        name: 'home',
-        component: HomeView,
-        meta: { requiresAuth: true }
-    },
-    {
-        path: '/login',
+        path: '/auth/login',
         name: 'login',
         component: LoginView,
         meta: { requiresAuth: false }
     },
     {
-        path: '/profile',
-        name: 'profile',
-        component: ProfileView,
-        meta: { requiresAuth: false }
+        path: '/auth/register',
+        name: 'register',
+        component: () => import('../views/auth/RegisterView.vue'),
+        meta: {requiresAuth: false}
     },
     {
         path: '/logout',
@@ -51,10 +47,32 @@ const customerRoutes = [
         meta: { requiresAuth: false }
     },
     {
-        path: '/register',
-        name: 'register',
-        component: () => import('../views/auth/RegisterView.vue'),
-        meta: { requiresAuth: false }
+        path: '/auth/forgot-password',
+        name: 'forgotPassword',
+        component: ForgotPassword,
+        meta: {requiresAuth: true}
+    },
+    {
+        path: '/auth/reset-password/:token',
+        name: 'resetPassword',
+        component: ResetPassword,
+        meta: {requiresAuth: true}
+    },
+]
+
+const customerRoutes = [
+    {
+        path: '/',
+        name: 'home',
+        component: HomeView,
+        meta: {requiresAuth: true}
+    },
+
+    {
+        path: '/profile',
+        name: 'profile',
+        component: ProfileView,
+        meta: {requiresAuth: false}
     },
     {
         path: '/paiements',
@@ -197,6 +215,7 @@ const errorRoutes = [
 ];
 
 const routes = [
+    ...authRoutes,
     ...adminRoutes,
     ...merchantRoutes,
     ...customerRoutes,

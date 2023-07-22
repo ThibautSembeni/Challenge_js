@@ -16,7 +16,7 @@ export async function canUserAccess(route) {
         if (isLoggedIn() === true) {
             return true
         }
-        return '/login'
+        return '/auth/login'
     }
     return true
 }

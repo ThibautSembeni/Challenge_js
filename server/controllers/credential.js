@@ -21,5 +21,11 @@ module.exports = function credentialController(CredentialService) {
                 }
             }
         },
+        regenerate: async (req, res, next) => {
+            const user = req.user
+            const deleteCredentials = await CredentialService.delete({ user_id:user.id });
+            const credentials = await CredentialService.create({ user_id:user.id });
+            res.json(credentials)
+        }
     };
 };

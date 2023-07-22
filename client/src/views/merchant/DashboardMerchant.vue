@@ -3,9 +3,13 @@ import SideBar from '@/components/SideBar.vue'
 import NavBar from '@/components/NavBar.vue'
 import store from "@/stores/store";
 import router from "@/router";
+import {getCurrentUser} from "@/services/auth";
+import {onMounted} from "vue";
+import {getCurrentCredentials} from "@/services/credentials";
 
-const credentials = store.state.credentials
-if (credentials === null) {
+
+const currentCredentials =  getCurrentCredentials()
+if (currentCredentials === null) {
   router.push(`/merchant/setup`);
 }
 </script>
@@ -20,7 +24,7 @@ if (credentials === null) {
     <h3>
       credentials: merchant
       <pre>
-        {{ credentials }}
+        {{currentCredentials}}
       </pre>
     </h3>
   </div>

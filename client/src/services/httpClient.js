@@ -79,14 +79,29 @@ httpClient.get = async function (url, config) {
 };
 
 httpClient.post = async function (url, data, config) {
+    const headers = { 'Content-Type': 'application/json', ...config?.headers };
+    config = {
+        ...config,
+        headers
+    };
     return makeRequest('post', url, data, config);
 };
 
 httpClient.put = async function (url, data, config) {
+    const headers = { 'Content-Type': 'application/json', ...config?.headers };
+    config = {
+        ...config,
+        headers
+    };
     return makeRequest('put', url, data, config);
 };
 
 httpClient.patch = async function (url, data, config) {
+    const headers = { 'Content-Type': 'application/json', ...config?.headers };
+    config = {
+        ...config,
+        headers
+    };
     return makeRequest('patch', url, data, config);
 };
 
