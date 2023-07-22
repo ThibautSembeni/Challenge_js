@@ -1,8 +1,6 @@
 <script setup>
-import { computed } from 'vue'
 import SideBar from '@/components/SideBar.vue'
 import NavBar from '@/components/NavBar.vue'
-import store from '@/stores/store'
 import { getCurrentUser } from '@/services/auth'
 import router from '@/router'
 const user = getCurrentUser()
