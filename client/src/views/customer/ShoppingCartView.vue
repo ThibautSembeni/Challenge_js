@@ -4,8 +4,10 @@ import { getCurrentUser } from '../../services/auth'
 import NavBar from '../../components/NavBar.vue'
 
 const cartItems = reactive([])
-const customerFacturationAddress = ref('')
-const customerDeliveryAddress = ref('')
+const customerAddress = ref('')
+const customerCity = ref('')
+const customerPostalCode = ref('')
+const customerCountry = ref('')
 
 const currentUser = getCurrentUser()
 const user = currentUser.id
@@ -43,16 +45,20 @@ const removeItem = async (cartItem) => {
   }
 }
 
+async function getCartByUser() {
+  const response = await fetch(`${import.meta.env.VITE_API_URL}/cart/user/${user}`, {
+    method: 'GET',
+    headers: {
+      'Content-type': 'application/json'
+    }
+  })
+  const data = await response.json()
+  cartItems.push(...data[0].cart_items)
+}
+
 onMounted(async () => {
   try {
-    const response = await fetch(`${import.meta.env.VITE_API_URL}/cart/user/${user}`, {
-      method: 'GET',
-      headers: {
-        'Content-type': 'application/json'
-      }
-    })
-    const data = await response.json()
-    cartItems.push(...data[0].cart_items)
+    await getCartByUser()
   } catch (error) {
     console.error('Error fetching cart items:', error)
   }
@@ -103,26 +109,68 @@ onMounted(async () => {
     <div class="mt-8">
       <h2 class="text-3xl font-semibold mb-4">Informations Client</h2>
       <form class="grid grid-cols-1 sm:grid-cols-2 gap-6">
-        <div class="flex flex-col">
-          <label class="text-lg font-semibold text-gray-800 mb-2">Adresse de facturation:</label>
-          <input
-            class="border rounded py-2 px-4 focus:outline-none focus:border-blue-500"
-            type="text"
-            v-model="customerFacturationAddress"
-            required
-            placeholder="Entrez votre nom complet"
-          />
+        <div class="mb-4">
+          <label class="block text-lg font-semibold text-gray-800 mb-2">Adresse:</label>
+          <div class="relative">
+            <input
+              class="w-full border rounded py-3 px-4 pl-12 focus:outline-none focus:border-blue-500"
+              type="text"
+              v-model="customerAddress"
+              required
+              placeholder="Entrez votre adresse de facturation et de livraison"
+            />
+            <i
+              class="absolute left-4 top-1/2 transform -translate-y-1/2 fas fa-map-marker-alt text-gray-400"
+            ></i>
+          </div>
         </div>
 
-        <div class="flex flex-col">
-          <label class="text-lg font-semibold text-gray-800 mb-2">Adresse de livraison:</label>
-          <input
-            class="border rounded py-2 px-4 focus:outline-none focus:border-blue-500"
-            type="text"
-            v-model="customerDeliveryAddress"
-            required
-            placeholder="Entrez votre adresse"
-          />
+        <div class="mb-4">
+          <label class="block text-lg font-semibold text-gray-800 mb-2">Ville:</label>
+          <div class="relative">
+            <input
+              class="w-full border rounded py-3 px-4 pl-12 focus:outline-none focus:border-blue-500"
+              type="text"
+              v-model="customerCity"
+              required
+              placeholder="Entrez votre ville"
+            />
+            <i
+              class="absolute left-4 top-1/2 transform -translate-y-1/2 fas fa-city text-gray-400"
+            ></i>
+          </div>
+        </div>
+
+        <div class="mb-4">
+          <label class="block text-lg font-semibold text-gray-800 mb-2">Code postal:</label>
+          <div class="relative">
+            <input
+              class="w-full border rounded py-3 px-4 pl-12 focus:outline-none focus:border-blue-500"
+              type="text"
+              v-model="customerPostalCode"
+              required
+              placeholder="Entrez votre code postal"
+            />
+            <i
+              class="absolute left-4 top-1/2 transform -translate-y-1/2 fas fa-envelope text-gray-400"
+            ></i>
+          </div>
+        </div>
+
+        <div class="mb-4">
+          <label class="block text-lg font-semibold text-gray-800 mb-2">Pays:</label>
+          <div class="relative">
+            <input
+              class="w-full border rounded py-3 px-4 pl-12 focus:outline-none focus:border-blue-500"
+              type="text"
+              v-model="customerCountry"
+              required
+              placeholder="Entrez votre pays"
+            />
+            <i
+              class="absolute left-4 top-1/2 transform -translate-y-1/2 fas fa-globe text-gray-400"
+            ></i>
+          </div>
         </div>
 
         <button
