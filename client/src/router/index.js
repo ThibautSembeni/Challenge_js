@@ -26,6 +26,8 @@ import PaymentUpdateView from "@/views/transactions/PaymentUpdateView.vue";
 import ForgotPassword from "@/views/auth/ForgotPassword.vue";
 import ResetPassword from "@/views/auth/ResetPassword.vue";
 import ShoppingCartView from '@/views/ShoppingCartView.vue';
+import ProductsFrontView from '@/views/customer/ProductsView.vue'
+
 
 const authRoutes = [
     {
@@ -61,90 +63,89 @@ const authRoutes = [
 ]
 
 const customerRoutes = [
-    {
-        path: '/',
-        name: 'home',
-        component: HomeView,
-        meta: {requiresAuth: true}
-    },
-
-    {
-        path: '/profile',
-        name: 'profile',
-        component: ProfileView,
-        meta: {requiresAuth: true}
-    },
-    {
-        path: '/paiements',
-        name: 'payments',
-        component: PaymentView,
-        meta: { requiresAuth: true }
-    },
-    {
-        path: '/paiement/ajouter',
-        name: 'transactionAdd',
-        component: PaymentCreateView,
-        meta: {requiresAuth: true}
-    },
-    {
-        path: '/paiement/:reference',
-        name: 'paymentDetail',
-        component: PaymentDetailView,
-        meta: { requiresAuth: true }
-    },
-    {
-        path: '/paiement/:reference/update',
-        name: 'paymentUpdate',
-        component: PaymentUpdateView,
-        meta: { requiresAuth: true }
-    },
-    {
-        path: '/clients',
-        name: 'customers',
-        component: CustomersView,
-        meta: { requiresAuth: true }
-    },
-    {
-        path: '/client/:id',
-        name: 'customerDetail',
-        component: CustomerDetailView,
-        meta: { requiresAuth: true }
-    },
-    {
-        path: '/produits',
-        name: 'products',
-        component: ProductsView,
-        meta: { requiresAuth: true }
-    },
-    {
-        path: '/produit/ajouter',
-        name: 'productAdd',
-        component: ProductCreateView,
-        meta: { requiresAuth: true }
-    },
-    {
-        path: '/produit/:reference',
-        name: 'productDetail',
-        component: ProductDetailView,
-        meta: { requiresAuth: true }
-    },
-    {
-        path: '/produit/:reference/update',
-        name: 'productUpdate',
-        component: ProductUpdateView,
-        meta: { requiresAuth: true }
-    },
-    {
-        path: '/about',
-        name: 'about',
-        component: () => import('../views/AboutView.vue')
-    },
-    {
-      path: '/cart',
-      name: 'cart',
-      component: ShoppingCartView,
-      meta: { requiresAuth: false }
-    }
+  {
+    path: '/',
+    name: 'home',
+    component: HomeView,
+    meta: { requiresAuth: true }
+  },
+  {
+      path: '/profile',
+      name: 'profile',
+      component: ProfileView,
+      meta: {requiresAuth: true}
+  },
+  {
+      path: '/paiements',
+      name: 'payments',
+      component: PaymentView,
+      meta: { requiresAuth: true }
+  },
+  {
+      path: '/paiement/ajouter',
+      name: 'transactionAdd',
+      component: PaymentCreateView,
+      meta: {requiresAuth: true}
+  },
+  {
+      path: '/paiement/:reference',
+      name: 'paymentDetail',
+      component: PaymentDetailView,
+      meta: { requiresAuth: true }
+  },
+  {
+      path: '/paiement/:reference/update',
+      name: 'paymentUpdate',
+      component: PaymentUpdateView,
+      meta: { requiresAuth: true }
+  },
+  {
+      path: '/clients',
+      name: 'customers',
+      component: CustomersView,
+      meta: { requiresAuth: true }
+  },
+  {
+      path: '/client/:id',
+      name: 'customerDetail',
+      component: CustomerDetailView,
+      meta: { requiresAuth: true }
+  },
+  {
+      path: '/produits',
+      name: 'products',
+      component: ProductsView,
+      meta: { requiresAuth: true }
+  },
+  {
+      path: '/produit/ajouter',
+      name: 'productAdd',
+      component: ProductCreateView,
+      meta: { requiresAuth: true }
+  },
+  {
+      path: '/produit/:reference',
+      name: 'productDetail',
+      component: ProductDetailView,
+      meta: { requiresAuth: true }
+  },
+  {
+      path: '/produit/:reference/update',
+      name: 'productUpdate',
+      component: ProductUpdateView,
+      meta: { requiresAuth: true }
+  },
+  {
+      path: '/about',
+      name: 'about',
+      component: () => import('../views/AboutView.vue')
+  },
+  {
+    path: '/cart',
+    name: 'cart',
+    component: ShoppingCartView,
+    meta: { requiresAuth: false }
+  }
 ]
 
 const adminRoutes = [
@@ -202,39 +203,32 @@ const merchantRoutes = [
 ];
 
 const errorRoutes = [
-    {
-        path: '/404',
-        name: '404',
-        component: ForbiddenView
-    },
-    {
-        path: '/:catchAll(.*)',
-        name: 'notFound',
-        component: NotFoundView
-    },
-];
-
-const routes = [
-    ...authRoutes,
-    ...adminRoutes,
-    ...merchantRoutes,
-    ...customerRoutes,
-    ...errorRoutes,
+  {
+    path: '/404',
+    name: '404',
+    component: ForbiddenView
+  },
+  {
+    path: '/:catchAll(.*)',
+    name: 'notFound',
+    component: NotFoundView
+  }
 ]
 
+const routes = [...authRoutes, ...adminRoutes, ...merchantRoutes, ...customerRoutes, ...errorRoutes]
+
 const router = createRouter({
-    history: createWebHistory(import.meta.env.BASE_URL),
-    routes
+  history: createWebHistory(import.meta.env.BASE_URL),
+  routes
 })
 
 router.beforeEach(async (to, from, next) => {
-    const canAccess = await canUserAccess(to)
-    if (canAccess !== true) {
-        next(canAccess);
-    } else {
-        next();
-    }
+  const canAccess = await canUserAccess(to)
+  if (canAccess !== true) {
+    next(canAccess)
+  } else {
+    next()
+  }
 })
-
 
 export default router
