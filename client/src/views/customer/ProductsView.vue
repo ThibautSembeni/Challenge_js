@@ -6,6 +6,7 @@ import { getCurrentUser } from '../../services/auth'
 const products = reactive([])
 const currentUser = getCurrentUser()
 const user = currentUser.id
+let cartId = null
 
 const decrement = (product) => {
   if (product.quantity > 0) {
@@ -26,15 +27,46 @@ async function getCartIdByUser() {
       }
     })
     const data = await response.json()
-    return data[0].id
+    if (data.length > 0) {
+      cartId = data[0].id
+    }
+    return cartId
   } catch (error) {
     console.error('Error fetching cart:', error)
   }
 }
 
+async function createCart(totalPrice, userId) {
+  try {
+    const response = await fetch(`${import.meta.env.VITE_API_URL}/cart`, {
+      method: 'POST',
+      headers: {
+        'Content-type': 'application/json'
+      },
+      body: JSON.stringify({
+        total_price: totalPrice,
+        user_id: userId
+      })
+    })
+    const data = await response.json()
+    return data.id
+  } catch (error) {
+    console.error('Error creating cart:', error)
+  }
+}
+
 async function addToCart(product) {
   try {
-    const cartId = await getCartIdByUser()
+    if (cartId === null) {
+      const existingCartId = await getCartIdByUser()
+      if (existingCartId) {
+        cartId = existingCartId
+      } else {
+        const newCart = await createCart(product.price * product.quantity, user)
+        cartId = newCart.id
+      }
+    }
+
     const response = await fetch(`${import.meta.env.VITE_API_URL}/cart/add`, {
       method: 'POST',
       headers: {
