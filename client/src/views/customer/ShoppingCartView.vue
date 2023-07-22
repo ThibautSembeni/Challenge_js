@@ -10,8 +10,16 @@ const customerDeliveryAddress = ref('')
 const currentUser = getCurrentUser()
 const user = currentUser.id
 
-const total = computed(() => {
+const subtotal = computed(() => {
   return cartItems.reduce((total, cartItem) => total + cartItem.price * cartItem.quantity, 0)
+})
+
+const shipping = computed(() => {
+  return subtotal.value > 0 ? 5 : 0
+})
+
+const total = computed(() => {
+  return subtotal.value + shipping.value
 })
 
 const removeItem = async (cartItem) => {
@@ -127,7 +135,10 @@ onMounted(async () => {
     </div>
 
     <div class="mt-8">
-      <h2 class="text-3xl font-semibold">Montant total de la commande: {{ total }}€</h2>
+      <h2 class="text-3xl font-semibold">Montant de la commande</h2>
+      <p class="text-xl mt-2">Sous-total: {{ subtotal }}€</p>
+      <p class="text-xl">Frais de port: {{ shipping }}€</p>
+      <p class="text-2xl font-semibold mt-4">Total: {{ total }}€</p>
     </div>
   </main>
 </template>
