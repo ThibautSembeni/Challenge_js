@@ -22,7 +22,8 @@ import SetupMerchant from '@/views/merchant/SetupMerchant.vue'
 import ProfileView from '@/views/auth/ProfileView.vue'
 import ForgotPassword from '@/views/auth/ForgotPassword.vue'
 import ResetPassword from '@/views/auth/ResetPassword.vue'
-import ShoppingCartView from '@/views/ShoppingCartView.vue'
+import ShoppingCartView from '@/views/customer/ShoppingCartView.vue'
+import ProductsFrontView from '@/views/customer/ProductsView.vue'
 
 const authRoutes = [
   {
@@ -119,7 +120,13 @@ const customerRoutes = [
     component: () => import('../views/AboutView.vue')
   },
   {
-    path: '/cart',
+    path: '/products',
+    name: 'products',
+    component: ProductsFrontView,
+    meta: { requiresAuth: false }
+  },
+  {
+    path: '/panier',
     name: 'cart',
     component: ShoppingCartView,
     meta: { requiresAuth: true }

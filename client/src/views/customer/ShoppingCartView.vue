@@ -1,7 +1,7 @@
 <script setup>
 import { ref, reactive, computed, onMounted } from 'vue'
-import { getCurrentUser } from '../services/auth'
-import NavBar from '../components/NavBar.vue'
+import { getCurrentUser } from '../../services/auth'
+import NavBar from '../../components/NavBar.vue'
 
 const cartItems = reactive([])
 const customerFacturationAddress = ref('')
