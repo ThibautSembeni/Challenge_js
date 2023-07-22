@@ -1,5 +1,5 @@
 const UnauthorizedError = require("../errors/UnauthorizedError");
-const {getUserFromJWTToken} = require("../utils/user");
+const { getUserFromJWTToken } = require("../utils/user");
 
 module.exports = (req, res, next) => {
     if (!req.headers.authorization) {

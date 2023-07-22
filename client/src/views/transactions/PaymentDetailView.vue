@@ -9,31 +9,20 @@ import PaymentDetailLine from '@/components/Payment/PaymentDetailLine.vue'
 import FormatEuro from '@/components/Payment/FormatEuro.vue'
 import moment from 'moment'
 import Table from '@/components/Table.vue'
+import { getTransaction } from '@/services/transactions'
 
 onMounted(async () => {
-  await getTransaction()
+  await getTransactionById()
 })
 
 const payment = reactive({})
 const isLoading = ref(true)
 
-async function getTransaction() {
-  const response = await fetch(
-    `${import.meta.env.VITE_API_URL}/transactions/${useRoute().params.reference}`,
-    {
-      method: 'GET',
-      headers: {
-        'Content-type': 'application/json'
-      }
-    }
-  )
-  if (response.ok) {
-    const transaction = await response.json()
-    Object.assign(payment, transaction)
-    isLoading.value = false
-  }
+async function getTransactionById() {
+  const transaction = await getTransaction(useRoute().params.reference)
+  Object.assign(payment, transaction)
+  isLoading.value = false
 }
-console.log(payment)
 const formatEuro = (value, currency) => {
   return new Intl.NumberFormat('fr-FR', { style: 'currency', currency: currency }).format(value)
 }
@@ -50,7 +39,8 @@ const formatEuro = (value, currency) => {
           <router-link
             :to="{ name: 'payments' }"
             class="bg-blue-100 text-blue-800 text-sm font-medium ml-2 px-2.5 py-0.5 rounded-full mr-2"
-            ><i class="fa-solid fa-chevron-left mr-2"></i> Retour</router-link>
+            ><i class="fa-solid fa-chevron-left mr-2"></i> Retour</router-link
+          >
           <h1 class="uppercase"><i class="fa-solid fa-dollar-sign mr-2"></i> Chargement...</h1>
         </div>
       </div>
@@ -119,12 +109,11 @@ const formatEuro = (value, currency) => {
               <td class="p-3 border-r">{{ payment.client_info.name }}</td>
               <td class="p-3 border-r">
                 <span v-if="payment.billing_info.card_number">
-                  <i class="fa-brands fa-cc-visa mr-2"></i> <i class="fa-solid fa-ellipsis mr-2"></i>
+                  <i class="fa-brands fa-cc-visa mr-2"></i>
+                  <i class="fa-solid fa-ellipsis mr-2"></i>
                   {{ payment.billing_info.card_number.slice(-4) }}
                 </span>
-                <span v-else>
-                    Aucune carte
-                </span>
+                <span v-else> Aucune carte </span>
               </td>
               <td class="p-3">
                 <span
