@@ -1,9 +1,14 @@
 <script setup>
 import { ref, reactive, computed, onMounted } from 'vue'
+import { getCurrentUser } from '../services/auth'
+import NavBar from '../components/NavBar.vue'
 
 const cartItems = reactive([])
-const customerName = ref('')
-const customerAddress = ref('')
+const customerFacturationAddress = ref('')
+const customerDeliveryAddress = ref('')
+
+const currentUser = getCurrentUser()
+const user = currentUser.id
 
 const total = computed(() => {
   return cartItems.reduce((total, cartItem) => total + cartItem.price * cartItem.quantity, 0)
@@ -16,10 +21,7 @@ const removeItem = async (cartItem) => {
         cartItem.product.reference
       }`,
       {
-        method: 'DELETE',
-        headers: {
-          'Content-type': 'application/json'
-        }
+        method: 'DELETE'
       }
     )
     if (response.status === 204) {
@@ -35,7 +37,7 @@ const removeItem = async (cartItem) => {
 
 onMounted(async () => {
   try {
-    const response = await fetch(`${import.meta.env.VITE_API_URL}/cart/user/1`, {
+    const response = await fetch(`${import.meta.env.VITE_API_URL}/cart/user/${user}`, {
       method: 'GET',
       headers: {
         'Content-type': 'application/json'
@@ -50,7 +52,8 @@ onMounted(async () => {
 </script>
 
 <template>
-  <main class="container mx-auto p-8">
+  <NavBar />
+  <main class="container mx-auto p-12">
     <div class="flex justify-between items-center mb-6">
       <h2 class="text-3xl font-semibold">Mon Panier</h2>
       <span class="text-base text-gray-600">Les articles seront réservés pendant 30 minutes</span>
@@ -93,22 +96,22 @@ onMounted(async () => {
       <h2 class="text-3xl font-semibold mb-4">Informations Client</h2>
       <form class="grid grid-cols-1 sm:grid-cols-2 gap-6">
         <div class="flex flex-col">
-          <label class="text-lg font-semibold text-gray-800 mb-2">Nom:</label>
+          <label class="text-lg font-semibold text-gray-800 mb-2">Adresse de facturation:</label>
           <input
             class="border rounded py-2 px-4 focus:outline-none focus:border-blue-500"
             type="text"
-            v-model="customerName"
+            v-model="customerFacturationAddress"
             required
             placeholder="Entrez votre nom complet"
           />
         </div>
 
         <div class="flex flex-col">
-          <label class="text-lg font-semibold text-gray-800 mb-2">Adresse:</label>
+          <label class="text-lg font-semibold text-gray-800 mb-2">Adresse de livraison:</label>
           <input
             class="border rounded py-2 px-4 focus:outline-none focus:border-blue-500"
             type="text"
-            v-model="customerAddress"
+            v-model="customerDeliveryAddress"
             required
             placeholder="Entrez votre adresse"
           />
