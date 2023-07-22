@@ -85,7 +85,7 @@ const customerRoutes = [
         path: '/paiement/ajouter',
         name: 'transactionAdd',
         component: PaymentCreateView,
-        meta: {requiresAuth: true}
+        meta: {requiresAuth: false}
     },
     {
         path: '/paiement/:reference',

@@ -10,16 +10,19 @@ import router from "@/router";
 import Dropdown from "@/components/Dropdown.vue";
 import {deleteTransaction, getTransactions} from "@/services/transactions";
 
+
 onMounted(async () => {
   data.payments = await getTransactions()
   await subscribeToSSETransaction()
 })
 
+
+
 const defaultValue = {
   currentTab: 'Tous les paiements',
-  tabs: ['Tous les paiements', 'Litiges', 'Toutes les transactions'],
+  tabs: ['Tous les paiements'],
   currentFilterAll: 'Tous',
-  filtersAll: ['Tous', 'Réussi', 'En attente', 'Échoué'],
+
   pager: {
     currentPage: 1,
     perPage: 20
@@ -109,14 +112,14 @@ const filteredPaymentsAll = computed(() => {
 </script>
 
 <template>
-  <SideBar />
+  <SideBar/>
 
   <div class="sm:ml-64">
     <NavBar />
     <div class="p-4 lg:p-10">
 
       <div class="flex items-center">
-        <h1 class="text-3xl font-bold mr-3"><i class="fa-solid fa-dollar-sign mr-2"></i> Paiements</h1>
+        <h1 class="text-3xl font-bold mr-3">Transactions</h1>
 
         <router-link :to="{ name: 'transactionAdd' }" class="px-3 py-2 text-xs font-medium text-center inline-flex items-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300">Ajouter une transaction</router-link>
       </div>
@@ -137,9 +140,9 @@ const filteredPaymentsAll = computed(() => {
         </ul>
       </div>
 
-      <div class="relative overflow-x-auto" v-if="data.currentTab === 'Tous les paiements'">
+      <div class="relative overflow-x-auto" v-if="data.currentTab === ''">
         <div class="flex justify-end my-3">
-          <button
+          <!--<button
               v-for="filter in data.filtersAll"
               :key="filter"
               @click="data.currentFilterAll = filter"
@@ -154,7 +157,7 @@ const filteredPaymentsAll = computed(() => {
             >
               {{ filter }}
             </span>
-          </button>
+          </button>-->
         </div>
 
         <Table>
@@ -269,32 +272,7 @@ const filteredPaymentsAll = computed(() => {
         </Table>
       </div>
 
-      <div class="relative overflow-x-auto" v-if="data.currentTab === 'Toutes les transactions'">
-        <Table>
-          <template #thead>
-            <tr>
-              <th scope="col" class="px-6 py-3">Type</th>
-              <th scope="col" class="px-6 py-3">Net</th>
-              <th scope="col" class="px-6 py-3">Montant</th>
-              <th scope="col" class="px-6 py-3">Frais</th>
-              <th scope="col" class="px-6 py-3">Description</th>
-              <th scope="col" class="px-6 py-3">Disponible le</th>
-            </tr>
-          </template>
-          <template #tbody>
-            <tr class="bg-white border-b">
-              <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
-                Paiement
-              </th>
-              <td class="px-6 py-4">208 975,98 €</td>
-              <td class="px-6 py-4">200 000,00 €</td>
-              <td class="px-6 py-4">(8 975,98 €) EUR</td>
-              <td class="px-6 py-4">Achat par : Romain Lethumier</td>
-              <td class="px-6 py-4">4 mai</td>
-            </tr>
-          </template>
-        </Table>
-      </div>
+
     </div>
   </div>
 </template>
