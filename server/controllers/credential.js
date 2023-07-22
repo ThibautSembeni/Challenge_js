@@ -1,4 +1,4 @@
-const {Credential} = require("../db/models/postgres");
+const { Credential } = require("../db/models/postgres");
 
 
 module.exports = function credentialController(CredentialService) {

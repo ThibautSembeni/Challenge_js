@@ -1,14 +1,17 @@
 <script setup>
-import { computed, onMounted, reactive, watch } from 'vue'
-import '../assets/index.css'
+import { computed, onMounted, reactive } from 'vue'
+import '../../assets/index.css'
 import SideBar from '@/components/SideBar.vue'
 import NavBar from '@/components/NavBar.vue'
 import moment from 'moment'
 import FormatEuro from '@/components/Payment/FormatEuro.vue'
 import Table from '@/components/Table.vue'
+import router from "@/router";
+import Dropdown from "@/components/Dropdown.vue";
+import {deleteTransaction, getTransactions} from "@/services/transactions";
 
 onMounted(async () => {
-  await getTransactions()
+  data.payments = await getTransactions()
   await subscribeToSSETransaction()
 })
 
@@ -27,18 +30,6 @@ const data = reactive({
   ...defaultValue,
   payments: {}
 })
-
-async function getTransactions() {
-  const response = await fetch(`${import.meta.env.VITE_API_URL}/transactions`, {
-    method: 'GET',
-    headers: {
-      'Content-type': 'application/json'
-    }
-  })
-  if (response.ok) {
-    data.payments = await response.json()
-  }
-}
 
 async function subscribeToSSETransaction() {
   const params = new URLSearchParams()
@@ -59,12 +50,18 @@ function bindEventSource(eventSource) {
     localStorage.setItem('last-id', event.lastEventId)
   })
 }
+const deletePayment = async (paymentId) => {
+    await deleteTransaction(paymentId);
+    data.payments = await getTransactions();
+}
 
 // eslint-disable-next-line vue/return-in-computed-property
 const filteredPaymentsAll = computed(() => {
-  switch (data.currentFilterAll) {
+    const payments = data.payments;
+
+    switch (data.currentFilterAll) {
     case 'Tous':
-      return Object.values(data.payments)
+      return Object.values(payments)
         .sort(
           (firstItem, secondItem) =>
             new Date(secondItem.createdAt).getTime() - new Date(firstItem.createdAt).getTime()
@@ -74,7 +71,7 @@ const filteredPaymentsAll = computed(() => {
           data.pager.currentPage * data.pager.perPage
         )
     case 'Réussi':
-      return data.payments
+      return payments
         .filter((p) => p.status === 'paid')
         .sort(
           (firstItem, secondItem) =>
@@ -85,7 +82,7 @@ const filteredPaymentsAll = computed(() => {
           data.pager.currentPage * data.pager.perPage
         )
     case 'En attente':
-      return data.payments
+      return payments
         .filter((p) => p.status === 'pending')
         .sort(
           (firstItem, secondItem) =>
@@ -96,7 +93,7 @@ const filteredPaymentsAll = computed(() => {
           data.pager.currentPage * data.pager.perPage
         )
     case 'Échoué':
-      return data.payments
+      return payments
         .filter((p) => p.status === 'failed')
         .sort(
           (firstItem, secondItem) =>
@@ -108,6 +105,7 @@ const filteredPaymentsAll = computed(() => {
         )
   }
 })
+
 </script>
 
 <template>
@@ -116,7 +114,12 @@ const filteredPaymentsAll = computed(() => {
   <div class="sm:ml-64">
     <NavBar />
     <div class="p-4 lg:p-10">
-      <h1 class="text-3xl font-bold"><i class="fa-solid fa-dollar-sign mr-2"></i> Paiements</h1>
+
+        <div class="flex items-center">
+            <h1 class="text-3xl font-bold mr-3"><i class="fa-solid fa-dollar-sign mr-2"></i> Paiements</h1>
+
+            <router-link :to="{ name: 'transactionAdd' }" class="px-3 py-2 text-xs font-medium text-center inline-flex items-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300">Ajouter une transaction</router-link>
+        </div>
 
       <div class="text-sm font-medium text-center text-gray-500 border-b border-gray-200">
         <ul class="flex flex-wrap -mb-px">
@@ -161,6 +164,7 @@ const filteredPaymentsAll = computed(() => {
               <th scope="col" class="px-6 py-3">Description</th>
               <th scope="col" class="px-6 py-3">Client</th>
               <th scope="col" class="px-6 py-3">Date</th>
+              <th scope="col" class="px-6 py-3 text-center">Actions</th>
             </tr>
           </template>
           <template #tbody>
@@ -197,10 +201,21 @@ const filteredPaymentsAll = computed(() => {
               <td class="px-6 py-4">
                 {{ moment(payment.createdAt).format('LLLL') }}
               </td>
+              <td class="text-center">
+                <Dropdown
+                  :actions="[
+                    { label: 'Voir', onClick: () => router.push({ name: 'paymentDetail', params: { 'reference': payment.reference } }) },
+                    { label: 'Modifier', onClick: () => router.push({ name: 'paymentUpdate', params: { 'reference': payment.reference } }), divider: true },
+                    { label: 'Supprimer', textColor: 'text-red-600 font-bold', onDelete: () => deletePayment(payment.id) }
+                  ]"
+                  :dropdownId="payment.id"
+                  @deleted="data.payments = getTransactions()"
+                />
+              </td>
             </tr>
             <tr class="bg-white border-b" v-if="!filteredPaymentsAll.length">
               <th
-                colspan="4"
+                colspan="5"
                 scope="row"
                 class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap text-center"
               >

@@ -201,16 +201,10 @@ const confirmRegenerate = async () => {
             </div>
             <div class="flex flex-row mb-4">
               <div class="flex-1 mr-2">
-                <CopyToClipboard
-                  label="Client Token"
-                  :text-to-copy="currentCredentials.client_token"
-                />
+                <CopyToClipboard label="Client Token" :text-to-copy="currentCredentials?.client_token"/>
               </div>
               <div class="flex-1 ml-2">
-                <CopyToClipboard
-                  label="Client Secret"
-                  :text-to-copy="currentCredentials.client_secret"
-                />
+                <CopyToClipboard label="Client Secret" :text-to-copy="currentCredentials?.client_secret"/>
               </div>
             </div>
           </div>

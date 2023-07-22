@@ -1,7 +1,7 @@
 <script setup>
 import { onMounted, reactive, ref } from 'vue'
 import { useRoute } from 'vue-router'
-import '../assets/index.css'
+import '../../assets/index.css'
 import SideBar from '@/components/SideBar.vue'
 import NavBar from '@/components/NavBar.vue'
 import PaymentDetail from '@/components/Payment/PaymentDetail.vue'
@@ -50,8 +50,7 @@ const formatEuro = (value, currency) => {
           <router-link
             :to="{ name: 'payments' }"
             class="bg-blue-100 text-blue-800 text-sm font-medium ml-2 px-2.5 py-0.5 rounded-full mr-2"
-            ><i class="fa-solid fa-chevron-left mr-2"></i> Retour</router-link
-          >
+            ><i class="fa-solid fa-chevron-left mr-2"></i> Retour</router-link>
           <h1 class="uppercase"><i class="fa-solid fa-dollar-sign mr-2"></i> Chargement...</h1>
         </div>
       </div>
@@ -119,8 +118,13 @@ const formatEuro = (value, currency) => {
               <td class="p-3 border-r">{{ moment(payment.updatedAt).format('LLLL') }}</td>
               <td class="p-3 border-r">{{ payment.client_info.name }}</td>
               <td class="p-3 border-r">
-                <i class="fa-brands fa-cc-visa mr-2"></i> <i class="fa-solid fa-ellipsis mr-2"></i>
-                {{ payment.billing_info.card_number.slice(-4) }}
+                <span v-if="payment.billing_info.card_number">
+                  <i class="fa-brands fa-cc-visa mr-2"></i> <i class="fa-solid fa-ellipsis mr-2"></i>
+                  {{ payment.billing_info.card_number.slice(-4) }}
+                </span>
+                <span v-else>
+                    Aucune carte
+                </span>
               </td>
               <td class="p-3">
                 <span
@@ -206,6 +210,7 @@ const formatEuro = (value, currency) => {
               <PaymentDetailLine title="ID" :content="payment.reference" />
               <PaymentDetailLine
                 title="Numéro"
+                v-if="payment.billing_info.card_number"
                 :content="'... ' + payment.billing_info.card_number.slice(-4)"
               />
               <PaymentDetailLine title="Empreinte" :content="payment.reference" />
@@ -274,6 +279,7 @@ const formatEuro = (value, currency) => {
               <td class="px-6 py-4">
                 <span
                   class="bg-orange-100 text-orange-800 text-sm font-medium ml-2 px-2.5 py-0.5 rounded"
+                  v-if="payment.billing_info.card_number"
                 >
                   <i class="fa-regular fa-credit-card mr-2"></i>
                   <i class="fa-solid fa-ellipsis mr-2"></i>
