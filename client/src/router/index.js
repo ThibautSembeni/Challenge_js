@@ -50,13 +50,13 @@ const authRoutes = [
         path: '/auth/forgot-password',
         name: 'forgotPassword',
         component: ForgotPassword,
-        meta: {requiresAuth: true}
+        meta: { requiresAuth: false }
     },
     {
         path: '/auth/reset-password/:token',
         name: 'resetPassword',
         component: ResetPassword,
-        meta: {requiresAuth: true}
+        meta: { requiresAuth: false }
     },
 ]
 
@@ -72,7 +72,7 @@ const customerRoutes = [
         path: '/profile',
         name: 'profile',
         component: ProfileView,
-        meta: {requiresAuth: false}
+        meta: {requiresAuth: true}
     },
     {
         path: '/paiements',
