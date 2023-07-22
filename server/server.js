@@ -6,6 +6,7 @@ const SecurityRouter = require("./routes/security");
 const TemplateRouter = require("./routes/route.template");
 const TransactionRouter = require("./routes/transactions");
 const ProductRouter = require("./routes/products");
+const CartRouter = require("./routes/cart");
 const AdminRouter = require("./routes/admin");
 const CredentialRouter = require("./routes/credentials");
 
@@ -15,11 +16,15 @@ const checkAuth = require("./middlewares/check-auth");
 const checkAdmin = require("./middlewares/check-admin-role");
 const verifyCredentials = require("./middlewares/verify-credentials");
 
+const CronService = require("./utils/cron");
+
 const app = express();
 
-app.use(cors({
-    origin: process.env.FRONT_URL
-}))
+app.use(
+  cors({
+    origin: process.env.FRONT_URL,
+  })
+);
 
 app.use(checkFormat);
 
@@ -33,10 +38,14 @@ app.use("/template", checkAuth, TemplateRouter);
 
 app.use("/users", checkAuth, UserRouter);
 
-// app.use("/transactions", checkAuth, TransactionRouter);
-app.use("/transactions", TransactionRouter);
+app.use("/transactions", checkAuth, TransactionRouter);
+
+// Pour activer la vérification des credentials pour les marchands
+// app.use("/transactions", verifyCredentials, TransactionRouter);
 
 app.use("/products", checkAuth, ProductRouter);
+
+app.use("/cart", CartRouter);
 
 app.use("/credentials", checkAuth, CredentialRouter);
 
@@ -45,9 +54,12 @@ app.get("/", (req, res) => {
 });
 
 app.post("/", (req, res) => {
-    res.json(req.body);
+  res.json(req.body);
 });
 
 app.use(errorHandler);
+
+const cronService = new CronService();
+cronService.start();
 
 module.exports = app;

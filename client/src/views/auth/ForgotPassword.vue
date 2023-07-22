@@ -4,36 +4,20 @@ import router from '@/router'
 import GenericButton from '@/components/GenericButton.vue'
 import Input from '@/components/form/Input.vue'
 import Form from '@/components/form/Form.vue'
-import {fetchUser, login} from '@/services/auth'
+import {fetchUser, forgotPassword, login} from '@/services/auth'
 
 const defaultValue = {
-  email: '',
-  password: ''
+  email: ''
 }
 
 const formData = reactive({...defaultValue})
 const requestError = ref('')
+const infosMsg = ref('')
 
-async function loginUser(_user) {
+async function submitForm(payload) {
   if (requestError.value) requestError.value = ''
-  try {
-    await login(_user)
-    const currentUser = await fetchUser()
-
-    switch (currentUser.role) {
-      case 'admin':
-        router.push({path: '/admin', replace: true})
-        break
-      case 'merchant':
-        router.push({path: '/merchant', replace: true})
-        break
-      default:
-        router.push({path: '/', replace: true})
-        break
-    }
-  } catch (error) {
-    requestError.value = error.message
-  }
+    const res = await forgotPassword(payload)
+    infosMsg.value = 'Vous allez recevoir votre mail de renitialisation '
 }
 
 const validateEmail = (email) => {
@@ -45,9 +29,9 @@ const validateEmail = (email) => {
 </script>
 <template>
   <div id="container-login-form" class="flex justify-center content-center items-center">
-    <Form :formData="formData" :onSubmit="loginUser" :errorMsg="requestError">
-      <template #title
-      ><h2 class="text-3xl font-extrabold mb-6">Connectez-vous à votre compte </h2></template>
+    <Form :formData="formData" :onSubmit="submitForm" :errorMsg="requestError"         :infosMsg="infosMsg"
+    >
+      <template #title><h2 class="text-3xl font-extrabold mb-6">Demander votre password</h2></template>
       <template #inputs>
         <Input
             label="E-mail"
@@ -56,31 +40,23 @@ const validateEmail = (email) => {
             type="email"
             :required="true"
         />
-        <Input label="Password" v-model="formData.password" type="password" :required="true"/>
       </template>
       <template #submit>
         <div class="column mt-4">
           <GenericButton
-              :active="formData.password !== '' && formData.email !== ''"
+              :active="formData.email !== ''"
               color="primary"
-              text="Se connecter"
+              text="Demander votre password"
           />
         </div>
       </template>
       <template #footer>
-        <p>
-          Vous n'avez pas encore de compte ?
+        <p class="text-center">
+          Vous avez un compte ?
           <router-link
-              :to="{ name: 'register' }"
+              :to="{ name: 'login' }"
               class="inline-flex items-center text-lg text-blue-600 hover:underline"
-          >Créez-vous en un !
-          </router-link>
-        </p>
-        <p>
-          <router-link
-              :to="{ name: 'forgotPassword' }"
-              class="inline-flex items-center text-lg text-blue-600 hover:underline"
-          >Demander un nouveau password
+          > Connectez vous
           </router-link>
         </p>
       </template>

@@ -19,7 +19,11 @@ export async function getProduct(id) {
 }
 
 export async function createProduct(product) {
-    const response = await httpClient.post('/products', product);
+    const response = await httpClient.post('/products', product, {
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    });
     if (response.status === 201) {
         return response.data;
     } else {
@@ -29,7 +33,11 @@ export async function createProduct(product) {
 }
 
 export async function updateProduct(product) {
-    const response = await httpClient.put(`/products/${product.id}`, product);
+    const response = await httpClient.put(`/products/${product.id}`, product, {
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    });
     if (response.status === 200) {
         return response.data;
     } else {
@@ -39,7 +47,7 @@ export async function updateProduct(product) {
 
 export async function deleteProduct(id) {
     const response = await httpClient.delete(`/products/${id}`);
-    if (response.status === 200) {
+    if (response.status === 204) {
         return response.data;
     } else {
         throw new Error(`Error: ${response.status} - Une erreur s'est produite lors de la suppression du produit`);

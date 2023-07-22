@@ -1,16 +1,18 @@
 <script setup>
 import SideBar from '@/components/SideBar.vue'
 import NavBar from '@/components/NavBar.vue'
-import store from '@/stores/store'
 import DashboardKPIS from '@/components/KPI/DashboardKpis.vue'
-import TransactionsNumberByDay from '@/components/KPI/TransactionsNumberByDay.vue'
-import TransactionsNumberByYear from '@/components/KPI/TransactionsNumberByYear.vue'
-const user = store.state.user
+import { getCurrentUser } from '@/services/auth'
+import router from '@/router'
+const user = getCurrentUser()
+if (user?.role === 'merchant') {
+  router.push({ path: '/merchant', replace: true })
+}
 </script>
 
 <template>
-  <SideBar />
-  <div class="sm:ml-64">
+  <SideBar v-if="user.role !== 'customer'" />
+  <div :class="{ 'sm:ml-64': user.role !== 'customer' }">
     <NavBar />
     <div class="p-4 lg:p-10">
       <h1 class="text-3xl font-bold p-4"><i class="fa-solid fa-house"></i> Rapport Analytique</h1>

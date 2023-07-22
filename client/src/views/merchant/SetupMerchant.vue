@@ -8,6 +8,7 @@ import {reactive, ref} from "vue";
 import Input from "@/components/form/Input.vue";
 import GenericButton from "@/components/GenericButton.vue";
 import httpClient from "@/services/httpClient";
+import {verifyCredentials} from "@/services/credentials";
 
 const defaultValue = {
   client_token: '',
@@ -23,17 +24,14 @@ const requestError = ref('')
 const infosMsg = ref('')
 
 const validCredentials = async (_credentials) => {
-  const response = await httpClient.post('credentials/verify',_credentials)
-  const credentials = response.data
-  const {user_id} = credentials
-  if (user_id === store.state.user.id){
+  try {
+    const credentials = await verifyCredentials(_credentials)
     store.commit('setCredentials', credentials)
     router.push(`/merchant`);
+  } catch (error) {
+    console.error(`error  : ${error}`)
+    requestError.value = error
   }
-  else {
-    requestError.value = 'Error validation credentials'
-  }
-
 }
 </script>
 

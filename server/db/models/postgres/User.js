@@ -7,6 +7,7 @@ module.exports = (connection) => {
             User.hasMany(models.Credential, { foreignKey: 'user_id', as: 'credentials' });
             User.hasMany(models.Transaction, { foreignKey: 'user_id', as: 'transactions' });
             User.hasMany(models.Cart, { foreignKey: 'user_id', as: 'carts' });
+            User.hasMany(models.ResetPassword, { foreignKey: 'user_id', as: 'reset_password' });
         }
 
         isPasswordValid(password) {
