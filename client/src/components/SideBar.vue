@@ -1,4 +1,7 @@
 <template>
+  <div  v-if="currentUser.role === 'customer'"
+        class="items-center justify-between hidden w-full md:flex md:w-auto md:order-1"
+        id="navbar-user">
   <aside
       id="default-sidebar"
       class="fixed top-0 left-0 z-40 w-64 h-screen transition-transform -translate-x-full sm:translate-x-0"
@@ -20,6 +23,7 @@
       </ul>
     </div>
   </aside>
+  </div>
 </template>
 
 <script setup>
@@ -51,9 +55,11 @@ const defaultValue = [
 
 const mergedPages = ref([...defaultValue]);
 
+const currentUser = ref(null);
+
 onMounted(async () => {
-  const currentUser = await getCurrentUser();
-  if (currentUser.hasOwnProperty('role') && currentUser.role === 'admin') {
+  currentUser.value = await getCurrentUser();
+  if (currentUser.value.hasOwnProperty('role') && currentUser.value.role === 'admin') {
     const adminRoutes = [
       {
         name: 'Users',
