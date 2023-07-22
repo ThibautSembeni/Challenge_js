@@ -2,7 +2,9 @@
 import SideBar from '@/components/SideBar.vue'
 import NavBar from '@/components/NavBar.vue'
 import store from '@/stores/store'
-import TransactionByDay from '@/components/KPI/TransactionByDay.vue'
+import DashboardKPIS from '@/components/KPI/DashboardKpis.vue'
+import TransactionsNumberByDay from '@/components/KPI/TransactionsNumberByDay.vue'
+import TransactionsNumberByYear from '@/components/KPI/TransactionsNumberByYear.vue'
 const user = store.state.user
 </script>
 
@@ -10,17 +12,6 @@ const user = store.state.user
   <SideBar />
   <div class="sm:ml-64">
     <NavBar />
-    <br />
-    <br />
-    <br />
-    user connecté
-    <pre>
-
-  {{ user }}
-    </pre>
-    Lorem ipsum dolor sit amet, consectetur adipisicing elit. A, atque corporis, culpa dolorem esse
-    et eum explicabo illum laudantium maiores mollitia nisi numquam obcaecati quidem reprehenderit
-    rerum vel voluptate voluptatum!
-    <TransactionByDay :height="50" :width="250" />
+    <DashboardKPIS />
   </div>
 </template>

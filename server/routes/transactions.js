@@ -16,8 +16,10 @@ module.exports = new genericRouter(
             { method: 'get', path: '/transaction/user/:id', middleware: [], handler: 'getTransactionsByUserId' },
             { method: 'get', path: '/transaction/subscribe', middleware: [], handler: 'subscribe' },
             { method: 'post', path: '/', middleware: [], handler: 'transaction' },
-            { method: 'get', path: '/stats/subscribe', middleware: [], handler: 'subscribeTransactionsVolumeByDays' },
-            { method: 'get', path: '/stats/nbbyday', middleware: [], handler: 'getTransactionsVolumeByDays' },
+            { method: 'get', path: '/stats/subscribe', middleware: [], handler: 'subscribeToTransactionsStats' },
+            { method: 'get', path: '/stats/amountbyday', middleware: [], handler: 'getTransactionsVolumeByDays' },
+            { method: 'get', path: '/stats/numberbyday', middleware: [], handler: 'getTransactionsNumberByDays' },
+            { method: 'get', path: '/stats/numberbyyear', middleware: [], handler: 'getTransactionsNumberByYear' },
         ],
         defaultRoutes: {
             getAll: { method: 'get', path: '/', middleware: [], active: true },

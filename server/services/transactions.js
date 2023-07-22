@@ -1,7 +1,7 @@
 const { Transaction } = require("../db/models/postgres");
 const Sequelize = require("sequelize");
 const ValidationError = require("../errors/ValidationError");
-const mongoDB = require('../db/models/mongo');
+const mongoDB = require("../db/models/mongo");
 
 module.exports = function TransactionService() {
     return {
@@ -69,37 +69,113 @@ module.exports = function TransactionService() {
             try {
                 const transactions = await mongoDB.Transaction.aggregate([
                     {
-                        '$match': {
-                            'createdAt': {
-                                '$gte': new Date(data.start_date),
-                                '$lt': new Date(data.end_date)
-                            }
-                        }
-                    }, {
-                        '$project': {
-                            'hour': {
-                                '$hour': '$createdAt'
+                        $match: {
+                            createdAt: {
+                                $gte: new Date(data.start_date),
+                                $lt: new Date(data.end_date),
                             },
-                            'amount': 1
-                        }
-                    }, {
-                        '$group': {
-                            '_id': "$hour",
-                            'totalAmount': {
-                                '$sum': '$amount'
-                            }
-                        }
-                    }, {
-                        '$sort': {
-                            '_id.hour': 1
-                        }
-                    }
+                        },
+                    },
+                    {
+                        $project: {
+                            hour: {
+                                $hour: "$createdAt",
+                            },
+                            amount: 1,
+                        },
+                    },
+                    {
+                        $group: {
+                            _id: "$hour",
+                            totalAmount: {
+                                $sum: "$amount",
+                            },
+                        },
+                    },
+                    {
+                        $sort: {
+                            "_id.hour": 1,
+                        },
+                    },
                 ]);
                 return transactions;
             } catch (error) {
                 throw error;
             }
-
-        }
+        },
+        getTransactionsNumberByDays: async (data) => {
+            try {
+                const transactions = await mongoDB.Transaction.aggregate([
+                    {
+                        $match: {
+                            createdAt: {
+                                $gte: new Date(data.start_date),
+                                $lte: new Date(data.end_date),
+                            },
+                        },
+                    },
+                    {
+                        $group: {
+                            _id: {
+                                $dateToString: {
+                                    format: "%Y-%m-%d",
+                                    date: "$createdAt",
+                                },
+                            },
+                            count: {
+                                $sum: 1,
+                            },
+                        },
+                    },
+                    {
+                        $sort: {
+                            _id: 1,
+                        },
+                    },
+                ]);
+                return transactions;
+            } catch (error) {
+                throw error;
+            }
+        },
+        getTransactionsNumberByYear: async (year) => {
+            try {
+                const transactions = await mongoDB.Transaction.aggregate([
+                    {
+                        $match: {
+                            createdAt: {
+                                $gte: new Date(`${year}-01-01T00:00:00.000Z`),
+                                $lte: new Date(`${year}-12-31T00:00:00.000Z`),
+                            },
+                        },
+                    },
+                    {
+                        $group: {
+                            _id: {
+                                $dateFromParts: {
+                                    year: {
+                                        $year: "$createdAt",
+                                    },
+                                    month: {
+                                        $month: "$createdAt",
+                                    },
+                                },
+                            },
+                            count: {
+                                $sum: 1,
+                            },
+                        },
+                    },
+                    {
+                        $sort: {
+                            _id: 1,
+                        },
+                    },
+                ]);
+                return transactions;
+            } catch (error) {
+                throw error;
+            }
+        },
     };
 };
