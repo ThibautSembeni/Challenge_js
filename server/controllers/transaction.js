@@ -31,6 +31,22 @@ module.exports = function transactionController(TransactionService, options = {}
                 next(e)
             }
         },
+
+        //MCH
+        //get cart items with name and price by user id
+        getCartItemsByUserId: async (req, res, next) => {
+            try {
+                const id = req.params.id
+                const results = await TransactionService.findAll({ user_id: id })
+                if (results) {
+                    res.json(results)
+                } else {
+                    res.status(404).json({ error: "Transaction not found" })
+                }
+            } catch (e) {
+                next(e)
+            }
+        },
         subscribe: async (req, res, next) => {
             const username = req.query.username;
             subscribers[username] = res;

@@ -14,6 +14,8 @@ module.exports = new genericRouter(
     {
         customRoutes: [
             { method: 'get', path: '/transaction/user/:id', middleware: [], handler: 'getTransactionsByUserId' },
+            //MCH
+            { method: 'get', path: '/transaction/cart/:id', middleware: [], handler: 'getCartItemsByUserId' },
             { method: 'get', path: '/transaction/subscribe', middleware: [], handler: 'subscribe' },
             { method: 'post', path: '/', middleware: [], handler: 'transaction' },
         ],

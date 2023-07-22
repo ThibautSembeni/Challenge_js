@@ -53,61 +53,24 @@ function bindEventSource(eventSource) {
     localStorage.setItem('last-id', event.lastEventId)
   })
 }
-const deletePayment = async (paymentId) => {
-  await deleteTransaction(paymentId);
-  data.payments = await getTransactions();
-}
 
 // eslint-disable-next-line vue/return-in-computed-property
 const filteredPaymentsAll = computed(() => {
   const payments = data.payments;
+  const currentFilter = data.currentFilterAll;
 
-  switch (data.currentFilterAll) {
-    case 'Tous':
-      return Object.values(payments)
-          .sort(
-              (firstItem, secondItem) =>
-                  new Date(secondItem.createdAt).getTime() - new Date(firstItem.createdAt).getTime()
-          )
-          .slice(
-              (data.pager.currentPage - 1) * data.pager.perPage,
-              data.pager.currentPage * data.pager.perPage
-          )
-    case 'Réussi':
-      return payments
-          .filter((p) => p.status === 'paid')
-          .sort(
-              (firstItem, secondItem) =>
-                  new Date(secondItem.createdAt).getTime() - new Date(firstItem.createdAt).getTime()
-          )
-          .slice(
-              (data.pager.currentPage - 1) * data.pager.perPage,
-              data.pager.currentPage * data.pager.perPage
-          )
-    case 'En attente':
-      return payments
-          .filter((p) => p.status === 'pending')
-          .sort(
-              (firstItem, secondItem) =>
-                  new Date(secondItem.createdAt).getTime() - new Date(firstItem.createdAt).getTime()
-          )
-          .slice(
-              (data.pager.currentPage - 1) * data.pager.perPage,
-              data.pager.currentPage * data.pager.perPage
-          )
-    case 'Échoué':
-      return payments
-          .filter((p) => p.status === 'failed')
-          .sort(
-              (firstItem, secondItem) =>
-                  new Date(secondItem.createdAt).getTime() - new Date(firstItem.createdAt).getTime()
-          )
-          .slice(
-              (data.pager.currentPage - 1) * data.pager.perPage,
-              data.pager.currentPage * data.pager.perPage
-          )
-  }
-})
+  if (currentFilter === 'Tous') {
+    return Object.values(payments)
+        .sort(
+            (firstItem, secondItem) =>
+                new Date(secondItem.createdAt).getTime() - new Date(firstItem.createdAt).getTime()
+        )
+        .slice(
+            (data.pager.currentPage - 1) * data.pager.perPage,
+            data.pager.currentPage * data.pager.perPage
+        );
+    }
+});
 
 </script>
 
@@ -140,7 +103,7 @@ const filteredPaymentsAll = computed(() => {
         </ul>
       </div>
 
-      <div class="relative overflow-x-auto" v-if="data.currentTab === ''">
+      <div class="relative overflow-x-auto" v-if="data.currentTab === 'Tous les paiements'">
         <div class="flex justify-end my-3">
           <!--<button
               v-for="filter in data.filtersAll"
