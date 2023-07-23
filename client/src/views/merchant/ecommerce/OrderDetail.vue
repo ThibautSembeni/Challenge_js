@@ -11,23 +11,30 @@ import moment from 'moment'
 import Table from '@/components/Table.vue'
 import { getTransactionByReference, getTransactionItemsById } from '@/services/transactions'
 
-const id = useRoute().params.id;
+const id = useRoute().params.reference;
 
 onMounted(async () => {
-  payment.transactions = await getTransactionByReference
-      payment.items = await getTransactionItemsById(id)
+  payment.transactions = await getTransactionItemsById(id)
+  payment.items = payment.transactions.cart.products
+
+
       console.log(payment.items)
   isLoading.value = false
 
 
 })
 
+//const transaction = await getTransactionByReference(id);
+
 const payment = reactive({
   transactions: {},
-  items: []
+  items : []
 
 })
 const isLoading = ref(true)
+
+
+
 
 const formatEuro = (value, currency) => {
   return new Intl.NumberFormat('fr-FR', { style: 'currency', currency: currency }).format(value)
