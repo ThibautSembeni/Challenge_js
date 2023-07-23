@@ -1,6 +1,7 @@
 <script setup>
 import { onMounted, reactive, ref } from 'vue'
-import '../../assets/index.css'
+import { useRoute } from 'vue-router'
+import '../../../assets/index.css'
 import SideBar from '@/components/SideBar.vue'
 import NavBar from '@/components/NavBar.vue'
 import PaymentDetail from '@/components/Payment/PaymentDetail.vue'
@@ -8,17 +9,23 @@ import PaymentDetailLine from '@/components/Payment/PaymentDetailLine.vue'
 import FormatEuro from '@/components/Payment/FormatEuro.vue'
 import moment from 'moment'
 import Table from '@/components/Table.vue'
-import { getTransactionByReference } from '@/services/transactions'
+import { getTransactionByReference, getTransactionItemsById } from '@/services/transactions'
+
+const id = useRoute().params.id;
 
 onMounted(async () => {
-  payment.transactions = await getTransactionByReference,
+  payment.transactions = await getTransactionByReference
+      payment.items = await getTransactionItemsById(id)
+      console.log(payment.items)
   isLoading.value = false
 
 
 })
 
 const payment = reactive({
-  transactions: {}
+  transactions: {},
+  items: []
+
 })
 const isLoading = ref(true)
 
@@ -28,7 +35,12 @@ const formatEuro = (value, currency) => {
 
 </script>
 
+
 <template>
+  <pre>{{  }}</pre>
+
+</template>
+<!--<template>
   <SideBar />
 
   <div class="sm:ml-64">
@@ -92,6 +104,28 @@ const formatEuro = (value, currency) => {
         </button>
       </div>
 
+      //MCH
+      <div class="flex flex-wrap mb-10">
+        <table class="font-light text-left">
+          <thead>
+          <tr class="text-gray-400">
+            <th class="font-light border-r px-3 pt-3">Dernière mise à jour</th>
+            <th class="font-light border-r px-3 pt-3">Client</th>
+            <th class="font-light border-r px-3 pt-3">Moyen de paiement</th>
+            <th class="font-light px-3 pt-3">Évaluation des risques</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr>
+            <td class="p-3 border-r">{{ moment(paymen).format('LLLL') }}</td>
+            <td class="p-3 border-r">{{ payment.client_info.name }}</td>
+
+          </tr>
+          </tbody>
+        </table>
+      </div>
+
+      //========================================================================
       <div class="flex flex-wrap mb-10">
         <table class="font-light text-left">
           <thead>
@@ -305,4 +339,4 @@ const formatEuro = (value, currency) => {
       </PaymentDetail>
     </div>
   </div>
-</template>
+</template> -->

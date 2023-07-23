@@ -1,5 +1,6 @@
 import httpClient from '@/services/httpClient'
 import {useRoute} from "vue-router";
+import HttpClient from "@/services/httpClient";
 
 export async function getTransactions() {
     const response = await httpClient.get('/transactions');
@@ -74,6 +75,19 @@ export async function getTransactionByReference() {
         return transaction
     } else {
         throw new Error(`Error: ${response.status} - Une erreur s'est produite lors de la récupération de la transaction`)
+    }
+
+
+}
+
+//getTransactionItemsById
+export async function getTransactionItemsById(id) {
+   const response = await HttpClient.get(`/transactions/${id}`);
+    if (response.status === 200) {
+        return response.data;
+
+    }else {
+        throw new Error(`Error: ${response.status} - Une erreur s'est produite lors de la récupération des items de la transaction`);
     }
 }
 

@@ -34,7 +34,7 @@ module.exports = function transactionController(TransactionService, options = {}
 
         //MCH
         //get cart items with name and price by user id
-        getCartItemsByUserId: async (req, res, next) => {
+        getTransactionItemsById: async (req, res, next) => {
             try {
                 const id = req.params.id
                 const results = await TransactionService.findAll({ user_id: id })
