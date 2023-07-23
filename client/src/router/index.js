@@ -27,6 +27,7 @@ import ForgotPassword from "@/views/auth/ForgotPassword.vue";
 import ResetPassword from "@/views/auth/ResetPassword.vue";
 import ShoppingCartView from '@/views/ShoppingCartView.vue';
 import OrdersList from "@/views/merchant/ecommerce/OrdersList.vue";
+import OrderDetail from "@/views/merchant/ecommerce/OrderDetail.vue";
 
 const authRoutes = [
     {
@@ -205,8 +206,13 @@ const merchantRoutes = [
         name: 'ordersList',
         component: OrdersList,
         meta: { requiresAuth: false}
+    },
+    {
+        path: '/oderdetail/:reference',
+        name: 'orderdetail',
+        component: OrderDetail,
+        meta: {requiresAuth: false}
     }
-
 ];
 
 const errorRoutes = [

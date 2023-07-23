@@ -26,8 +26,6 @@ const formatEuro = (value, currency) => {
   return new Intl.NumberFormat('fr-FR', { style: 'currency', currency: currency }).format(value)
 }
 
-
-
 </script>
 
 <template>

@@ -137,7 +137,7 @@ const filteredPaymentsAll = computed(() => {
             <tr v-for="payment in filteredPaymentsAll" :key="payment.id" class="bg-white border-b">
               <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
                 <router-link
-                    :to="{ name: 'paymentDetail', params: { reference: payment.reference } }"
+                    :to="{ name: 'orderdetail', params: { reference: payment.reference } }"
                 >
                   <FormatEuro :price="payment.amount" :currency="payment.currency" />
                   <span class="ml-4 font-light text-gray-400">{{ payment.currency }}</span>
