@@ -110,12 +110,12 @@ Content-Type: application/json
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Miwicm9sZSI6ImFkbWluIiwiaWF0IjoxNjkwMDQ2MTkwLCJleHAiOjE2OTAwNDc5OTB9.41hUgZPBfWavDk9sZDOftl8fugLftREggwoPRNXM9fY
 
 {
-    "transaction_ref": "tr_UIvdwgxwEQHb4LVRugCW",
-    "refunded_amount": 200
+    "transaction_ref": "tr_dGOJySDPt2vYbTXGNZE9",
+    "refunded_amount": 500
 }
 
 ###
-GET http://localhost:3000/operation/transaction/tr_UIvdwgxwEQHb4LVRugCW
+GET http://localhost:3000/operation/transaction/tr_dGOJySDPt2vYbTXGNZE9
 Content-Type: application/json
 
 ###
