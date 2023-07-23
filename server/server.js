@@ -9,6 +9,7 @@ const ProductRouter = require("./routes/products");
 const CartRouter = require("./routes/cart");
 const AdminRouter = require("./routes/admin");
 const CredentialRouter = require("./routes/credentials");
+const OperationRouter = require("./routes/operation");
 
 const checkFormat = require("./middlewares/check-format");
 const errorHandler = require("./middlewares/error-handler");
@@ -51,6 +52,8 @@ app.use("/products", checkAuth, ProductRouter);
 app.use("/cart", CartRouter);
 
 app.use("/credentials", checkAuth, CredentialRouter);
+
+app.use("/operation", OperationRouter);
 
 app.get("/", (req, res) => {
   res.status(200).json({ message: "Hello World!" });

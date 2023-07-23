@@ -21,6 +21,7 @@ jobs:
       JWT_SECRET: ${{ secrets.JWT_SECRET }}
       MAILJET_PK: ${{ secrets.MAILJET_PK }}
       MAILJET_SK: ${{ secrets.MAILJET_SK }}
+      SCRAPPING_API_KEY: ${{ secrets.SCRAPPING_API_KEY }}
 
     services:
       postgres:
