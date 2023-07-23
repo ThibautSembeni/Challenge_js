@@ -75,72 +75,6 @@ const customerRoutes = [
     meta: { requiresAuth: true }
   },
   {
-    path: '/paiements',
-    name: 'payments',
-    component: PaymentView,
-    meta: { requiresAuth: true }
-  },
-  {
-    path: '/paiement/ajouter',
-    name: 'transactionAdd',
-    component: PaymentCreateView,
-    meta: { requiresAuth: true }
-  },
-  {
-    path: '/paiement/:reference',
-    name: 'paymentDetail',
-    component: PaymentDetailView,
-    meta: { requiresAuth: true }
-  },
-  {
-    path: '/paiement/:reference/update',
-    name: 'paymentUpdate',
-    component: PaymentUpdateView,
-    meta: { requiresAuth: true }
-  },
-  {
-    path: '/clients',
-    name: 'customers',
-    component: CustomersView,
-    meta: { requiresAuth: true }
-  },
-  {
-    path: '/client/:id',
-    name: 'customerDetail',
-    component: CustomerDetailView,
-    meta: { requiresAuth: true }
-  },
-  {
-    path: '/products',
-    name: 'productsFront',
-    component: ProductsFrontView,
-    meta: { requiresAuth: true }
-  },
-  {
-    path: '/produits',
-    name: 'products',
-    component: ProductsView,
-    meta: { requiresAuth: true }
-  },
-  {
-    path: '/produit/ajouter',
-    name: 'productAdd',
-    component: ProductCreateView,
-    meta: { requiresAuth: true }
-  },
-  {
-    path: '/produit/:reference',
-    name: 'productDetail',
-    component: ProductDetailView,
-    meta: { requiresAuth: true }
-  },
-  {
-    path: '/produit/:reference/update',
-    name: 'productUpdate',
-    component: ProductUpdateView,
-    meta: { requiresAuth: true }
-  },
-  {
     path: '/about',
     name: 'about',
     component: () => import('../views/AboutView.vue')
@@ -167,12 +101,6 @@ const adminRoutes = [
     meta: { requiresAuth: true, requiresAdminAccess: true }
   },
   {
-    path: '/admin/users',
-    name: 'UsersView',
-    component: UsersView,
-    meta: { requiresAuth: true, requiresAdminAccess: true }
-  },
-  {
     path: '/admin/users/:userId(\\d+)',
     name: 'adminUserDetails',
     component: UsersDetails,
@@ -189,7 +117,7 @@ const adminRoutes = [
     name: 'adminPendingUsers',
     component: PendingMerchants,
     meta: { requiresAuth: true, requiresAdminAccess: true }
-  }
+  },
 ]
 
 const merchantRoutes = [
@@ -204,7 +132,73 @@ const merchantRoutes = [
     name: 'setupMerchant',
     component: SetupMerchant,
     meta: { requiresAuth: true, requiresMerchantAccess: true }
-  }
+  },
+  {
+    path: '/paiements',
+    name: 'payments',
+    component: PaymentView,
+    meta: { requiresAuth: true, requiresMerchantAccess: true }
+  },
+  {
+    path: '/paiement/ajouter',
+    name: 'transactionAdd',
+    component: PaymentCreateView,
+    meta: { requiresAuth: true, requiresMerchantAccess: true }
+  },
+  {
+    path: '/paiement/:reference',
+    name: 'paymentDetail',
+    component: PaymentDetailView,
+    meta: { requiresAuth: true, requiresMerchantAccess: true }
+  },
+  {
+    path: '/paiement/:reference/update',
+    name: 'paymentUpdate',
+    component: PaymentUpdateView,
+    meta: { requiresAuth: true, requiresMerchantAccess: true }
+  },
+  {
+    path: '/clients',
+    name: 'customers',
+    component: CustomersView,
+    meta: { requiresAuth: true, requiresMerchantAccess: true }
+  },
+  {
+    path: '/client/:id',
+    name: 'customerDetail',
+    component: CustomerDetailView,
+    meta: { requiresAuth: true, requiresMerchantAccess: true }
+  },
+  {
+    path: '/products',
+    name: 'productsFront',
+    component: ProductsFrontView,
+    meta: { requiresAuth: true, requiresMerchantAccess: true }
+  },
+  {
+    path: '/produits',
+    name: 'products',
+    component: ProductsView,
+    meta: { requiresAuth: true, requiresMerchantAccess: true }
+  },
+  {
+    path: '/produit/ajouter',
+    name: 'productAdd',
+    component: ProductCreateView,
+    meta: { requiresAuth: true, requiresMerchantAccess: true }
+  },
+  {
+    path: '/produit/:reference',
+    name: 'productDetail',
+    component: ProductDetailView,
+    meta: { requiresAuth: true, requiresMerchantAccess: true }
+  },
+  {
+    path: '/produit/:reference/update',
+    name: 'productUpdate',
+    component: ProductUpdateView,
+    meta: { requiresAuth: true, requiresMerchantAccess: true }
+  },
 ]
 
 const errorRoutes = [

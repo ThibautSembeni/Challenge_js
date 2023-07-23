@@ -5,9 +5,10 @@ module.exports = (connection) => {
     class User extends Model {
         static associate(models) {
             User.hasMany(models.Credential, { foreignKey: 'user_id', as: 'credentials' });
-            User.hasMany(models.Transaction, { foreignKey: 'user_id', as: 'transactions' });
+            User.hasMany(models.Transaction, { foreignKey: 'user_id', as: 'userTransactions' }); // changed 'transactions' to 'userTransactions'
             User.hasMany(models.Cart, { foreignKey: 'user_id', as: 'carts' });
             User.hasMany(models.ResetPassword, { foreignKey: 'user_id', as: 'reset_password' });
+            User.hasMany(models.Transaction, { foreignKey: 'merchant_id', as: 'merchantTransactions' }); // changed user_id to merchant_id and 'transactions' to 'merchantTransactions'
         }
 
         isPasswordValid(password) {

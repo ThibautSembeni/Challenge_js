@@ -5,6 +5,8 @@ const UnauthorizedError = require("../errors/UnauthorizedError");
 const UniqueConstraintError = require("../errors/UniqueConstraintError");
 const { generateVerificationToken } = require("../utils/user");
 const UserMongoService = require('./mongo/user')
+const {Transaction} = require("../db/models/postgres");
+
 
 module.exports = function UserService(MongoService) {
     return {
@@ -96,6 +98,32 @@ module.exports = function UserService(MongoService) {
                 where: filters
             }
             return User.count(dbOptions);
+        },
+        getUsersByMerchantId: async function (merchantId) {
+            return User.findAll({
+                include: [{
+                    model: Transaction,
+                    where: { merchant_id: merchantId },
+                    attributes: [],
+                    required: true,
+                    as: 'merchantTransactions'  // provide alias here
+                }],
+                group: ['User.id']
+            });
+        },
+        getMerchantById: async function (merchantId) {
+            const merchant = await User.findOne({
+                where: {
+                    id: merchantId,
+                    role: 'merchant'
+                }
+            });
+
+            if (!merchant) {
+                throw new Error(`Merchant with id ${merchantId} not found`);
+            }
+
+            return merchant;
         }
     };
 };

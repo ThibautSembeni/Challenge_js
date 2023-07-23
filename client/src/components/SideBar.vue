@@ -61,7 +61,7 @@ onMounted(async () => {
   if (currentUser.hasOwnProperty('role') && currentUser.role === 'admin') {
     const adminRoutes = [
       {
-        name: 'Users',
+        name: 'Utilisateurs',
         to: 'UsersView',
         icon: 'fa-solid fa-user'
       }
