@@ -1,9 +1,16 @@
 <script setup>
-import { ref, computed, onMounted } from 'vue'
-import { getCurrentUser } from '../../services/auth'
-import NavBar from '../../components/NavBar.vue'
+import { ref, onMounted } from 'vue'
+import { getCurrentUser } from '@/services/auth'
+import NavBar from '@/components/NavBar.vue'
+import {
+  cartItems,
+  subtotal,
+  shipping,
+  total,
+  getCartByUser,
+  removeItem
+} from '@/services/customer/shoppingCart'
 
-const cartItems = ref([])
 const customerAddress = ref('')
 const customerCity = ref('')
 const customerPostalCode = ref('')
@@ -12,54 +19,9 @@ const customerCountry = ref('')
 const currentUser = getCurrentUser()
 const user = currentUser.id
 
-const subtotal = computed(() => {
-  return cartItems.value.reduce((total, cartItem) => total + cartItem.price * cartItem.quantity, 0)
-})
-
-const shipping = computed(() => {
-  return subtotal.value > 0 ? 5 : 0
-})
-
-const total = computed(() => {
-  return subtotal.value + shipping.value
-})
-
-const removeItem = async (cartItem) => {
-  try {
-    const response = await fetch(
-      `${import.meta.env.VITE_API_URL}/cart/remove/${cartItem.cart_id}/${
-        cartItem.product.reference
-      }`,
-      {
-        method: 'DELETE'
-      }
-    )
-    if (response.status === 204) {
-      await getCartByUser()
-    } else {
-      const data = await response.json()
-      console.error('Error removing item:', data.error)
-    }
-  } catch (error) {
-    console.error('Error removing item:', error)
-  }
-}
-
-async function getCartByUser() {
-  const response = await fetch(`${import.meta.env.VITE_API_URL}/cart/user/${user}`, {
-    method: 'GET',
-    headers: {
-      'Content-type': 'application/json'
-    }
-  })
-  cartItems.value = []
-  const data = await response.json()
-  cartItems.value.push(...data[0].cart_items)
-}
-
 onMounted(async () => {
   try {
-    await getCartByUser()
+    await getCartByUser(user)
   } catch (error) {
     console.error('Error fetching cart items:', error)
   }
@@ -95,7 +57,7 @@ onMounted(async () => {
             <td class="border px-4 py-2">{{ cartItem.quantity }}</td>
             <td class="border px-4 py-2">
               <button
-                @click="removeItem(cartItem)"
+                @click="removeItem(user, cartItem)"
                 class="bg-red-500 text-white px-4 py-2 rounded flex items-center"
               >
                 Supprimer
