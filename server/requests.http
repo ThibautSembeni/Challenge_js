@@ -175,3 +175,9 @@ Content-Type: application/json
 ###
 GET http://localhost:3000/transactions/stats/numberbyyear?year=2023
 Content-Type: application/json 
+
+###
+GET http://localhost:3000/get-sse-token
+Content-Type: application/json 
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Miwicm9sZSI6ImFkbWluIiwiaWF0IjoxNjkwMDcwOTkyLCJleHAiOjE2OTAwNzI3OTJ9.nBF9qwZBCTq2oPtcDHyPd86NOgj6BNK6k4bbFb1eS2s
+X-Forwarded-By: test

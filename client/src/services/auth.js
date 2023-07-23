@@ -4,7 +4,7 @@ import httpClient from '@/services/httpClient'
 export async function login(userCredentials) {
     const response = await httpClient.post('/login', userCredentials)
     if (response.status === 200) {
-        const {token} = response.data
+        const { token } = response.data
         localStorage.setItem('access_token', token)
         store.commit('setLoggedIn', true)
         return token
@@ -60,4 +60,13 @@ export async function changePassword(payload) {
 
 export async function forgotPassword(payload) {
     return await httpClient.post('/forgot-password', payload)
+}
+
+export async function getSSEToken() {
+    const response = await httpClient.get('/get-sse-token');
+    if (response.status === 201) {
+        const { token } = response.data
+        return token
+    }
+    return
 }
