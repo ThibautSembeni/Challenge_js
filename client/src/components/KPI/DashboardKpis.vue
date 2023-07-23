@@ -7,7 +7,7 @@ import TransactionsNumberByYear from '@/components/KPI/TransactionsNumberByYear.
 
 import { generateHourlyData, getFirstDayOfMonth, getLastDayOfMonth } from '@/utils/date'
 import { generateValue, generateLabelsData } from '@/utils/dashboardKpis'
-import axios from 'axios'
+import { getSSEToken } from '@/services/auth'
 const user = store.state.user
 
 const statsData = reactive({
@@ -29,8 +29,10 @@ onUnmounted(async () => {
 const eventSource = ref(null)
 
 async function subscribeToSSETransaction() {
+  const token = await getSSEToken()
   const params = new URLSearchParams()
   params.set('id', user.id)
+  params.set('token', token)
   eventSource.value = new EventSource(
     `${import.meta.env.VITE_API_URL}/transactions/stats/subscribe?` + params
   )
