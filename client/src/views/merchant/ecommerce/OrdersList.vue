@@ -8,7 +8,7 @@ import FormatEuro from '@/components/Payment/FormatEuro.vue'
 import Table from '@/components/Table.vue'
 import router from "@/router";
 import Dropdown from "@/components/Dropdown.vue";
-import {deleteTransaction, getTransactions} from "@/services/transactions";
+import {getTransactions} from "@/services/transactions";
 
 
 onMounted(async () => {

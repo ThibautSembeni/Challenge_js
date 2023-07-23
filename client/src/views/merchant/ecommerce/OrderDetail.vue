@@ -1,6 +1,5 @@
 <script setup>
 import { onMounted, reactive, ref } from 'vue'
-import { useRoute } from 'vue-router'
 import '../../assets/index.css'
 import SideBar from '@/components/SideBar.vue'
 import NavBar from '@/components/NavBar.vue'
@@ -9,38 +8,26 @@ import PaymentDetailLine from '@/components/Payment/PaymentDetailLine.vue'
 import FormatEuro from '@/components/Payment/FormatEuro.vue'
 import moment from 'moment'
 import Table from '@/components/Table.vue'
+import { getTransactionByReference } from '@/services/transactions'
 
 onMounted(async () => {
-  await getTransaction()
+  payment.transactions = await getTransactionByReference,
+  isLoading.value = false
 
 
 })
 
-const payment = reactive({})
+const payment = reactive({
+  transactions: {}
+})
 const isLoading = ref(true)
 
-
-
-async function getTransaction() {
-  const response = await fetch(
-      `${import.meta.env.VITE_API_URL}/transactions/${useRoute().params.reference}`,
-      {
-        method: 'GET',
-        headers: {
-          'Content-type': 'application/json'
-        }
-      }
-  )
-  if (response.ok) {
-    const transaction = await response.json()
-    Object.assign(payment, transaction)
-    isLoading.value = false
-  }
-}
-console.log(payment)
 const formatEuro = (value, currency) => {
   return new Intl.NumberFormat('fr-FR', { style: 'currency', currency: currency }).format(value)
 }
+
+
+
 </script>
 
 <template>

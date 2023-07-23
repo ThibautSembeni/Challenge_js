@@ -1,4 +1,5 @@
 import httpClient from '@/services/httpClient'
+import {useRoute} from "vue-router";
 
 export async function getTransactions() {
     const response = await httpClient.get('/transactions');
@@ -54,3 +55,25 @@ export async function deleteTransaction(id) {
         throw new Error(`Error: ${response.status} - Une erreur s'est produite lors de la suppression de la transaction`);
     }
 }
+
+
+
+//MCH
+export async function getTransactionByReference() {
+    const response = await fetch(
+        `${import.meta.env.VITE_API_URL}/transactions/${useRoute().params.reference}`,
+        {
+            method: 'GET',
+            headers: {
+                'Content-type': 'application/json'
+            }
+        }
+    )
+    if (response.ok) {
+        const transaction = await response.json()
+        return transaction
+    } else {
+        throw new Error(`Error: ${response.status} - Une erreur s'est produite lors de la récupération de la transaction`)
+    }
+}
+
