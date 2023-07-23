@@ -1,7 +1,6 @@
 const { Cart, CartItem, Product } = require("../db/models/postgres");
 const Sequelize = require("sequelize");
 const ValidationError = require("../errors/ValidationError");
-const cart = require("../controllers/cart");
 
 module.exports = function CartService() {
   async function updateCartTotalPrice(cartId) {
