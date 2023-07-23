@@ -1,15 +1,10 @@
 <script setup>
 import { RouterView } from 'vue-router'
-import { computed } from 'vue';
-import store from "@/stores/store";
-import Spinner from "@/components/Spinner.vue";
+import { computed } from 'vue'
+import store from '@/stores/store'
+import Spinner from '@/components/Spinner.vue'
 
-const isLoading = computed(() => store.state.isLoading);
-
-fetch(`${import.meta.env.VITE_API_URL}`)
-  .then((res) => res.json())
-  .then((data) => console.log(data))
-  .catch((err) => console.error(err))
+const isLoading = computed(() => store.state.isLoading)
 </script>
 
 <template>
@@ -25,7 +20,7 @@ fetch(`${import.meta.env.VITE_API_URL}`)
     </nav>
   </div>
 </header>-->
-  <Spinner  v-if="isLoading"/>
+  <Spinner v-if="isLoading" />
 
   <RouterView />
 </template>

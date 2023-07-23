@@ -1,7 +1,7 @@
 version: "3.8"
 
 services:
-  mongo:
+  mongodb:
     container_name: mongodb
     image: mongo
     ports:
@@ -11,6 +11,24 @@ services:
       MONGO_INITDB_ROOT_PASSWORD: password
     volumes:
       - mongo-data:/data/db
+      - ./file.key:/data/file.key
+      - ./setup.sh:/data/setup.sh
+    command: mongod --keyFile /data/file.key --replSet rs
+  mongodb-replica:
+    container_name: mongodb-replica
+    image: mongo
+    ports:
+      - 27018:27017
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: password
+      MONGODB_REPLICA_SET: mongodb-replica-set
+      MONGODB_PRIMARY_HOST: mongodb
+      MONGODB_PRIMARY_PORT: 27017
+    volumes:
+      - mongo-replica-data:/data/db
+      - ./file.key:/data/file.key
+    command: mongod --keyFile /data/file.key --replSet rs
 
   node:
     container_name: node
@@ -20,6 +38,7 @@ services:
     environment:
       DATABASE_URL: ${DATABASE_URL:-postgres://root:password@database:5432/app}
       JWT_SECRET: ${JWT_SECRET:-jmqlskdfjmlqsdkf}
+      NODE_ENV: ${NODE_ENV:-development}
     working_dir: /usr/local/app
     ports:
       - 127.0.0.1:3000:3000
@@ -48,3 +67,4 @@ services:
 volumes:
   mongo-data: {}
   postgre-data: {}
+  mongo-replica-data: {}

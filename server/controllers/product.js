@@ -29,7 +29,7 @@ module.exports = function productController(productService, options = {}) {
             try {
                 const product = req.body;
                 const results = await productService.create(product);
-                res.status(201).json(product);
+                res.status(201).json(results);
             } catch (error) {
                 console.error(error);
                 next(error);
@@ -39,8 +39,8 @@ module.exports = function productController(productService, options = {}) {
             try {
                 const reference = req.params.reference;
                 const product = req.body;
-                const results = await productService.update({reference: reference}, product);
-                res.status(200).json(product);
+                const results = await productService.update({ reference: reference }, product);
+                res.status(200).json(results);
             } catch (error) {
                 console.error(error);
                 next(error);
@@ -49,7 +49,7 @@ module.exports = function productController(productService, options = {}) {
         delete: async (req, res, next) => {
             try {
                 const reference = req.params.reference;
-                const results = await productService.delete({reference: reference});
+                const results = await productService.delete({ reference: reference });
                 res.status(200).json(results);
             } catch (error) {
                 console.error(error);
