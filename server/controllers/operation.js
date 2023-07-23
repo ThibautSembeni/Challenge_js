@@ -14,5 +14,18 @@ module.exports = function OperationController(OperationService, options = {}) {
         next(e);
       }
     },
+    getTransactionOperationsHistory: async (req, res, next) => {
+      try {
+        const transactionRef = req.params.transaction_ref;
+        const operations =
+          await OperationService.getTransactionOperationsHistory(
+            transactionRef
+          );
+        res.json(operations);
+      } catch (e) {
+        console.log(e);
+        next(e);
+      }
+    },
   };
 };

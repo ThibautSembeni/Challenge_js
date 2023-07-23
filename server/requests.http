@@ -110,5 +110,9 @@ Content-Type: application/json
 
 {
     "transaction_ref": "tr_UIvdwgxwEQHb4LVRugCW",
-    "refunded_amount": 10
+    "refunded_amount": 200
 }
+
+###
+GET http://localhost:3000/operation/transaction/tr_UIvdwgxwEQHb4LVRugCW
+Content-Type: application/json

@@ -99,5 +99,30 @@ module.exports = function OperationService() {
         throw e;
       }
     },
+    getTransactionOperationsHistory: async (transaction_ref) => {
+      try {
+        const transaction = await Transaction.findOne({
+          where: { reference: transaction_ref },
+        });
+
+        if (!transaction) {
+          throw new UnauthorizedError("Transaction not found");
+        }
+
+        const operations = await Operation.findAll({
+          where: {
+            transaction_id: transaction.id,
+          },
+          order: [["createdAt", "ASC"]],
+        });
+
+        return operations;
+      } catch (e) {
+        if (e instanceof Sequelize.ValidationError) {
+          throw ValidationError.fromSequelizeValidationError(e);
+        }
+        throw e;
+      }
+    },
   };
 };

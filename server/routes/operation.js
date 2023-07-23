@@ -15,6 +15,12 @@ module.exports = new genericRouter(
         middleware: [],
         handler: "refund",
       },
+      {
+        method: "get",
+        path: "/transaction/:transaction_ref",
+        middleware: [],
+        handler: "getTransactionOperationsHistory",
+      },
     ],
     defaultRoutes: {
       getOne: {
