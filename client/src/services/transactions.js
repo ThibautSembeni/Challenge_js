@@ -19,6 +19,14 @@ export async function getTransaction(id) {
         throw new Error(`Error: ${response.status} - Une erreur s'est produite lors de la récupération de la transaction`);
     }
 }
+export async function getTransactionsOfUserById(id) {
+    const response = await httpClient.get(`/transactions/transaction/user/${id}`);
+    if (response.status === 200) {
+        return response.data;
+    } else {
+        throw new Error(`Error: ${response.status} - Une erreur s'est produite lors de la récupération de la transaction`);
+    }
+}
 
 export async function createTransaction(transaction) {
     const response = await httpClient.post('/transactions', transaction, {

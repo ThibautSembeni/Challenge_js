@@ -9,35 +9,20 @@ import PaymentDetailLine from '@/components/Payment/PaymentDetailLine.vue'
 import FormatEuro from '@/components/Payment/FormatEuro.vue'
 import moment from 'moment'
 import Table from '@/components/Table.vue'
+import { getTransaction } from '@/services/transactions'
 
 onMounted(async () => {
-  await getTransaction()
-
-
+  await getTransactionById()
 })
 
 const payment = reactive({})
 const isLoading = ref(true)
 
-
-
-async function getTransaction() {
-  const response = await fetch(
-    `${import.meta.env.VITE_API_URL}/transactions/${useRoute().params.reference}`,
-    {
-      method: 'GET',
-      headers: {
-        'Content-type': 'application/json'
-      }
-    }
-  )
-  if (response.ok) {
-    const transaction = await response.json()
-    Object.assign(payment, transaction)
-    isLoading.value = false
-  }
+async function getTransactionById() {
+  const transaction = await getTransaction(useRoute().params.reference)
+  Object.assign(payment, transaction)
+  isLoading.value = false
 }
-console.log(payment)
 const formatEuro = (value, currency) => {
   return new Intl.NumberFormat('fr-FR', { style: 'currency', currency: currency }).format(value)
 }
@@ -52,9 +37,10 @@ const formatEuro = (value, currency) => {
       <div class="md:flex md:flex-wrap md:justify-between font-light text-sm text-gray-400 mb-6">
         <div class="flex flex-wrap items-center">
           <router-link
-            :to="{ name: 'payments' }"
-            class="bg-blue-100 text-blue-800 text-sm font-medium ml-2 px-2.5 py-0.5 rounded-full mr-2"
-            ><i class="fa-solid fa-chevron-left mr-2"></i> Retour</router-link>
+              :to="{ name: 'payments' }"
+              class="bg-blue-100 text-blue-800 text-sm font-medium ml-2 px-2.5 py-0.5 rounded-full mr-2"
+          ><i class="fa-solid fa-chevron-left mr-2"></i> Retour</router-link
+          >
           <h1 class="uppercase"><i class="fa-solid fa-dollar-sign mr-2"></i> Chargement...</h1>
         </div>
       </div>
@@ -63,9 +49,9 @@ const formatEuro = (value, currency) => {
       <div class="md:flex md:flex-wrap md:justify-between font-light text-sm text-gray-400 mb-6">
         <div class="flex flex-wrap items-center">
           <router-link
-            :to="{ name: 'payments' }"
-            class="bg-blue-100 text-blue-800 text-sm font-medium ml-2 px-2.5 py-0.5 rounded-full mr-2"
-            ><i class="fa-solid fa-chevron-left mr-2"></i> Retour</router-link
+              :to="{ name: 'payments' }"
+              class="bg-blue-100 text-blue-800 text-sm font-medium ml-2 px-2.5 py-0.5 rounded-full mr-2"
+          ><i class="fa-solid fa-chevron-left mr-2"></i> Retour</router-link
           >
           <h1 class="uppercase"><i class="fa-solid fa-dollar-sign mr-2"></i> Paiement</h1>
         </div>
@@ -75,30 +61,30 @@ const formatEuro = (value, currency) => {
       <div class="flex flex-wrap justify-between border-b border-gray-200 pb-5">
         <p class="font-bold text-2xl flex flex-wrap items-center">
           <FormatEuro
-            v-if="payment.amount && payment.currency"
-            :price="payment.amount"
-            :currency="payment.currency"
+              v-if="payment.amount && payment.currency"
+              :price="payment.amount"
+              :currency="payment.currency"
           />
           <span class="font-light text-gray-400 uppercase ml-2">{{ payment.currency }}</span>
           <span
-            :class="`${
+              :class="`${
               payment.status === 'pending'
                 ? 'bg-orange-100 text-orange-800'
                 : payment.status === 'paid'
                 ? 'bg-green-100 text-green-800'
                 : 'bg-red-100 text-red-800'
             } text-sm font-medium ml-2 px-2.5 py-0.5 rounded`"
-            >{{
+          >{{
               payment.status === 'pending'
-                ? 'En attente'
-                : payment.status === 'paid'
-                ? 'Réussi'
-                : 'Échec'
+                  ? 'En attente'
+                  : payment.status === 'paid'
+                      ? 'Réussi'
+                      : 'Échec'
             }}</span
           >
         </p>
         <button
-          class="relative inline-flex items-center justify-center p-0.5 mb-2 overflow-hidden text-sm font-medium text-gray-900 rounded-lg group bg-gradient-to-br from-cyan-500 to-blue-500 focus:outline-none"
+            class="relative inline-flex items-center justify-center p-0.5 mb-2 overflow-hidden text-sm font-medium text-gray-900 rounded-lg group bg-gradient-to-br from-cyan-500 to-blue-500 focus:outline-none"
         >
           <span class="relative px-5 py-2.5 transition-all ease-in duration-75 bg-white rounded-md">
             <i class="fa-solid fa-rotate-left md:mr-2"></i>
@@ -110,34 +96,33 @@ const formatEuro = (value, currency) => {
       <div class="flex flex-wrap mb-10">
         <table class="font-light text-left">
           <thead>
-            <tr class="text-gray-400">
-              <th class="font-light border-r px-3 pt-3">Dernière mise à jour</th>
-              <th class="font-light border-r px-3 pt-3">Client</th>
-              <th class="font-light border-r px-3 pt-3">Moyen de paiement</th>
-              <th class="font-light px-3 pt-3">Évaluation des risques</th>
-            </tr>
+          <tr class="text-gray-400">
+            <th class="font-light border-r px-3 pt-3">Dernière mise à jour</th>
+            <th class="font-light border-r px-3 pt-3">Client</th>
+            <th class="font-light border-r px-3 pt-3">Moyen de paiement</th>
+            <th class="font-light px-3 pt-3">Évaluation des risques</th>
+          </tr>
           </thead>
           <tbody>
-            <tr>
-              <td class="p-3 border-r">{{ moment(payment.updatedAt).format('LLLL') }}</td>
-              <td class="p-3 border-r">{{ payment.client_info.name }}</td>
-              <td class="p-3 border-r">
+          <tr>
+            <td class="p-3 border-r">{{ moment(payment.updatedAt).format('LLLL') }}</td>
+            <td class="p-3 border-r">{{ payment.client_info.name }}</td>
+            <td class="p-3 border-r">
                 <span v-if="payment.billing_info.card_number">
-                  <i class="fa-brands fa-cc-visa mr-2"></i> <i class="fa-solid fa-ellipsis mr-2"></i>
+                  <i class="fa-brands fa-cc-visa mr-2"></i>
+                  <i class="fa-solid fa-ellipsis mr-2"></i>
                   {{ payment.billing_info.card_number.slice(-4) }}
                 </span>
-                <span v-else>
-                    Aucune carte
-                </span>
-              </td>
-              <td class="p-3">
+              <span v-else> Aucune carte </span>
+            </td>
+            <td class="p-3">
                 <span
-                  class="bg-orange-100 text-orange-800 text-sm font-medium ml-2 px-2.5 py-0.5 rounded-full mr-2"
-                  >10</span
+                    class="bg-orange-100 text-orange-800 text-sm font-medium ml-2 px-2.5 py-0.5 rounded-full mr-2"
+                >10</span
                 >
-                Risque normal
-              </td>
-            </tr>
+              Risque normal
+            </td>
+          </tr>
           </tbody>
         </table>
       </div>
@@ -146,25 +131,25 @@ const formatEuro = (value, currency) => {
         <ol class="relative border-l border-gray-200 mt-4">
           <li class="mb-7 ml-6">
             <span
-              class="absolute flex items-center justify-center w-6 h-6 bg-green-100 rounded-full -left-3"
+                class="absolute flex items-center justify-center w-6 h-6 bg-green-100 rounded-full -left-3"
             >
               <i class="fa-solid fa-circle-check text-green-600"></i>
             </span>
             <h3 class="mb-1">Paiement réussi</h3>
             <time class="block mb-2 text-sm font-normal leading-none text-gray-400">{{
-              moment(payment.updatedAt).format('LLLL')
-            }}</time>
+                moment(payment.updatedAt).format('LLLL')
+              }}</time>
           </li>
           <li class="ml-6">
             <span
-              class="absolute flex items-center justify-center w-6 h-6 bg-blue-100 rounded-full -left-3"
+                class="absolute flex items-center justify-center w-6 h-6 bg-blue-100 rounded-full -left-3"
             >
               <i class="fa-solid fa-hourglass-start text-blue-800"></i>
             </span>
             <h3 class="mb-1">Paiement démarré</h3>
             <time class="block mb-2 text-sm font-normal leading-none text-gray-400">{{
-              moment(payment.createdAt).format('LLLL')
-            }}</time>
+                moment(payment.createdAt).format('LLLL')
+              }}</time>
           </li>
         </ol>
       </PaymentDetail>
@@ -174,23 +159,23 @@ const formatEuro = (value, currency) => {
           <div class="w-full md:w-1/2">
             <div class="flex flex-wrap">
               <PaymentDetailLine
-                title="Montant"
-                :content="formatEuro(payment.amount, payment.currency)"
+                  title="Montant"
+                  :content="formatEuro(payment.amount, payment.currency)"
               />
               <PaymentDetailLine title="Devise" :content="payment.currency" />
               <PaymentDetailLine title="Frais" content="à faire (affichage formatté)" />
               <PaymentDetailLine
-                title="Date de paiement"
-                :content="moment(payment.createdAt).format('ll')"
+                  title="Date de paiement"
+                  :content="moment(payment.createdAt).format('ll')"
               />
               <PaymentDetailLine title="Net" content="à faire (affichage formatté)" />
               <PaymentDetailLine
-                title="Heure de paiement"
-                :content="moment(payment.createdAt).format('LT')"
+                  title="Heure de paiement"
+                  :content="moment(payment.createdAt).format('LT')"
               />
               <PaymentDetailLine
-                title="Statut"
-                :content="
+                  title="Statut"
+                  :content="
                   payment.status === 'pending'
                     ? 'En attente'
                     : payment.status === 'paid'
@@ -199,8 +184,8 @@ const formatEuro = (value, currency) => {
                 "
               />
               <PaymentDetailLine
-                title="Type de paiement"
-                :content="payment.shipping_info.payment_type"
+                  title="Type de paiement"
+                  :content="payment.shipping_info.payment_type"
               />
             </div>
           </div>
@@ -213,22 +198,22 @@ const formatEuro = (value, currency) => {
             <div class="flex flex-wrap">
               <PaymentDetailLine title="ID" :content="payment.reference" />
               <PaymentDetailLine
-                title="Numéro"
-                v-if="payment.billing_info.card_number"
-                :content="'... ' + payment.billing_info.card_number.slice(-4)"
+                  title="Numéro"
+                  v-if="payment.billing_info.card_number"
+                  :content="'... ' + payment.billing_info.card_number.slice(-4)"
               />
               <PaymentDetailLine title="Empreinte" :content="payment.reference" />
               <PaymentDetailLine
-                title="Date d'expiration"
-                :content="payment.billing_info.expiration_date"
+                  title="Date d'expiration"
+                  :content="payment.billing_info.expiration_date"
               />
               <PaymentDetailLine title="Type" :content="payment.billing_info.card_type" />
               <PaymentDetailLine title="Émetteur" :content="payment.billing_info.card_bank" />
               <PaymentDetailLine title="Code postal" :content="payment.billing_info.zipcode" />
               <PaymentDetailLine title="Origine" :content="payment.billing_info.country" />
               <PaymentDetailLine
-                title="Vérification CVC"
-                :content="payment.billing_info.cvc ? 'Réussi' : 'En échec'"
+                  title="Vérification CVC"
+                  :content="payment.billing_info.cvc ? 'Réussi' : 'En échec'"
               />
               <PaymentDetailLine title="Vérification code postal" content="Réussi" />
             </div>
@@ -253,37 +238,37 @@ const formatEuro = (value, currency) => {
             <tr class="bg-white border-b">
               <td class="px-6 py-4">
                 <span
-                  class="bg-orange-100 text-orange-800 text-sm font-medium ml-2 px-2.5 py-0.5 rounded-full mr-2"
-                  >10</span
+                    class="bg-orange-100 text-orange-800 text-sm font-medium ml-2 px-2.5 py-0.5 rounded-full mr-2"
+                >10</span
                 >
               </td>
               <td class="px-6 py-4 font-semibold text-blue-500">
                 <FormatEuro
-                  v-if="payment.amount && payment.currency"
-                  :price="payment.amount"
-                  :currency="payment.currency"
+                    v-if="payment.amount && payment.currency"
+                    :price="payment.amount"
+                    :currency="payment.currency"
                 />
                 <span
-                  :class="`${
+                    :class="`${
                     payment.status === 'pending'
                       ? 'bg-orange-100 text-orange-800'
                       : payment.status === 'paid'
                       ? 'bg-green-100 text-green-800'
                       : 'bg-red-100 text-red-800'
                   } text-sm font-medium ml-2 px-2.5 py-0.5 rounded`"
-                  >{{
+                >{{
                     payment.status === 'pending'
-                      ? 'En attente'
-                      : payment.status === 'paid'
-                      ? 'Réussi'
-                      : 'Échec'
+                        ? 'En attente'
+                        : payment.status === 'paid'
+                            ? 'Réussi'
+                            : 'Échec'
                   }}</span
                 >
               </td>
               <td class="px-6 py-4">
                 <span
-                  class="bg-orange-100 text-orange-800 text-sm font-medium ml-2 px-2.5 py-0.5 rounded"
-                  v-if="payment.billing_info.card_number"
+                    class="bg-orange-100 text-orange-800 text-sm font-medium ml-2 px-2.5 py-0.5 rounded"
+                    v-if="payment.billing_info.card_number"
                 >
                   <i class="fa-regular fa-credit-card mr-2"></i>
                   <i class="fa-solid fa-ellipsis mr-2"></i>

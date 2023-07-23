@@ -1,18 +1,28 @@
 <script setup>
-import { computed, onMounted, reactive } from 'vue'
+import { computed, onMounted, onUnmounted, reactive, ref } from 'vue'
 import '../../assets/index.css'
 import SideBar from '@/components/SideBar.vue'
 import NavBar from '@/components/NavBar.vue'
 import moment from 'moment'
 import FormatEuro from '@/components/Payment/FormatEuro.vue'
 import Table from '@/components/Table.vue'
-import router from "@/router";
-import Dropdown from "@/components/Dropdown.vue";
-import {deleteTransaction, getTransactions} from "@/services/transactions";
+import store from '@/stores/store'
+
+const user = store.state.user
+import router from '@/router'
+import Dropdown from '@/components/Dropdown.vue'
+import { getSSEToken } from '../../services/auth'
+import { deleteTransaction, getTransactions } from '@/services/transactions'
 
 onMounted(async () => {
   data.payments = await getTransactions()
   await subscribeToSSETransaction()
+})
+
+onUnmounted(async () => {
+  if (eventSource.value) {
+    eventSource.value.close()
+  }
 })
 
 const defaultValue = {
@@ -31,16 +41,20 @@ const data = reactive({
   payments: {}
 })
 
+const eventSource = ref(null)
+
 async function subscribeToSSETransaction() {
+  const token = await getSSEToken()
   const params = new URLSearchParams()
-  params.set('username', 'test')
+  params.set('username', user.id)
+  params.set('token', token)
   if (localStorage.getItem('last-id')) {
     params.set('last-id', localStorage.getItem('last-id'))
   }
-  const eventSource = new EventSource(
+  eventSource.value = new EventSource(
     `${import.meta.env.VITE_API_URL}/transactions/transaction/subscribe?` + params
   )
-  bindEventSource(eventSource)
+  bindEventSource(eventSource.value)
 }
 
 function bindEventSource(eventSource) {
@@ -51,15 +65,15 @@ function bindEventSource(eventSource) {
   })
 }
 const deletePayment = async (paymentId) => {
-    await deleteTransaction(paymentId);
-    data.payments = await getTransactions();
+  await deleteTransaction(paymentId)
+  data.payments = await getTransactions()
 }
 
 // eslint-disable-next-line vue/return-in-computed-property
 const filteredPaymentsAll = computed(() => {
-    const payments = data.payments;
+  const payments = data.payments
 
-    switch (data.currentFilterAll) {
+  switch (data.currentFilterAll) {
     case 'Tous':
       return Object.values(payments)
         .sort(
@@ -105,7 +119,6 @@ const filteredPaymentsAll = computed(() => {
         )
   }
 })
-
 </script>
 
 <template>
@@ -114,12 +127,17 @@ const filteredPaymentsAll = computed(() => {
   <div class="sm:ml-64">
     <NavBar />
     <div class="p-4 lg:p-10">
+      <div class="flex items-center">
+        <h1 class="text-3xl font-bold mr-3">
+          <i class="fa-solid fa-dollar-sign mr-2"></i> Paiements
+        </h1>
 
-        <div class="flex items-center">
-            <h1 class="text-3xl font-bold mr-3"><i class="fa-solid fa-dollar-sign mr-2"></i> Paiements</h1>
-
-            <router-link :to="{ name: 'transactionAdd' }" class="px-3 py-2 text-xs font-medium text-center inline-flex items-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300">Ajouter une transaction</router-link>
-        </div>
+        <router-link
+          :to="{ name: 'transactionAdd' }"
+          class="px-3 py-2 text-xs font-medium text-center inline-flex items-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300"
+          >Ajouter une transaction</router-link
+        >
+      </div>
 
       <div class="text-sm font-medium text-center text-gray-500 border-b border-gray-200">
         <ul class="flex flex-wrap -mb-px">
@@ -169,7 +187,7 @@ const filteredPaymentsAll = computed(() => {
           </template>
           <template #tbody>
             <tr v-for="payment in filteredPaymentsAll" :key="payment.id" class="bg-white border-b">
-              <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
+              <td scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
                 <router-link
                   :to="{ name: 'paymentDetail', params: { reference: payment.reference } }"
                 >
@@ -192,7 +210,7 @@ const filteredPaymentsAll = computed(() => {
                     }}</span
                   >
                 </router-link>
-              </th>
+              </td>
               <td class="px-6 py-4">
                 Achat par :
                 {{ payment.client_info.name }}
@@ -204,9 +222,28 @@ const filteredPaymentsAll = computed(() => {
               <td class="text-center">
                 <Dropdown
                   :actions="[
-                    { label: 'Voir', onClick: () => router.push({ name: 'paymentDetail', params: { 'reference': payment.reference } }) },
-                    { label: 'Modifier', onClick: () => router.push({ name: 'paymentUpdate', params: { 'reference': payment.reference } }), divider: true },
-                    { label: 'Supprimer', textColor: 'text-red-600 font-bold', onDelete: () => deletePayment(payment.id) }
+                    {
+                      label: 'Voir',
+                      onClick: () =>
+                        router.push({
+                          name: 'paymentDetail',
+                          params: { reference: payment.reference }
+                        })
+                    },
+                    {
+                      label: 'Modifier',
+                      onClick: () =>
+                        router.push({
+                          name: 'paymentUpdate',
+                          params: { reference: payment.reference }
+                        }),
+                      divider: true
+                    },
+                    {
+                      label: 'Supprimer',
+                      textColor: 'text-red-600 font-bold',
+                      onDelete: () => deletePayment(payment.id)
+                    }
                   ]"
                   :dropdownId="payment.id"
                   @deleted="data.payments = getTransactions()"
@@ -223,50 +260,41 @@ const filteredPaymentsAll = computed(() => {
               </th>
             </tr>
           </template>
-          <template #tfoot>
-            <tr>
-              <td colspan="3" class="px-6 py-4">
-                <span
-                  >Résultats
-                  {{ data.pager.currentPage * data.pager.perPage - data.pager.perPage + 1 }}–{{
-                    data.pager.currentPage * data.pager.perPage
-                  }}
-                  affichés sur {{ data.payments.length }} résultats</span
-                >
-              </td>
-              <td class="px-6 py-4 flex flex-end space-x-2 w-full">
-                <button
-                  @click="data.pager.currentPage--"
-                  :disabled="data.pager.currentPage === 1"
-                  :class="`border border-black-700 font-medium rounded-lg text-sm px-2 py-1 text-center ${
-                    data.pager.currentPage === 1 ? 'border-gray-200 text-gray-300' : ''
-                  }`"
-                >
-                  précédent
-                </button>
-                <button
-                  @click="data.pager.currentPage++"
-                  :disabled="
-                    data.pager.currentPage * data.pager.perPage - data.pager.perPage + 1 ===
-                      data.payments.length ||
-                    data.pager.currentPage * data.pager.perPage - data.pager.perPage + 1 <=
-                      data.payments.length
-                  "
-                  :class="`border border-black-700 font-medium rounded-lg text-sm px-2 py-1 text-center ${
-                    data.pager.currentPage * data.pager.perPage - data.pager.perPage + 1 ===
-                      data.payments.length ||
-                    data.pager.currentPage * data.pager.perPage - data.pager.perPage + 1 <=
-                      data.payments.length
-                      ? 'border-gray-200 text-gray-300'
-                      : ''
-                  }`"
-                >
-                  suivant
-                </button>
-              </td>
-            </tr>
-          </template>
         </Table>
+        <div class="w-full px-6 py-4 flex justify-between items-center">
+          <span class="w-max"
+            >Résultats {{ data.pager.currentPage * data.pager.perPage - data.pager.perPage + 1 }}–{{
+              data.pager.currentPage * data.pager.perPage
+            }}
+            affichés sur {{ data.payments.length }} résultats</span
+          >
+          <div class="px-6 py-4 flex space-x-2 w-max">
+            <button
+              @click="data.pager.currentPage--"
+              :disabled="data.pager.currentPage === 1"
+              :class="`border border-black-700 font-medium rounded-lg text-sm px-2 py-1 text-center ${
+                data.pager.currentPage === 1 ? 'border-gray-200 text-gray-300' : ''
+              }`"
+            >
+              précédent
+            </button>
+            <button
+              @click="data.pager.currentPage++"
+              :disabled="
+                data.pager.currentPage * data.pager.perPage - data.pager.perPage + 1 ===
+                  data.payments.length || filteredPaymentsAll.length < data.pager.perPage
+              "
+              :class="`border border-black-700 font-medium rounded-lg text-sm px-2 py-1 text-center ${
+                data.pager.currentPage * data.pager.perPage - data.pager.perPage + 1 ===
+                  data.payments.length || filteredPaymentsAll.length < data.pager.perPage
+                  ? 'border-gray-200 text-gray-300'
+                  : ''
+              }`"
+            >
+              suivant
+            </button>
+          </div>
+        </div>
       </div>
 
       <div class="relative overflow-x-auto" v-if="data.currentTab === 'Toutes les transactions'">

@@ -78,7 +78,7 @@ Content-Type: application/json
 ###
 GET http://localhost:3000/check
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NzY0LCJmdWxsTmFtZSI6IkRvZSBKb2huIiwiaWF0IjoxNjg4ODMzNjMzLCJleHAiOjE2ODg4MzcyMzN9.nzC_gToW-c2yNvbonhlk7ElOGQ8ga4hmtsQsBcy_bZw
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Miwicm9sZSI6ImN1c3RvbWVyIiwiaWF0IjoxNjkwMDQ0NzcyLCJleHAiOjE2OTAwNDY1NzJ9.wDLvHJ_DA0nVAiyPdVTigfVp9DKD7u6VfhFL8A4LVAE
 
 ### 
 GET http://localhost:3000/verify/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NzY0LCJmdWxsTmFtZSI6IkRvZSBKb2huIiwiaWF0IjoxNjg4ODMzNjMzLCJleHAiOjE2ODg4MzcyMzN9.nzC_gToW-c2yNvbonhlk7ElOGQ8ga4hmtsQsBcy_bZw
@@ -118,10 +118,11 @@ Accept: text/event-stream
 ###
 POST http://localhost:3000/transactions
 Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Miwicm9sZSI6ImFkbWluIiwiaWF0IjoxNjkwMDQ2MTkwLCJleHAiOjE2OTAwNDc5OTB9.41hUgZPBfWavDk9sZDOftl8fugLftREggwoPRNXM9fY
 
 {
    "client_info": {
-        "name": "Michel Chemlal le petit vieux",
+        "name": "Tibo pinot",
         "address": "2T route de villechavant, Villebougis, 89150 France"
     },
     "billing_info": {
@@ -136,7 +137,7 @@ Content-Type: application/json
         "device": "Ordinateur"       
     },
     "shipping_info": {
-        "amount": 9,
+        "amount": 1000,
         "costs": 10000,
         "net": 200000,
         "currency": "EUR",
@@ -145,7 +146,7 @@ Content-Type: application/json
     "cart": {
         "card_number": "4141414141414141"
     },
-    "amount": 9,
+    "amount": 1000,
     "currency": "EUR"
 }
 
@@ -157,3 +158,26 @@ Content-Type: application/json
     "amount": 210000.45,
     "currency": "EUR"
 }
+
+
+###
+GET http://localhost:3000/products
+Content-Type: application/json
+
+###
+GET http://localhost:3000/transactions/stats/amountbyday?date=2023-07-21
+Content-Type: application/json
+
+###
+GET http://localhost:3000/transactions/stats/numberbyday?start_date=2023-07-01&end_date=2023-07-30
+Content-Type: application/json 
+
+###
+GET http://localhost:3000/transactions/stats/numberbyyear?year=2023
+Content-Type: application/json 
+
+###
+GET http://localhost:3000/get-sse-token
+Content-Type: application/json 
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Miwicm9sZSI6ImFkbWluIiwiaWF0IjoxNjkwMDcwOTkyLCJleHAiOjE2OTAwNzI3OTJ9.nBF9qwZBCTq2oPtcDHyPd86NOgj6BNK6k4bbFb1eS2s
+X-Forwarded-By: test

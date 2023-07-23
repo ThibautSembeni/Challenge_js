@@ -14,6 +14,7 @@ const checkFormat = require("./middlewares/check-format");
 const errorHandler = require("./middlewares/error-handler");
 const checkAuth = require("./middlewares/check-auth");
 const checkAdmin = require("./middlewares/check-admin-role");
+const trustProxy = require("./middlewares/trust-proxy");
 const verifyCredentials = require("./middlewares/verify-credentials");
 
 const CronService = require("./utils/cron");
@@ -25,6 +26,8 @@ app.use(
     origin: process.env.FRONT_URL,
   })
 );
+
+app.use(trustProxy);
 
 app.use(checkFormat);
 
@@ -38,7 +41,7 @@ app.use("/template", checkAuth, TemplateRouter);
 
 app.use("/users", checkAuth, UserRouter);
 
-app.use("/transactions", checkAuth, TransactionRouter);
+app.use("/transactions", TransactionRouter);
 
 // Pour activer la vérification des credentials pour les marchands
 // app.use("/transactions", verifyCredentials, TransactionRouter);
@@ -50,7 +53,7 @@ app.use("/cart", CartRouter);
 app.use("/credentials", checkAuth, CredentialRouter);
 
 app.get("/", (req, res) => {
-    res.status(200).json({ message: "Hello World!" });
+  res.status(200).json({ message: "Hello World!" });
 });
 
 app.post("/", (req, res) => {
