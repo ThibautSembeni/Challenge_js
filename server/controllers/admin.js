@@ -92,17 +92,13 @@ module.exports = function adminController(UserService) {
         isImpersonating: async (req, res, next) => {
             try {
                 const adminId = req.user.id;
-
                 const impersonation = await Impersonation.findOne({ where: { adminId } });
-
-                if (impersonation) {
-                    res.status(200).json(impersonation);
-                }
+                res.status(200).json({ status: !!impersonation });
             } catch (error) {
-                console.error(error);
                 res.status(500).json({ error: "Internal server error" });
             }
         },
+
 
         stopImpersonating: async (req, res, next) => {
             try {

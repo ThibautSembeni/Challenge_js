@@ -128,29 +128,41 @@
 </template>
 
 <script setup>
-import {onMounted, ref} from 'vue'
-import {initFlowbite} from 'flowbite'
-import {isConnectedByImpersonation, stopImpersonatingUser} from '@/services/users'
-import {getCurrentUser} from "@/services/auth";
+import { onMounted, ref } from 'vue'
+import { initFlowbite } from 'flowbite'
+import { isConnectedByImpersonation, stopImpersonatingUser } from '@/services/users'
+import { getCurrentUser } from "@/services/auth";
 
-const currentUser = getCurrentUser()
-const role = currentUser.role
+const currentUser = ref({})
+const role = ref('')
 
-const impersonatedMerchant = ref(null)
+const impersonatedMerchant = ref(false)
 
 const switchToAdminProfile = async () => {
-    await stopImpersonatingUser()
-    impersonatedMerchant.value = null
+    try {
+        await stopImpersonatingUser()
+        impersonatedMerchant.value = false
+    } catch (error) {
+        console.error(error)
+    }
 }
 
 onMounted(async () => {
     initFlowbite()
 
-    try {
-        impersonatedMerchant.value = await isConnectedByImpersonation()
-    } catch (error) {
-        console.error(error)
+    currentUser.value = await getCurrentUser()
+    role.value = currentUser.value.role
+
+    if (currentUser.value.hasOwnProperty('role') && currentUser.value.role === 'admin') {
+        try {
+            impersonatedMerchant.value = await isConnectedByImpersonation()
+        } catch (error) {
+            console.error(error)
+        }
     }
 })
+
 </script>
+
+
 

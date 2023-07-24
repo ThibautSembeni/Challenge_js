@@ -62,10 +62,11 @@ export async function stopImpersonatingUser() {
 }
 
 export async function isConnectedByImpersonation() {
-    const response = await httpClient.get('/users/admin/impersonate');
-    if (response.status === 200) {
-        return response.data;
-    } else {
-        throw new Error(`Error: ${response.status} - Une erreur s'est produite lors de l'usurpation de l'utilisateur`);
+    try {
+        const response = await httpClient.get('/users/admin/impersonate');
+        return response && response.status === 200 && response.data.status;
+    } catch (error) {
+        return false;
     }
 }
+
