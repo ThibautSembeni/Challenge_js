@@ -116,16 +116,9 @@ module.exports = function CartService() {
     },
     create: async function (data) {
       try {
-        if (isNaN(data.total_price)) {
-          throw new ValidationError("Le prix total doit être un nombre");
-        }
-        if (!data.user_id) {
-          throw new ValidationError(
-            "Le panier doit être associé à un utilisateur"
-          );
-        }
+        const cart = await Cart.create(data);
 
-        return await Cart.create(data);
+        return cart;
       } catch (e) {
         if (
           e instanceof Sequelize.ValidationError ||

@@ -1,6 +1,7 @@
 module.exports = (connection) => {
   const mongo = require("../mongo");
   const { DataTypes, Model } = require("sequelize");
+  const db = require("../postgres");
 
   function uniqueRef() {
     let code = "tr_";
@@ -15,13 +16,14 @@ module.exports = (connection) => {
   }
 
 
+    let updateInProgress = false;
     class Transaction extends Model {
-        static associate(models) {
-            Transaction.belongsTo(models.User, { foreignKey: 'user_id', as: 'user' });
-            Transaction.belongsTo(models.User, { foreignKey: 'merchant_id', as: 'merchant' });
-            Transaction.hasMany(models.Operation, { foreignKey: 'transaction_id', as: 'operations' });
-            Transaction.hasMany(models.Notification, { foreignKey: 'transaction_id', as: 'notifications' });
-        }
+      static associate(models) {
+          Transaction.belongsTo(models.User, { foreignKey: 'user_id', as: 'user' });
+          Transaction.belongsTo(models.User, { foreignKey: 'merchant_id', as: 'merchant' });
+          Transaction.hasMany(models.Operation, { foreignKey: 'transaction_id', as: 'operations' });
+          Transaction.hasMany(models.Notification, { foreignKey: 'transaction_id', as: 'notifications' });
+      }
   }
 
   Transaction.init(
@@ -119,16 +121,20 @@ module.exports = (connection) => {
   });
 
   Transaction.addHook("afterUpdate", async (transaction) => {
-    if (transaction.changed("status")) {
+    if (transaction.changed("status") && !updateInProgress) {
+      updateInProgress = true;
       const operations = await transaction.getOperations();
       const operation = operations[0];
 
       if (operation.status !== transaction.status) {
-        operation.status = transaction.status;
-        operation.save();
+        db.Operation.update(
+          { status: transaction.status },
+          { where: { id: operation.id, transaction_id: transaction.id } }
+        );
       } else {
         console.log("status already updated");
       }
+      updateInProgress = false;
     }
   });
 
