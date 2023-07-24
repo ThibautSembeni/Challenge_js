@@ -17,7 +17,6 @@ Content-Type: application/json
 ###
 GET http://localhost:3000/users
 # X-api-key: 13
-
 ###
 GET http://localhost:3000/users/1685116695797
 
@@ -71,7 +70,7 @@ POST http://localhost:3000/login
 Content-Type: application/json
 
 {
-    "email": "thibautsembeni@gmail.com",
+    "email": "test1@test.com",
     "password": "password"
 }
 
@@ -83,10 +82,6 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Miwicm9sZSI6I
 ### 
 GET http://localhost:3000/verify/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NzY0LCJmdWxsTmFtZSI6IkRvZSBKb2huIiwiaWF0IjoxNjg4ODMzNjMzLCJleHAiOjE2ODg4MzcyMzN9.nzC_gToW-c2yNvbonhlk7ElOGQ8ga4hmtsQsBcy_bZw
 
-############
-### Cart ###
-############
-
 ###
 GET http://localhost:3000/cart/user/1
 
@@ -95,70 +90,33 @@ POST http://localhost:3000/cart/add
 Content-Type: application/json
 
 {
-    "cartId": 6,
-    "productRef": "prod_bfekhkegnengnjo",
-    "quantity": 10
+    "cartId": 1,
+    "productRef": "prod_bfekhkegnegukfzu",
+    "quantity": 35
 }
 
 ###
-DELETE http://localhost:3000/cart/remove/6/prod_bfekhkegnengnjo
-Content-Type: application/json
-
-####################
-### Transactions ###
-####################
-
-GET http://localhost:3000/transactions
+DELETE http://localhost:3000/cart/remove/6/prod_bfekhkegnegukfzu
 Content-Type: application/json
 
 ###
-GET http://localhost:3000/transactions/transaction/subscribe?username=John
-Accept: text/event-stream
+GET http://localhost:3000/products
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6ImN1c3RvbWVyIiwiaWF0IjoxNjg5OTg2NTUyLCJleHAiOjE2ODk5ODgzNTJ9.fkizUKZOUb5oaP7DPKGy1CVhrXGj7zENspsYE2vC-cA
 
 ###
-POST http://localhost:3000/transactions
+POST  http://localhost:3000/operation/refund
 Content-Type: application/json
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Miwicm9sZSI6ImFkbWluIiwiaWF0IjoxNjkwMDQ2MTkwLCJleHAiOjE2OTAwNDc5OTB9.41hUgZPBfWavDk9sZDOftl8fugLftREggwoPRNXM9fY
 
 {
-   "client_info": {
-        "name": "Tibo pinot",
-        "address": "2T route de villechavant, Villebougis, 89150 France"
-    },
-    "billing_info": {
-        "zipcode": "89100",
-        "country":  "FRANCE",
-        "card_type": "Visa",
-        "card_bank": "Stripe Payments UK Limited",
-        "card_number": "4141414141414142",
-        "expiration_date": "04 / 2024",
-        "cvc": true,
-        "IP": "192.168.1.1",
-        "device": "Ordinateur"       
-    },
-    "shipping_info": {
-        "amount": 1000,
-        "costs": 10000,
-        "net": 200000,
-        "currency": "EUR",
-        "payment_type": "Carte de crédit"
-    },
-    "cart": {
-        "card_number": "4141414141414141"
-    },
-    "amount": 1000,
-    "currency": "EUR"
+    "transaction_ref": "tr_dGOJySDPt2vYbTXGNZE9",
+    "refunded_amount": 500
 }
 
 ###
-POST http://localhost:3000/transactions
+GET http://localhost:3000/operation/transaction/tr_dGOJySDPt2vYbTXGNZE9
 Content-Type: application/json
-
-{
-    "amount": 210000.45,
-    "currency": "EUR"
-}
-
 
 ###
 GET http://localhost:3000/products
@@ -181,3 +139,4 @@ GET http://localhost:3000/get-sse-token
 Content-Type: application/json 
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Miwicm9sZSI6ImFkbWluIiwiaWF0IjoxNjkwMDcwOTkyLCJleHAiOjE2OTAwNzI3OTJ9.nBF9qwZBCTq2oPtcDHyPd86NOgj6BNK6k4bbFb1eS2s
 X-Forwarded-By: test
+

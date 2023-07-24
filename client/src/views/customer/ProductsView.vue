@@ -1,8 +1,8 @@
 <script setup>
 import { ref, onMounted } from 'vue'
-import NavBar from '../../components/NavBar.vue'
-import { getCurrentUser } from '../../services/auth'
-import httpClient from '../../services/httpClient'
+import NavBar from '@/components/NavBar.vue'
+import { getCurrentUser } from '@/services/auth'
+import httpClient from '@/services/httpClient'
 
 const products = ref([])
 const currentUser = getCurrentUser()
@@ -21,15 +21,9 @@ const increment = (product) => {
 
 async function getCartIdByUser() {
   try {
-    const response = await fetch(`${import.meta.env.VITE_API_URL}/cart/user/${user}`, {
-      method: 'GET',
-      headers: {
-        'Content-type': 'application/json'
-      }
-    })
-    const data = await response.json()
-    if (data.length > 0) {
-      cartId = data[0].id
+    const response = await httpClient.get(`/cart/user/${user}`)
+    if (response.data.length > 0) {
+      cartId = response.data[0].id
       return cartId
     }
 
@@ -41,18 +35,11 @@ async function getCartIdByUser() {
 
 async function createCart(totalPrice, userId) {
   try {
-    const response = await fetch(`${import.meta.env.VITE_API_URL}/cart`, {
-      method: 'POST',
-      headers: {
-        'Content-type': 'application/json'
-      },
-      body: JSON.stringify({
-        total_price: totalPrice,
-        user_id: userId
-      })
+    const response = await httpClient.post('/cart', {
+      total_price: totalPrice,
+      user_id: userId
     })
-    const data = await response.json()
-    return data
+    return response.data
   } catch (error) {
     console.error('Error creating cart:', error)
   }
@@ -68,16 +55,10 @@ async function addToCart(product) {
       cartId = newCart.id
     }
 
-    const response = await fetch(`${import.meta.env.VITE_API_URL}/cart/add`, {
-      method: 'POST',
-      headers: {
-        'Content-type': 'application/json'
-      },
-      body: JSON.stringify({
-        cartId: cartId,
-        productRef: product.reference,
-        quantity: product.quantity
-      })
+    const response = await httpClient.post('/cart/add', {
+      cartId: cartId,
+      productRef: product.reference,
+      quantity: product.quantity
     })
     if (response.status === 200) {
       await getProducts()
