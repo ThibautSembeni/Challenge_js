@@ -133,7 +133,7 @@ module.exports = (connection) => {
 
       if (operation.status !== transaction.status) {
         db.Operation.update(
-          { status: transaction.status },
+          { status: transaction.status, transaction_id: transaction.id },
           { where: { id: operation.id, transaction_id: transaction.id } }
         );
       } else {
