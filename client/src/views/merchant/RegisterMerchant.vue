@@ -7,11 +7,14 @@ import Form from '@/components/form/Form.vue'
 import Input from '@/components/form/Input.vue'
 import {registerUser} from "@/services/auth";
 
+
 const defaultValue = {
   lastname: '',
   firstname: '',
   email: '',
-  password: ''
+  password: '',
+  kbis: '',
+  company: ''
 }
 
 const formData = reactive(
@@ -19,9 +22,12 @@ const formData = reactive(
       lastname: '',
       firstname: '',
       email: '',
-      password: ''
+      password: '',
+      kbis: null,
+      company: null
     }
 )
+
 
 const requestError = ref('')
 const infosMsg = ref('')
@@ -66,7 +72,7 @@ async function submitForm(_user) {
         :errorMsg="requestError"
         :infosMsg="infosMsg"
     >
-      <template #title><h2 class="text-3xl font-extrabold mb-4">Créez-vous un compte</h2></template>
+      <template #title><h2 class="text-2xl font-extrabold mb-6">Créez-vous un compte en tant que merchant</h2></template>
       <template #inputs>
         <Input
             label="E-mail"
@@ -97,6 +103,7 @@ async function submitForm(_user) {
             />
           </div>
         </div>
+
         <Input
             label="Password"
             name="password"
@@ -105,6 +112,26 @@ async function submitForm(_user) {
             type="password"
             :required="true"
         />
+        <div class="flex flex-row">
+          <div class="flex-1 mr-2">
+            <Input
+                label="Kbis"
+                name="kbis"
+                v-model="formData.kbis"
+                type="kbis"
+                :required="true"
+            />
+          </div>
+          <div class="flex-1 ">
+            <Input
+                label="Company"
+                name="company"
+                v-model="formData.compagny"
+                type="company"
+                :required="true"
+            />
+          </div>
+        </div>
       </template>
       <template #submit>
         <div class="column mt-4">
@@ -124,7 +151,7 @@ async function submitForm(_user) {
         <p class="flex justify-center items-center">
           Vous avez déjà un compte ?
           <router-link
-              :to="{ name: 'login' }"
+              :to="{ name: 'loginMerchant' }"
               class="inline-flex items-center text-lg text-blue-600 hover:underline"
           >Connectez-vous
           </router-link
@@ -132,6 +159,8 @@ async function submitForm(_user) {
         </p>
       </template>
     </Form>
+
+
   </section>
 </template>
 

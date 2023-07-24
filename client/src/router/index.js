@@ -27,6 +27,8 @@ import ForgotPassword from '@/views/auth/ForgotPassword.vue'
 import ResetPassword from '@/views/auth/ResetPassword.vue'
 import ShoppingCartView from '@/views/customer/ShoppingCartView.vue'
 import ProductsFrontView from '@/views/customer/ProductsView.vue'
+import RegisterMerchant from "@/views/merchant/RegisterMerchant.vue";
+import LoginMerchant from "@/views/merchant/LoginMerchant.vue";
 
 const authRoutes = [
   {
@@ -199,6 +201,19 @@ const merchantRoutes = [
     component: DashboardMerchant,
     meta: { requiresAuth: true, requiresMerchantAccess: true }
   },
+    {
+    path: '/merchant/register',
+    name: 'registerMerchant',
+    component: RegisterMerchant,
+    meta: { requiresAuth: false }
+  },
+    {
+    path: '/merchant/login',
+    name: 'loginMerchant',
+    component: LoginMerchant,
+    meta: { requiresAuth: false }
+  },
+
   {
     path: '/merchant/setup',
     name: 'setupMerchant',
@@ -206,6 +221,8 @@ const merchantRoutes = [
     meta: { requiresAuth: true, requiresMerchantAccess: true }
   }
 ]
+
+
 
 const errorRoutes = [
   {
