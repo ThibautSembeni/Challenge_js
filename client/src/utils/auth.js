@@ -10,7 +10,7 @@ export async function canUserAccess(route) {
         return user && user.role === 'admin' ? true : '/404'
     }
     if (requiresMerchantAccess) {
-        return user && user.role === 'merchant' ? true : '/404'
+        return user && (user.role === 'merchant' || user.role === 'admin') ? true : '/404'
     }
     if (requiresAuth) {
         if (isLoggedIn() === true) {

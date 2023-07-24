@@ -1,4 +1,4 @@
-const {Credential} = require("../db/models/postgres");
+const {Credential, Impersonation} = require("../db/models/postgres");
 const EmailSender = require("../services/emailSender");
 
 module.exports = function adminController(UserService) {
@@ -65,5 +65,52 @@ module.exports = function adminController(UserService) {
             }
         },
 
+        getUsersByMerchantId: async (req, res, next) => {
+            try {
+                const users = await UserService.getUsersByMerchantId(req.user.id);
+                res.json(users);
+            } catch (error) {
+                console.error(error);
+                res.status(500).json({error: "Internal server error"});
+            }
+        },
+
+        impersonate: async (req, res, next) => {
+            try {
+                const adminId = req.user.id;
+                const merchantId = req.body.merchantId;
+
+                await Impersonation.create({ adminId, merchantId });
+
+                res.status(200).json({ message: 'Usurpation start.' });
+            } catch (error) {
+                console.error(error);
+                res.status(500).json({ error: "Internal server error" });
+            }
+        },
+
+        isImpersonating: async (req, res, next) => {
+            try {
+                const adminId = req.user.id;
+                const impersonation = await Impersonation.findOne({ where: { adminId } });
+                res.status(200).json({ status: !!impersonation });
+            } catch (error) {
+                res.status(500).json({ error: "Internal server error" });
+            }
+        },
+
+
+        stopImpersonating: async (req, res, next) => {
+            try {
+                const adminId = req.user.id;
+
+                await Impersonation.destroy({ where: { adminId } });
+
+                res.status(200).json({ message: 'Usurpation stop.' });
+            } catch (error) {
+                console.error(error);
+                res.status(500).json({ error: "Internal server error" });
+            }
+        }
     };
 };

@@ -7,7 +7,7 @@ import Table from '@/components/Table.vue'
 import moment from 'moment'
 import router from '@/router'
 import Dropdown from '@/components/Dropdown.vue'
-import { getAllUsers, deleteUser } from '@/services/users'
+import {deleteUser, getAllUsersToMerchant} from '@/services/users'
 onMounted(async () => {
   await getCustomers()
 })
@@ -23,7 +23,7 @@ const data = reactive({
 })
 
 async function getCustomers() {
-  data.customers = await getAllUsers()
+  data.customers = await getAllUsersToMerchant()
 }
 
 const deleteUserRefresh = async (userId) => {

@@ -2,6 +2,10 @@ const genericRouter = require("./generic");
 const genericController = require("../controllers/generic");
 const UserService = require("../services/user");
 const userController = require("../controllers/admin");
+const checkAuth = require("../middlewares/check-auth");
+const checkMerchant = require("../middlewares/check-merchant");
+const checkAdmin = require("../middlewares/check-admin-role");
+
 module.exports = new genericRouter(
     new genericController(
         new UserService(),
@@ -11,9 +15,13 @@ module.exports = new genericRouter(
     ),
     {
         // `customRoutes` is optional is for add others custom routes
-        customRoutes: [],
-        // `defaultRoutes` is all resfull routes
-        // to desactivate resfull routes set default routes to false like ``defaultRoutes: false``
+        customRoutes: [
+            { method: 'get', path: '/user/customers', middleware: [checkAuth, checkMerchant], handler: 'getUsersByMerchantId'},
+            { method: 'get', path: '/admin/impersonate', middleware: [checkAuth, checkAdmin], handler: 'isImpersonating'},
+            { method: 'post', path: '/admin/impersonate', middleware: [checkAuth, checkAdmin], handler: 'impersonate'},
+            { method: 'get', path: '/admin/stopImpersonating', middleware: [checkAdmin], handler: 'stopImpersonating'},
+        ],
+
         defaultRoutes: {
             getAll: { method: 'get', path: '/', middleware: [], active: true },
             create: { method: 'post', path: '/', middleware: [], active: true },
