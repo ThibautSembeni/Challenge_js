@@ -4,8 +4,13 @@ module.exports = (connection) => {
   class Operation extends Model {
     static associate(models) {
       Operation.belongsTo(models.Transaction, {
-        foreignKey: "transaction_id",
+        foreignKey: "transaction_ref",
         as: "transaction",
+        targetKey: "reference",
+      });
+      Operation.hasMany(models.OperationHistory, {
+        foreignKey: "operation_id",
+        as: "operation_history",
       });
     }
   }
@@ -43,9 +48,9 @@ module.exports = (connection) => {
       },
       status: {
         type: DataTypes.ENUM,
-        values: ["pending", "paid", "failed"],
+        values: ["created", "processing", "done"],
         allowNull: false,
-        defaultValue: "pending",
+        defaultValue: "created",
       },
     },
     { sequelize: connection, tableName: "operations" }

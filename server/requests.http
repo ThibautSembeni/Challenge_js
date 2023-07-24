@@ -140,3 +140,74 @@ Content-Type: application/json
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Miwicm9sZSI6ImFkbWluIiwiaWF0IjoxNjkwMDcwOTkyLCJleHAiOjE2OTAwNzI3OTJ9.nBF9qwZBCTq2oPtcDHyPd86NOgj6BNK6k4bbFb1eS2s
 X-Forwarded-By: test
 
+###
+POST http://localhost:3000/transactions
+Content-Type: application/json
+
+{
+    "client_info": {
+        "name": "Jerem le monstre",
+        "email": "jerem@gmail.com",
+        "phoneNumber": "0606060606"
+    },
+    "billing_info": {
+        "address": "2T route de villechavant, Villebougis, 89150 France",
+        "city": "Villebougis",
+        "country":  "FRANCE",     
+        "postalCode": "89100"
+    },
+    "shipping_info": {
+        "address": "2T route de villechavant, Villebougis, 89150 France",
+        "city": "Villebougis",
+        "country":  "FRANCE",
+        "postalCode": "89100"
+    },
+    "cart": {
+        "0": {
+            "name": "produit",
+            "price": 234
+        },
+        "1": {
+            "name": "produit 2",
+            "price": 1234
+        }
+    },
+    "amount": 5000,
+    "currency": "eur",
+    "status": "created",
+    "reference": "tr_1VnQLIv1irGgZoQQ1wdf"
+}
+
+###
+PATCH http://localhost:3000/transactions/1
+Content-Type: application/json
+
+{
+    "status": "captured"
+}
+
+###
+POST http://localhost:3000/operation
+Content-Type: application/json
+
+{
+    "amount": 500,
+    "currency": "eur",
+    "transaction_ref": "tr_1VnQLIv1irGgZoQQ1wdf"
+}
+
+###
+PATCH http://localhost:3000/operation/2
+Content-Type: application/json
+
+{
+    "status": "done"
+}
+
+###
+GET http://localhost:3000/transactions/history/tr_1VnQLIv1irGgZoQQ1wdf
+Content-Type: application/json
+
+###
+GET http://localhost:3000/transactions/operation/history/tr_1VnQLIv1irGgZoQQ1wdf
+Content-Type: application/json

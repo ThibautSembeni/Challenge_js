@@ -1,4 +1,9 @@
-const { Transaction, Operation } = require("../db/models/postgres");
+const {
+  Transaction,
+  TransactionHistory,
+  Operation,
+  OperationHistory,
+} = require("../db/models/postgres");
 const Sequelize = require("sequelize");
 const ValidationError = require("../errors/ValidationError");
 
@@ -28,11 +33,8 @@ module.exports = function TransactionService() {
       try {
         const createdTransaction = await Transaction.create(data);
 
-        await Operation.create({
-          type: "capture",
-          amount: data.amount,
-          currency: data.currency,
-          status: data.status,
+        await TransactionHistory.create({
+          status: createdTransaction.status,
           transaction_id: createdTransaction.id,
         });
 
@@ -66,6 +68,11 @@ module.exports = function TransactionService() {
           where: filters,
           returning: true,
           individualHooks: true,
+        });
+
+        await TransactionHistory.create({
+          status: users[0].status,
+          transaction_id: users[0].id,
         });
 
         return users;
@@ -190,6 +197,42 @@ module.exports = function TransactionService() {
           },
         ]);
         return transactions;
+      } catch (error) {
+        throw error;
+      }
+    },
+    getTransactionHistoryByReference: async (transaction_ref) => {
+      try {
+        const transaction = await Transaction.findOne({
+          where: { reference: transaction_ref },
+          include: [
+            {
+              model: TransactionHistory,
+              as: "transaction_history",
+            },
+          ],
+        });
+        return transaction.transaction_history;
+      } catch (error) {
+        throw error;
+      }
+    },
+    getOperationHistoryByReference: async (transaction_ref) => {
+      try {
+        const transaction = await Transaction.findOne({
+          where: { reference: transaction_ref },
+        });
+
+        const operations = await Operation.findAll({
+          where: { transaction_ref: transaction.reference },
+          include: [
+            {
+              model: OperationHistory,
+              as: "operation_history",
+            },
+          ],
+        });
+        return operations;
       } catch (error) {
         throw error;
       }

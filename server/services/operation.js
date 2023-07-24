@@ -1,4 +1,8 @@
-const { Operation, Transaction } = require("../db/models/postgres");
+const {
+  Operation,
+  Transaction,
+  OperationHistory,
+} = require("../db/models/postgres");
 const Sequelize = require("sequelize");
 const ValidationError = require("../errors/ValidationError");
 const UnauthorizedError = require("../errors/UnauthorizedError");
@@ -16,6 +20,11 @@ module.exports = function OperationService() {
           individualHooks: true,
         });
 
+        await OperationHistory.create({
+          status: operations[0].status,
+          operation_id: operations[0].id,
+        });
+
         return operations;
       } catch (e) {
         if (e instanceof Sequelize.ValidationError) {
@@ -27,6 +36,12 @@ module.exports = function OperationService() {
     create: async (data) => {
       try {
         const operation = await Operation.create(data);
+
+        await OperationHistory.create({
+          status: operation.status,
+          operation_id: operation.id,
+        });
+
         return operation;
       } catch (e) {
         if (e instanceof Sequelize.ValidationError) {
