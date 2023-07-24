@@ -1,7 +1,6 @@
 const { Transaction } = require("../db/models/postgres");
 const Sequelize = require("sequelize");
 const ValidationError = require("../errors/ValidationError");
-const EmailSender = require("../services/emailSender");
 const mongoDB = require("../db/models/mongo");
 
 module.exports = function TransactionService() {
@@ -26,8 +25,7 @@ module.exports = function TransactionService() {
     },
     create: async function (data) {
       try {
-        const createdTransaction = await Transaction.create(data);
-        return createdTransaction;
+        return await Transaction.create(data);
       } catch (e) {
         if (
           e instanceof Sequelize.ValidationError ||

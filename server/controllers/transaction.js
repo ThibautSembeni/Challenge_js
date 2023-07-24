@@ -106,11 +106,11 @@ module.exports = function transactionController(TransactionService, options = {}
                 const transaction = req.body;
                 const results = await TransactionService.create(transaction);
                 messages.push(results);
+                notify({ id: results.id, name: "transaction", data: results }, false, subscribers, eventsSent);
                 const userId = results.user_id
                 const user = await UserService.findOne({id:userId})
                 const operationLink = `${process.env.FRONT_URL}/payment/capture/${results.reference}`
                 await EmailSender.sendEmailForPendingOperation(user, operationLink)
-                notify({ id: results.id, name: "transaction", data: results }, false, subscribers, eventsSent);
                 res.status(201).json(results);
             } catch (error) {
                 console.error(error);
