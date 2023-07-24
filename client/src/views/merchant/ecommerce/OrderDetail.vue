@@ -9,7 +9,7 @@ import PaymentDetailLine from '@/components/Payment/PaymentDetailLine.vue'
 import FormatEuro from '@/components/Payment/FormatEuro.vue'
 import moment from 'moment'
 import Table from '@/components/Table.vue'
-import { getTransactionByReference, getTransactionItemsById } from '@/services/transactions'
+import { getTransactionItemsById } from '@/services/transactions'
 
 const id = useRoute().params.reference;
 
@@ -19,6 +19,8 @@ onMounted(async () => {
 
 
       console.log(payment.items)
+      console.log("c'est un test" +payment.transactions.client_info.name)
+      console.log("c'est un test" +payment.transactions.currency)
   isLoading.value = false
 
 
@@ -43,11 +45,8 @@ const formatEuro = (value, currency) => {
 </script>
 
 
-<template>
-  <pre>{{  }}</pre>
 
-</template>
-<!--<template>
+<template>
   <SideBar />
 
   <div class="sm:ml-64">
@@ -56,7 +55,7 @@ const formatEuro = (value, currency) => {
       <div class="md:flex md:flex-wrap md:justify-between font-light text-sm text-gray-400 mb-6">
         <div class="flex flex-wrap items-center">
           <router-link
-              :to="{ name: 'payments' }"
+              :to="{ name: 'orderslist' }"
               class="bg-blue-100 text-blue-800 text-sm font-medium ml-2 px-2.5 py-0.5 rounded-full mr-2"
           ><i class="fa-solid fa-chevron-left mr-2"></i> Retour</router-link>
           <h1 class="uppercase"><i class="fa-solid fa-dollar-sign mr-2"></i> Chargement...</h1>
@@ -67,35 +66,35 @@ const formatEuro = (value, currency) => {
       <div class="md:flex md:flex-wrap md:justify-between font-light text-sm text-gray-400 mb-6">
         <div class="flex flex-wrap items-center">
           <router-link
-              :to="{ name: 'payments' }"
+              :to="{ name: 'orderslist' }"
               class="bg-blue-100 text-blue-800 text-sm font-medium ml-2 px-2.5 py-0.5 rounded-full mr-2"
           ><i class="fa-solid fa-chevron-left mr-2"></i> Retour</router-link
           >
           <h1 class="uppercase"><i class="fa-solid fa-dollar-sign mr-2"></i> Paiement</h1>
         </div>
-        <p>{{ payment.reference }}</p>
+        <p>{{ payment.transactions.reference }}</p>
       </div>
 
       <div class="flex flex-wrap justify-between border-b border-gray-200 pb-5">
         <p class="font-bold text-2xl flex flex-wrap items-center">
           <FormatEuro
-              v-if="payment.amount && payment.currency"
-              :price="payment.amount"
-              :currency="payment.currency"
+              v-if="payment.transactions.amount && payment.transactions.currency"
+              :price="payment.transactions.amount"
+              :currency="payment.transactions.currency"
           />
-          <span class="font-light text-gray-400 uppercase ml-2">{{ payment.currency }}</span>
+          <span class="font-light text-gray-400 uppercase ml-2">{{ payment.transactions.currency }}</span>
           <span
               :class="`${
-              payment.status === 'pending'
+              payment.transactions.status === 'pending'
                 ? 'bg-orange-100 text-orange-800'
-                : payment.status === 'paid'
+                : payment.transactions.status === 'paid'
                 ? 'bg-green-100 text-green-800'
                 : 'bg-red-100 text-red-800'
             } text-sm font-medium ml-2 px-2.5 py-0.5 rounded`"
           >{{
-              payment.status === 'pending'
+              payment.transactions.status === 'pending'
                   ? 'En attente'
-                  : payment.status === 'paid'
+                  : payment.transactions.status === 'paid'
                       ? 'Réussi'
                       : 'Échec'
             }}</span
@@ -124,8 +123,8 @@ const formatEuro = (value, currency) => {
           </thead>
           <tbody>
           <tr>
-            <td class="p-3 border-r">{{ moment(paymen).format('LLLL') }}</td>
-            <td class="p-3 border-r">{{ payment.client_info.name }}</td>
+            <td class="p-3 border-r">{{ moment(payment).format('LLLL') }}</td>
+            <td class="p-3 border-r">{{payment.transactions.client_info.name}}</td>
 
           </tr>
           </tbody>
@@ -146,11 +145,11 @@ const formatEuro = (value, currency) => {
           <tbody>
           <tr>
             <td class="p-3 border-r">{{ moment(payment.updatedAt).format('LLLL') }}</td>
-            <td class="p-3 border-r">{{ payment.client_info.name }}</td>
+            <td class="p-3 border-r">{{ payment.transactions.client_info.name }}</td>
             <td class="p-3 border-r">
-                <span v-if="payment.billing_info.card_number">
+                <span v-if="payment.transactions.billing_info.card_number">
                   <i class="fa-brands fa-cc-visa mr-2"></i> <i class="fa-solid fa-ellipsis mr-2"></i>
-                  {{ payment.billing_info.card_number.slice(-4) }}
+                  {{ payment.transactions.billing_info.card_number.slice(-4) }}
                 </span>
               <span v-else>
                     Aucune carte
@@ -178,7 +177,7 @@ const formatEuro = (value, currency) => {
             </span>
             <h3 class="mb-1">Paiement réussi</h3>
             <time class="block mb-2 text-sm font-normal leading-none text-gray-400">{{
-                moment(payment.updatedAt).format('LLLL')
+                moment(payment.transactions.updatedAt).format('LLLL')
               }}</time>
           </li>
           <li class="ml-6">
@@ -189,7 +188,7 @@ const formatEuro = (value, currency) => {
             </span>
             <h3 class="mb-1">Paiement démarré</h3>
             <time class="block mb-2 text-sm font-normal leading-none text-gray-400">{{
-                moment(payment.createdAt).format('LLLL')
+                moment(payment.transactions.createdAt).format('LLLL')
               }}</time>
           </li>
         </ol>
@@ -201,32 +200,32 @@ const formatEuro = (value, currency) => {
             <div class="flex flex-wrap">
               <PaymentDetailLine
                   title="Montant"
-                  :content="formatEuro(payment.amount, payment.currency)"
+                  :content="formatEuro(payment.transactions.amount, payment.transactions.currency)"
               />
-              <PaymentDetailLine title="Devise" :content="payment.currency" />
+              <PaymentDetailLine title="Devise" :content="payment.transactions.currency" />
               <PaymentDetailLine title="Frais" content="à faire (affichage formatté)" />
               <PaymentDetailLine
                   title="Date de paiement"
-                  :content="moment(payment.createdAt).format('ll')"
+                  :content="moment(payment.transactions.createdAt).format('ll')"
               />
               <PaymentDetailLine title="Net" content="à faire (affichage formatté)" />
               <PaymentDetailLine
                   title="Heure de paiement"
-                  :content="moment(payment.createdAt).format('LT')"
+                  :content="moment(payment.transactions.createdAt).format('LT')"
               />
               <PaymentDetailLine
                   title="Statut"
                   :content="
-                  payment.status === 'pending'
+                  payment.transactions.status === 'pending'
                     ? 'En attente'
-                    : payment.status === 'paid'
+                    : payment.transactions.status === 'paid'
                     ? 'Réussi'
                     : 'Échec'
                 "
               />
               <PaymentDetailLine
                   title="Type de paiement"
-                  :content="payment.shipping_info.payment_type"
+                  :content="payment.transactions.shipping_info.payment_type"
               />
             </div>
           </div>
@@ -237,24 +236,24 @@ const formatEuro = (value, currency) => {
         <div class="flex flex-wrap justify-between my-4">
           <div class="w-full md:w-1/2">
             <div class="flex flex-wrap">
-              <PaymentDetailLine title="ID" :content="payment.reference" />
+              <PaymentDetailLine title="ID" :content="payment.transactions.reference" />
               <PaymentDetailLine
                   title="Numéro"
-                  v-if="payment.billing_info.card_number"
-                  :content="'... ' + payment.billing_info.card_number.slice(-4)"
+                  v-if="payment.transactions.billing_info.card_number"
+                  :content="'... ' + payment.transactions.billing_info.card_number.slice(-4)"
               />
-              <PaymentDetailLine title="Empreinte" :content="payment.reference" />
+              <PaymentDetailLine title="Empreinte" :content="payment.transactions.reference" />
               <PaymentDetailLine
                   title="Date d'expiration"
-                  :content="payment.billing_info.expiration_date"
+                  :content="payment.transactions.billing_info.expiration_date"
               />
-              <PaymentDetailLine title="Type" :content="payment.billing_info.card_type" />
-              <PaymentDetailLine title="Émetteur" :content="payment.billing_info.card_bank" />
-              <PaymentDetailLine title="Code postal" :content="payment.billing_info.zipcode" />
-              <PaymentDetailLine title="Origine" :content="payment.billing_info.country" />
+              <PaymentDetailLine title="Type" :content="payment.transactions.billing_info.card_type" />
+              <PaymentDetailLine title="Émetteur" :content="payment.transactions.billing_info.card_bank" />
+              <PaymentDetailLine title="Code postal" :content="payment.transactions.billing_info.zipcode" />
+              <PaymentDetailLine title="Origine" :content="payment.transactions.billing_info.country" />
               <PaymentDetailLine
                   title="Vérification CVC"
-                  :content="payment.billing_info.cvc ? 'Réussi' : 'En échec'"
+                  :content="payment.transactions.billing_info.cvc ? 'Réussi' : 'En échec'"
               />
               <PaymentDetailLine title="Vérification code postal" content="Réussi" />
             </div>
@@ -285,22 +284,22 @@ const formatEuro = (value, currency) => {
               </td>
               <td class="px-6 py-4 font-semibold text-blue-500">
                 <FormatEuro
-                    v-if="payment.amount && payment.currency"
-                    :price="payment.amount"
-                    :currency="payment.currency"
+                    v-if="payment.transactions.amount && payment.transactions.currency"
+                    :price="payment.transactions.amount"
+                    :currency="payment.transactions.currency"
                 />
                 <span
                     :class="`${
-                    payment.status === 'pending'
+                    payment.transactions.status === 'pending'
                       ? 'bg-orange-100 text-orange-800'
-                      : payment.status === 'paid'
+                      : payment.transactions.status === 'paid'
                       ? 'bg-green-100 text-green-800'
                       : 'bg-red-100 text-red-800'
                   } text-sm font-medium ml-2 px-2.5 py-0.5 rounded`"
                 >{{
-                    payment.status === 'pending'
+                    payment.transactions.status === 'pending'
                         ? 'En attente'
-                        : payment.status === 'paid'
+                        : payment.transactions.status === 'paid'
                             ? 'Réussi'
                             : 'Échec'
                   }}</span
@@ -309,25 +308,25 @@ const formatEuro = (value, currency) => {
               <td class="px-6 py-4">
                 <span
                     class="bg-orange-100 text-orange-800 text-sm font-medium ml-2 px-2.5 py-0.5 rounded"
-                    v-if="payment.billing_info.card_number"
+                    v-if="payment.transactions.billing_info.card_number"
                 >
                   <i class="fa-regular fa-credit-card mr-2"></i>
                   <i class="fa-solid fa-ellipsis mr-2"></i>
-                  {{ payment.billing_info.card_number.slice(-4) }}
+                  {{ payment.transactions.billing_info.card_number.slice(-4) }}
                 </span>
               </td>
               <td class="px-6 py-4">
-                {{ payment.client_info.name }}
+                {{ payment.transactions.client_info.name }}
               </td>
               <td class="px-6 py-4">
                 <i class="fa-solid fa-desktop mr-2"></i>
-                {{ payment.billing_info.device }}
+                {{ payment.transactions.billing_info.device }}
               </td>
               <td class="px-6 py-4">
-                {{ payment.billing_info.IP }}
+                {{ payment.transactions.billing_info.IP }}
               </td>
               <td class="px-6 py-4">
-                {{ moment(payment.createdAt).format('LLLL') }}
+                {{ moment(payment.transactions.createdAt).format('LLLL') }}
               </td>
             </tr>
           </template>
@@ -338,12 +337,12 @@ const formatEuro = (value, currency) => {
         <div class="flex flex-wrap justify-between my-4">
           <div class="w-full md:w-1/2">
             <div class="flex flex-wrap">
-              <PaymentDetailLine title="Bénéficiaire" :content="payment.client_info.name" />
-              <PaymentDetailLine title="Adresse" :content="payment.client_info.address" />
+              <PaymentDetailLine title="Bénéficiaire" :content="payment.transactions.client_info.name" />
+              <PaymentDetailLine title="Adresse" :content="payment.transactions.client_info.address" />
             </div>
           </div>
         </div>
       </PaymentDetail>
     </div>
   </div>
-</template> -->
+</template>
