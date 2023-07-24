@@ -11,6 +11,7 @@ import store from '@/stores/store'
 const user = store.state.user
 import router from '@/router'
 import Dropdown from '@/components/Dropdown.vue'
+import { getSSEToken } from '../../services/auth'
 import { deleteTransaction, getTransactions } from '@/services/transactions'
 
 onMounted(async () => {
@@ -43,8 +44,10 @@ const data = reactive({
 const eventSource = ref(null)
 
 async function subscribeToSSETransaction() {
+  const token = await getSSEToken()
   const params = new URLSearchParams()
   params.set('username', user.id)
+  params.set('token', token)
   if (localStorage.getItem('last-id')) {
     params.set('last-id', localStorage.getItem('last-id'))
   }
