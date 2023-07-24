@@ -1,3 +1,6 @@
+const EmailSender = require("../services/emailSender");
+const userService = require("../services/user")
+const UserService = new userService()
 module.exports = function transactionController(TransactionService, options = {}) {
     const { notifyUser, notify } = require("../utils/notify.sse");
     const db = require('../db/models/mongo')
@@ -103,6 +106,10 @@ module.exports = function transactionController(TransactionService, options = {}
                 const transaction = req.body;
                 const results = await TransactionService.create(transaction);
                 messages.push(results);
+                const userId = results.user_id
+                const user = await UserService.findOne({id:userId})
+                const operationLink = `${process.env.FRONT_URL}/payment/capture/${results.reference}`
+                await EmailSender.sendEmailForPendingOperation(user, operationLink)
                 notify({ id: results.id, name: "transaction", data: results }, false, subscribers, eventsSent);
                 res.status(201).json(results);
             } catch (error) {

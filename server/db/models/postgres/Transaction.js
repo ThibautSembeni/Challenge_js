@@ -94,7 +94,7 @@ module.exports = (connection) => {
       },
       status: {
         type: DataTypes.ENUM,
-        values: ["pending", "paid", "failed"],
+        values: ["created", "pending", "paid", "failed"],
         defaultValue: "pending",
         allowNull: false,
         validate: {

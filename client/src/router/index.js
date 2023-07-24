@@ -27,6 +27,7 @@ import ForgotPassword from '@/views/auth/ForgotPassword.vue'
 import ResetPassword from '@/views/auth/ResetPassword.vue'
 import ShoppingCartView from '@/views/customer/ShoppingCartView.vue'
 import ProductsFrontView from '@/views/customer/ProductsView.vue'
+import PaymentCapture from "@/views/customer/PaymentCapture.vue";
 
 const authRoutes = [
   {
@@ -149,6 +150,12 @@ const customerRoutes = [
     path: '/cart',
     name: 'cart',
     component: ShoppingCartView,
+    meta: { requiresAuth: false }
+  },
+  {
+    path: '/payment/capture/:reference',
+    name: 'paymentCapture',
+    component: PaymentCapture,
     meta: { requiresAuth: false }
   }
 ]

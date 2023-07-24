@@ -10,6 +10,7 @@ import {
   getCartByUser,
   removeItem
 } from '@/services/customer/shoppingCart'
+import {createTransaction} from "@/services/transactions";
 
 const customerAddress = ref('')
 const customerCity = ref('')
@@ -26,6 +27,67 @@ onMounted(async () => {
     console.error('Error fetching cart items:', error)
   }
 })
+
+const _build_cart_object = () => {
+  const cart = {
+    cartText: "",
+    products: []
+  }
+  const cartTextItems = [];
+  for (const itemInCart of cartItems.value) {
+    const {product_id, quantity, price} = itemInCart
+    const product_name = itemInCart.product.name
+    const total_price_for_product = quantity * price
+
+    cart.products.push({
+      id: product_id,
+      name: product_name,
+      quantity: quantity,
+      price: total_price_for_product
+    })
+    cartTextItems.push(`${product_name} : ${total_price_for_product}`);
+  }
+  cart.cartText = cartTextItems.join(" ; ");
+  return cart
+}
+
+const goPayment = async () => {
+  const client_info = {
+    name: `${currentUser.lastname} ${currentUser.firstname}`,
+    email: currentUser.email,
+    phoneNumber: currentUser.phone_number
+  }
+  const billing_info = {
+    address: customerAddress.value,
+    city: customerCity.value,
+    postalCode: customerPostalCode.value,
+    country: customerCountry.value
+  }
+  const shipping_info = {
+    address: customerAddress.value,
+    city: customerCity.value,
+    postalCode: customerPostalCode.value,
+    country: customerCountry.value
+  }
+  const amount = total.value
+  const currency = 'EUR'
+  const user_id = currentUser.id
+
+
+
+  const cart = _build_cart_object()
+
+  const payload = {
+    client_info,
+    billing_info,
+    shipping_info,
+    cart,
+    amount,
+    currency,
+    user_id
+  }
+  const transaction = await createTransaction(payload)
+}
 </script>
 
 <template>
@@ -71,7 +133,7 @@ onMounted(async () => {
 
     <div class="mt-8">
       <h2 class="text-3xl font-semibold mb-4">Informations Client</h2>
-      <form class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+      <form class="grid grid-cols-1 sm:grid-cols-2 gap-6" @submit.prevent="goPayment">
         <div class="mb-4">
           <label class="block text-lg font-semibold text-gray-800 mb-2">Adresse:</label>
           <div class="relative">
