@@ -8,12 +8,13 @@ import PaymentDetail from '@/components/Payment/PaymentDetail.vue'
 import PaymentDetailLine from '@/components/Payment/PaymentDetailLine.vue'
 import FormatEuro from '@/components/Payment/FormatEuro.vue'
 import moment from 'moment'
-import Table from '@/components/Table.vue'
+// import Table from '@/components/Table.vue'
 import { getTransaction, getTransactionHistory } from '@/services/transactions'
+
+const reference = useRoute().params.reference
 
 onMounted(async () => {
   await getTransactionById()
-  await showHistory()
 })
 
 const payment = reactive({})
@@ -21,14 +22,13 @@ const history = reactive({})
 const isLoading = ref(true)
 
 async function getTransactionById() {
-  const transaction = await getTransaction(useRoute().params.reference)
-  Object.assign(payment, transaction)
-  isLoading.value = false
-}
+  const transaction = await getTransaction(reference)
+  const transactionHistory = await getTransactionHistory(reference)
 
-async function showHistory() {
-  const transactionHistory = await getTransactionHistory(useRoute().params.reference)
+  Object.assign(payment, transaction)
   Object.assign(history, transactionHistory)
+
+  isLoading.value = false
 }
 
 const formatEuro = (value, currency) => {
@@ -137,27 +137,39 @@ const formatEuro = (value, currency) => {
 
       <PaymentDetail title="Chronologie">
         <ol class="relative border-l border-gray-200 mt-4">
-          <li class="mb-7 ml-6">
+          <li v-for="transaction in history" :key="transaction" class="mb-7 ml-6">
             <span
               class="absolute flex items-center justify-center w-6 h-6 bg-green-100 rounded-full -left-3"
             >
-              <i class="fa-solid fa-circle-check text-green-600"></i>
+              <i
+                v-if="transaction.status === 'created'"
+                class="fa-solid fa-hourglass-start text-blue-800"
+              ></i>
+              <i
+                v-else-if="transaction.status === 'captured'"
+                class="fa-solid fa-circle-check text-green-600"
+              ></i>
+              <i
+                v-else-if="transaction.status === 'cancelled'"
+                class="fa-solid fa-circle-xmark text-red-600"
+              ></i>
+              <i
+                v-else-if="transaction.status === 'waiting_refund'"
+                class="fa-solid fa-waiting-circle text-blue-800"
+              ></i>
+              <i
+                v-else-if="transaction.status === 'partially_refunded'"
+                class="fa-solid fa-seamless-check text-green-600"
+              ></i>
+              <i
+                v-else-if="transaction.status === 'refunded'"
+                class="fa-solid fa-seamless-check text-green-600"
+              ></i>
+              <i v-else class="fa-solid fa-ban text-red-600"></i>
             </span>
-            <h3 class="mb-1">Paiement réussi</h3>
-            <time class="block mb-2 text-sm font-normal leading-none text-gray-400">{{
-              moment(payment.updatedAt).format('LLLL')
-            }}</time>
-          </li>
-          <li class="ml-6">
-            <span
-              class="absolute flex items-center justify-center w-6 h-6 bg-blue-100 rounded-full -left-3"
-            >
-              <i class="fa-solid fa-hourglass-start text-blue-800"></i>
-            </span>
-            <h3 class="mb-1">Paiement démarré</h3>
-            <time class="block mb-2 text-sm font-normal leading-none text-gray-400">{{
-              moment(payment.createdAt).format('LLLL')
-            }}</time>
+            <time class="block mb-2 text-sm font-normal leading-none text-gray-400">
+              {{ moment(transaction.createdAt).format('LLLL') }}
+            </time>
           </li>
         </ol>
       </PaymentDetail>

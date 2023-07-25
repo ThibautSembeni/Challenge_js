@@ -207,8 +207,8 @@ Content-Type: application/json
 ###
 GET http://localhost:3000/transactions/history/tr_y27QinbNVI7HYYH9f8f6
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6Im1lcmNoYW50IiwiaWF0IjoxNjkwMjY4MDY0LCJleHAiOjE2OTAyNjk4NjR9.bmtllXQfPtbAhHiI_Dwhh8upqbfLpJlgzHSYHO7LWhw
-
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6Im1lcmNoYW50IiwiaWF0IjoxNjkwMjc1NjQzLCJleHAiOjE2OTAyNzc0NDN9.7GZK76y4__6cUp0Mm6kcZ0Q1usWAfUQ6res5ed8_9w0
 ###
-GET http://localhost:3000/transactions/operation/history/tr_1VnQLIv1irGgZoQQ1wdf
+GET http://localhost:3000/transactions/operation/history/tr_y27QinbNVI7HYYH9f8f6
 Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6Im1lcmNoYW50IiwiaWF0IjoxNjkwMjc1NjQzLCJleHAiOjE2OTAyNzc0NDN9.7GZK76y4__6cUp0Mm6kcZ0Q1usWAfUQ6res5ed8_9w0

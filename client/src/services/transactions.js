@@ -75,8 +75,8 @@ export async function deleteTransaction(id) {
   }
 }
 
-export async function getTransactionHistory(reference) {
-  const response = await httpClient.get(`/transactions/history/${reference}`)
+export async function getTransactionHistory(id) {
+  const response = await httpClient.get(`/transactions/history/${id}`)
   if (response.status === 200) {
     return response.data
   } else {
