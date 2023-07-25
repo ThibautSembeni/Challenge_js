@@ -34,8 +34,10 @@ async function subscribeToSSETransaction() {
   params.set('id', user.id)
   params.set('token', token)
   eventSource.value = new EventSource(
-    `${import.meta.env.VITE_API_URL}/transactions/stats/subscribe?` + params
+    `${import.meta.env.VITE_API_URL}/transactions/stats/subscribe?` + params,
+    { withCredentials: true }
   )
+  console.log(eventSource.value)
   bindEventSource(eventSource.value)
 }
 

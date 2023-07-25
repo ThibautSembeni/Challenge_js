@@ -1,19 +1,15 @@
 const UnauthorizedError = require("../errors/UnauthorizedError");
-const {getUserFromJWTToken} = require("../utils/user");
+const { getUserFromJWTToken } = require("../utils/user");
 const UserService = require("../services/user");
-const {Impersonation} = require("../db/models/postgres");
+const { Impersonation } = require("../db/models/postgres");
 const CredentialService = require("../services/credential");
 
 module.exports = async (req, res, next) => {
-    if (!req.headers.authorization) {
-        return next(new UnauthorizedError());
-    }
-    const [type, token] = req.headers.authorization.split(" ");
-    if (type !== "Bearer") {
+    if (!req.cookies.token) {
         return next(new UnauthorizedError());
     }
     try {
-        const user = getUserFromJWTToken(token);
+        const user = getUserFromJWTToken(req.cookies.token);
         if (user.role === 'admin') {
             const impersonationRecord = await Impersonation.findOne({ where: { adminId: user.id } });
 

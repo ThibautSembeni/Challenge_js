@@ -1,6 +1,7 @@
-const UnauthorizedError = require("../errors/UnauthorizedError");
+const UnauthorizedError = require('./../errors/UnauthorizedError');
 const { verifyToken } = require("../utils/security");
 module.exports = (req, res, next) => {
+
     if (process.env.NODE_ENV === 'development') return next()
     const forwardedBy = req.headers['x-forwarded-by'];
 
@@ -9,7 +10,7 @@ module.exports = (req, res, next) => {
     }
 
     try {
-        const { ip } = verifyToken(forwardedBy);
+        const { ip } = verifyToken(req.query.token);
         if (ip !== forwardedBy) return next(new UnauthorizedError());
     } catch (err) {
         return next(new UnauthorizedError());
