@@ -1,11 +1,10 @@
 <script setup>
 import { reactive, computed, toRefs } from 'vue'
-import '../../assets/index.css'
+import { createTransaction } from '@/services/transactions'
 import SideBar from '@/components/SideBar.vue'
 import NavBar from '@/components/NavBar.vue'
 import TextInput from '@/components/form/TextInput.vue'
 import SelectInput from '@/components/form/SelectInput.vue'
-import { createTransaction } from '@/services/transactions'
 import ClientInfo from "@/components/Payment/ClientInfo.vue"
 import BillingInfo from "@/components/Payment/BillingInfo.vue"
 import ShippingInfo from "@/components/Payment/ShippingInfo.vue"

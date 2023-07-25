@@ -8,29 +8,15 @@ export default {
         }
         return response.data;
     },
-    async createTransactionMerchantEvent(transaction) {
-        const response = await httpClient.post('/eventPayment/transactionMerchant', transaction);
-        if (response.status !== 201) {
-            throw new Error(`Error: ${response.status} - An error occurred when creating the transaction`);
-        }
-        return response.data;
-    },
-    async updateTransactionEvent(id, transaction) {
-        const response = await httpClient.put(`/eventPayment/transaction/${id}`, transaction);
+    async updateTransactionEvent(reference, transaction) {
+        const response = await httpClient.put(`/eventPayment/transaction/${reference}`, transaction);
         if (response.status !== 200) {
             throw new Error(`Error: ${response.status} - An error occurred when updating the transaction`);
         }
         return response.data;
     },
-    async deleteTransactionEvent(id) {
-        const response = await httpClient.delete(`/eventPayment/transaction/${id}`);
-        if (response.status !== 200) {
-            throw new Error(`Error: ${response.status} - An error occurred when deleting the transaction`);
-        }
-        return response.data;
-    },
-    async getTransactionEvent(id) {
-        const response = await httpClient.get(`/eventPayment/transaction/${id}`);
+    async getTransactionEvent(reference) {
+        const response = await httpClient.get(`/eventPayment/transaction/${reference}`);
         if (response.status !== 200) {
             throw new Error(`Error: ${response.status} - An error occurred when getting the transaction`);
         }
@@ -57,13 +43,6 @@ export default {
         const response = await httpClient.put(`/eventPayment/operation/${id}`, operation);
         if (response.status !== 200) {
             throw new Error(`Error: ${response.status} - An error occurred when updating the operation`);
-        }
-        return response.data;
-    },
-    async deleteOperationEvent(id) {
-        const response = await httpClient.delete(`/eventPayment/operation/${id}`);
-        if (response.status !== 200) {
-            throw new Error(`Error: ${response.status} - An error occurred when deleting the operation`);
         }
         return response.data;
     },

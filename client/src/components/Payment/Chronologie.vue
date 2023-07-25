@@ -1,20 +1,20 @@
 <template>
     <ol class="relative border-l border-gray-200 mt-4">
         <li v-for="(event, index) in data.timeline" :key="index" class="mb-7 ml-6">
-            <span :class="getStatusClass(event)">
-                <i :class="getStatusIcon(event)"></i>
+            <span :class="getStatusClass(event.payload.status)">
+                <i :class="getStatusIcon(event.payload.status)"></i>
             </span>
             <h3 class="mb-1">
-                <span v-if="event.type === 'Transaction'">
-                    {{ getTransactionStatus(event.status) }}
+                <span v-if="event.type.includes('Transaction')">
+                    {{ getTransactionStatus(event.payload.status) }}
                 </span>
                 <span v-else>
-                    {{ getOperationStatus(event.status) }}
-                    <span :class="getTypeClass(event.type_operation)">{{ getOperationsType(event.type_operation) }}</span>
+                    {{ getOperationStatus(event.payload.status) }}
+                    <span :class="getTypeClass(event.payload.type)">{{ getOperationsType(event.payload.type) }}</span>
                 </span>
             </h3>
             <time class="block mb-2 text-sm font-normal leading-none text-gray-400">
-                {{ moment(event.createdAt).format('LLLL') }}
+                {{ moment(event.timestamp).format('LLLL') }}
             </time>
         </li>
     </ol>
@@ -30,47 +30,61 @@ const data = defineProps({
     }
 })
 
-const getStatusIcon = (event) => {
+const getStatusIcon = (status) => {
     const statusMap = {
         'created': 'play',
-        'paid': 'circle-check',
-        'canceled': 'xmark',
-        'refund': 'hand-holding-dollar',
+        'captured': 'circle-check',
+        'cancelled': 'xmark',
+        'waiting_refund': 'hand-holding-dollar',
+        'partially_refunded': 'circle-check',
+        'refunded': 'hand-holding-dollar',
+        'failed': 'xmark',
         'processing': 'hourglass-start',
         'done': 'check'
     };
 
     const colorMap = {
-        'created': 'text-blue-600',
-        'paid': 'text-green-600',
-        'canceled': 'text-orange-600',
-        'refund': 'text-red-600',
-        'processing': 'text-yellow-600',
-        'done': 'text-green-600'
+        'created': 'text-blue-500',
+        'captured': 'text-green-500',
+        'cancelled': 'text-orange-500',
+        'waiting_refund': 'text-red-500',
+        'partially_refunded': 'text-green-500',
+        'refunded': 'text-green-500',
+        'failed': 'text-red-500',
+        'processing': 'text-yellow-500',
+        'done': 'text-green-500'
     };
 
-    return `fa-solid fa-${statusMap[event.status]} ${colorMap[event.status]}`;
+    return `fa-solid fa-${statusMap[status]} ${colorMap[status]}`;
 };
 
-const getStatusClass = (event) => {
+const getStatusClass = (status) => {
     const statusMap = {
-        'created': 'bg-blue-200',
-        'paid': 'bg-green-200',
-        'canceled': 'bg-orange-200',
-        'refund': 'bg-red-200',
-        'processing': 'bg-yellow-200',
-        'done': 'bg-green-200'
+        'created': 'bg-blue-100',
+        'captured': 'bg-green-100',
+        'cancelled': 'bg-orange-100',
+        'waiting_refund': 'bg-red-100',
+        'partially_refunded': 'bg-green-100',
+        'refunded': 'bg-green-100',
+        'failed': 'bg-red-100',
+        'processing': 'bg-yellow-100',
+        'done': 'bg-green-100'
     };
 
-    return `absolute flex items-center justify-center w-7 h-7 rounded-full -left-3 ${statusMap[event.status]}`;
+    return `absolute flex items-center justify-center w-7 h-7 rounded-full -left-3 ${statusMap[status]}`;
 };
 
 const getTransactionStatus = (status) => {
     const statusMap = {
-        'created': 'Paiement créé',
-        'paid': 'Paiement réussi',
-        'canceled': 'Paiement annulé',
-        'refund': 'Paiement remboursé',
+        'created': 'Transaction créée',
+        'captured': 'Transaction réussie',
+        'cancelled': 'Transaction annulée',
+        'waiting_refund': 'Transaction en attente de remboursement',
+        'partially_refunded': 'Transaction partiellement remboursée',
+        'refunded': 'Transaction remboursée',
+        'failed': 'Transaction échouée',
+        'processing': 'Transaction en cours',
+        'done': 'Transaction réussie'
     };
 
     return statusMap[status];

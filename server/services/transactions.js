@@ -24,41 +24,6 @@ module.exports = function TransactionService() {
     findOne: async function (filters) {
       return Transaction.findOne({ where: filters });
     },
-    getTransactionTimeline: async function (reference) {
-      const transactions = await Transaction.findAll({ where: { reference: reference } });
-
-      if (!transactions.length) {
-        throw new Error('Transaction not found');
-      }
-
-      const operations = await Operation.findAll({ where: { transaction_reference: reference } });
-
-      let timeline = [];
-
-      for (let transaction of transactions) {
-        timeline.push({
-          type: 'Transaction',
-          status: transaction.status,
-          createdAt: transaction.createdAt,
-        });
-      }
-
-      for (let operation of operations) {
-          timeline.push({
-              type: 'Operation',
-              type_operation: operation.type,
-              status: operation.status,
-              createdAt: operation.createdAt,
-          });
-      }
-
-      timeline.sort((a, b) => {
-        return a.createdAt - b.createdAt;
-      });
-
-      return timeline;
-    },
-
 
     create: async function (data) {
       try {
@@ -115,9 +80,7 @@ module.exports = function TransactionService() {
         throw e;
       }
     },
-    delete: async (filters) => {
-      return Transaction.destroy({ where: filters });
-    },
+
     getTransactionsVolumeByDays: async (data) => {
       try {
         const transactions = await mongoDB.Transaction.aggregate([
