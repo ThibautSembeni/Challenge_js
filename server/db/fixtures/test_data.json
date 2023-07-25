@@ -1,0 +1,52 @@
+ [{
+    "model": "Transaction",
+    "data": {
+      "client_info": {
+        "name": "ezafdqs",
+        "email": "rezfq@regz",
+        "phoneNumber": "rgefdsv"
+      },
+      "billing_info": {
+        "address": "rfdvs",
+        "city": "refdsv",
+        "postalCode": "refds",
+        "country": "refdsv"
+      },
+      "shipping_info": {
+        "address": "rfdvs",
+        "city": "refdsv",
+        "postalCode": "refds",
+        "country": "refdsv"
+      },
+      "cart": {
+        "0": {
+          "name": "produit",
+          "price": 234
+        },
+        "1": {
+          "name": "produit 2",
+          "price": 1234
+        },
+        "cartText": "produit : 234 ; produit 2 : 1234",
+        "products": [
+          {
+            "name": "produit",
+            "price": 234
+          },
+          {
+            "name": "produit 2",
+            "price": 1234
+          }
+        ]
+      },
+      "amount": 1234,
+      "currency": "eur",
+      "status": "paid",
+      "reference": "tr_1VnQLIv1irGgZoQQ1wgn",
+      "createdAt": "2023-07-20T17:10:50.135Z",
+      "updatedAt": "2023-07-22T10:57:56.663Z",
+      "user_id": null,
+      "merchant_id": null
+    }
+  }]
+

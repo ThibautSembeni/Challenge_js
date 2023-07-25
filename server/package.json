@@ -7,6 +7,7 @@
     "start": "node index.js",
     "watch": "node --watch index.js",
     "d:s:u": "node migration.js",
+    "d:f:l": "node seed.js",
     "test:dev": "jest --verbose ./tests --watch --runInBand --detectOpenHandles",
     "test": "jest --verbose ./tests --runInBand --forceExit"
   },
@@ -23,7 +24,8 @@
     "node-cron": "^3.0.2",
     "node-mailjet": "^6.0.2",
     "pg": "^8.11.0",
-    "sequelize": "^6.32.1"
+    "sequelize": "^6.32.1",
+    "sequelize-fixtures": "^1.2.0"
   },
   "devDependencies": {
     "jest": "^29.5.0",
