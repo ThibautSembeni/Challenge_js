@@ -46,6 +46,7 @@ services:
     env_file:
       - web-variables.env
 
+
   database:
     container_name: postgres
     image: postgres
@@ -63,6 +64,45 @@ services:
       interval: 10s
       timeout: 5s
       retries: 3
+
+  node_marquesplace:
+    container_name: node_marquesplace
+    image: node:latest
+    volumes:
+      - ./server:/usr/local/app
+    environment:
+      DATABASE_URL: ${DATABASE_URL:-postgres://root:password@database_marquesplace:5433/app}
+      JWT_SECRET: ${JWT_SECRET:-jmqlskdfjmlqsdkf}
+      NODE_ENV: ${NODE_ENV:-development}
+    working_dir: /usr/local/app
+    ports:
+      - 127.0.0.1:4000:4000
+    command: npm run watch
+    env_file:
+      - web-variables.env
+
+
+  database_marquesplace:
+    container_name: postgres_marquesplace
+    image: postgres
+    volumes:
+      - postgre-data:/var/lib/postgresql/data/
+    expose:
+      - "5433" # Publishes 5433 to other containers but NOT to host machine
+    ports:
+      - "5433:5433"
+    restart: always
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: app
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -h localhost -p 5432 -U root"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    command: -p 5433
+
 
 volumes:
   mongo-data: {}
