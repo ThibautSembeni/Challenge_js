@@ -7,14 +7,15 @@
     "start": "node index.js",
     "watch": "node --watch index.js",
     "d:s:u": "node migration.js",
-    "d:f:l": "node seed.js",
     "test:dev": "jest --verbose ./tests --watch --runInBand --detectOpenHandles",
-    "test": "jest --verbose ./tests --runInBand --forceExit"
+    "test": "jest --verbose ./tests --runInBand --forceExit",
+    "d:f:l": "node fakers.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@faker-js/faker": "^8.0.2",
     "bcryptjs": "^2.4.3",
     "card-validator": "^8.1.1",
     "cors": "^2.8.5",
@@ -23,7 +24,7 @@
     "mongoose": "^7.3.1",
     "node-cron": "^3.0.2",
     "node-mailjet": "^6.0.2",
-    "pg": "^8.11.0",
+    "pg": "^8.11.1",
     "sequelize": "^6.32.1",
     "sequelize-fixtures": "^1.2.0"
   },
