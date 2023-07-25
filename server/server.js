@@ -29,7 +29,7 @@ app.use(
   cors({
     origin: async (origin, callback) => {
       const origins = await UserService().getOrigins();
-      if (origin === process.env.FRONT_URL || origins.includes(origin)) {
+      if (origin === process.env.FRONT_URL || origins.includes(origin) || origin === 'http://localhost:6000') {
         return callback(null, true);
       } else {
         return callback(new Error("Not allowed by CORS"), false);
