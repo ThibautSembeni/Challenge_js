@@ -1,12 +1,14 @@
 import httpClient from '@/services/httpClient'
 
-export async function getTransactions() {
-    const response = await httpClient.get('/transactions');
-    if (response.status === 200) {
-        return response.data;
-    } else {
-        throw new Error(`Error: ${response.status} - Une erreur s'est produite lors de la récupération des transactions`);
-    }
+export async function createOperation(payload) {
+    console.log(payload)
+    const response = await httpClient.post('/operations', payload);
+    return response
+    // if (response.status === 200) {
+    //     return response.data;
+    // } else {
+    //     throw new Error(`Error: ${response.status} - Une erreur s'est produite lors de la récupération des transactions`);
+    // }
 }
 
 export async function getTransaction(id) {

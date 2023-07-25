@@ -43,9 +43,9 @@ module.exports = (connection) => {
       },
       status: {
         type: DataTypes.ENUM,
-        values: ["pending", "paid", "failed"],
+        values: ["created", "processing", "done"],
         allowNull: false,
-        defaultValue: "pending",
+        defaultValue: "created",
       },
     },
     { sequelize: connection, tableName: "operations" }

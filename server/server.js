@@ -10,6 +10,7 @@ const CartRouter = require("./routes/cart");
 const AdminRouter = require("./routes/admin");
 const CredentialRouter = require("./routes/credentials");
 const OperationRouter = require("./routes/operation");
+const PspRouter = require("./routes/psp");
 
 const checkFormat = require("./middlewares/check-format");
 const errorHandler = require("./middlewares/error-handler");
@@ -53,7 +54,9 @@ app.use("/cart", CartRouter);
 
 app.use("/credentials", checkAuth, CredentialRouter);
 
-app.use("/operation", OperationRouter);
+app.use("/operations", OperationRouter);
+
+app.use("/psp", PspRouter);
 
 app.get("/", (req, res) => {
   res.status(200).json({ message: "Hello World!" });

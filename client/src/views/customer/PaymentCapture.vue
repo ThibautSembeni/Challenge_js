@@ -1,24 +1,41 @@
 <script setup>
 import {useRoute} from "vue-router";
 import {onMounted, reactive, ref} from "vue";
-import {getTransaction} from "@/services/transactions";
+import {cancelTransaction, getTransaction} from "@/services/transactions";
 import Input from "@/components/form/Input.vue";
 import GenericButton from "@/components/GenericButton.vue";
 import Form from "@/components/form/Form.vue";
+import {createOperation} from "@/services/operations";
 
 const route = useRoute()
 
+const transactionReference = route.params.reference
 const transaction = ref(null)
 const formData = reactive({
   cardNumber: null,
   cardExpiration: null,
   cardCVC: null
 })
+
 onMounted(async () => {
-  transaction.value = await getTransaction(route.params.reference)
+  transaction.value = await getTransaction(transactionReference)
 })
+
 const submitForm = async (formData) => {
-  console.log("formData", formData)
+  const amount = transaction.value.amount
+  const currency = transaction.value.currency
+  console.log("go payment" )
+  const payload = {...formData,amount, currency, transaction_id:transaction.value.id}
+  const response = await createOperation(payload)
+}
+
+const cancel = async () => {
+  try {
+    await cancelTransaction(transactionReference)
+  } catch (e) {
+    console.error(e)
+  }
+
 }
 </script>
 
@@ -40,9 +57,14 @@ const submitForm = async (formData) => {
             <Input v-model="formData.cardCVC" label="CVC" type="number"/>
           </template>
           <template #submit>
-            <GenericButton :active="formData.cardCVC && formData.cardExpiration && formData.cardNumber" color="primary" text=" Payer"/>
+            <GenericButton :active="formData.cardCVC && formData.cardExpiration && formData.cardNumber" color="primary"
+                           text=" Payer"/>
+            <button @click.prevent="cancel">
+              Annuler le paiement
+            </button>
           </template>
         </Form>
+
       </div>
     </div>
   </div>

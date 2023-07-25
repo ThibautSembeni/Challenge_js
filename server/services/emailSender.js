@@ -124,6 +124,7 @@ class EmailSender {
             username: firstname + " " + lastname,
             email: email
         }
+        console.log("ok")
         try {
             return await EmailSender.sendEmail(data);
         } catch (err) {

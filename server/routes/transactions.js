@@ -15,6 +15,7 @@ module.exports = new genericRouter(
     {
         customRoutes: [
             { method: 'get', path: '/transaction/user/:id', middleware: [checkAuth], handler: 'getTransactionsByUserId' },
+            { method: 'get', path: '/cancel/:reference', middleware: [checkAuth], handler: 'cancelTransaction' },
             { method: 'get', path: '/transaction/subscribe', middleware: [checkSSE], handler: 'subscribe' },
             { method: 'post', path: '/', middleware: [checkAuth], handler: 'transaction' },
             { method: 'get', path: '/stats/subscribe', middleware: [checkSSE], handler: 'subscribeToTransactionsStats' },
