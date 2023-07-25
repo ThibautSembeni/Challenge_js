@@ -110,14 +110,14 @@ const formatEuro = (value, currency) => {
         </button>
       </div>
 
-      //MCH
+      <div>Informations de facturation</div>
       <div class="flex flex-wrap mb-10">
         <table class="font-light text-left">
           <thead>
           <tr class="text-gray-400">
             <th class="font-light border-r px-3 pt-3">Dernière mise à jour</th>
             <th class="font-light border-r px-3 pt-3">Client</th>
-            <th class="font-light border-r px-3 pt-3">Moyen de paiement</th>
+            <th class="font-light border-r px-3 pt-3">adresse de facturation</th>
             <th class="font-light px-3 pt-3">Évaluation des risques</th>
           </tr>
           </thead>
@@ -138,7 +138,7 @@ const formatEuro = (value, currency) => {
           <tr class="text-gray-400">
             <th class="font-light border-r px-3 pt-3">Dernière mise à jour</th>
             <th class="font-light border-r px-3 pt-3">Client</th>
-            <th class="font-light border-r px-3 pt-3">Moyen de paiement</th>
+            <th class="font-light border-r px-3 pt-3">adresse de livraison</th>
             <th class="font-light px-3 pt-3">Évaluation des risques</th>
           </tr>
           </thead>
