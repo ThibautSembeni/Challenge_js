@@ -64,7 +64,7 @@ module.exports = function transactionController(TransactionService, options = {}
         getOne: async function (req, res, next) {
             try {
                 const reference = req.params.reference
-                const transaction = await TransactionService.findOne({reference: reference})
+                const transaction = await TransactionService.findOne({ merchant_id: req.user.id, reference: reference })
                 if (transaction) {
                     res.json(transaction)
                 } else {
@@ -74,10 +74,22 @@ module.exports = function transactionController(TransactionService, options = {}
                 next(e)
             }
         },
+        getAll: async function (req, res, next) {
+            try {
+                const transactions = await TransactionService.findAll({ merchant_id: req.user.id })
+                if (transactions) {
+                    res.json(transactions)
+                } else {
+                    res.status(404).json({ error: "Transaction not found" })
+                }
+            } catch (e) {
+                next(e)
+            }
+        },
         getTransactionsByUserId: async (req, res, next) => {
             try {
                 const id = req.params.id
-                const results = await TransactionService.findAll({user_id: id})
+                const results = await TransactionService.findAll({ merchant_id: req.user.id, user_id: id })
                 if (results) {
                     res.json(results)
                 } else {
@@ -106,6 +118,7 @@ module.exports = function transactionController(TransactionService, options = {}
         transaction: async (req, res, next) => {
             try {
                 const transaction = req.body;
+                transaction.merchant_id = req.user.id;
                 const results = await TransactionService.create(transaction);
                 messages.push(results);
                 notify({id: results.id, name: "transaction", data: results}, false, subscribers, eventsSent);

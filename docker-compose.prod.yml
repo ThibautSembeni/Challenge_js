@@ -5,16 +5,14 @@ services:
     container_name: client
     build:
       context: ./client
-    ports:
-      - 8080:80
-      - 443:443
     volumes:
-      - ./client:/app
-      - ./docker/nginx/nginx.conf:/etc/nginx/conf.d/default.conf
-      - ./docker/nginx/access.log:/var/log/nginx/access.log
-      - ./docker/nginx/error.log:/var/log/nginx/error.log
-      - /etc/letsencrypt/live/moula.thibautsbn.fr/fullchain.pem:/etc/pki/tls/certs/fullchain.pem
-      - /etc/letsencrypt/live/moula.thibautsbn.fr/privkey.pem:/etc/pki/tls/certs/privkey.pem
+      - client:/app/dist
+  marquesplace:
+    container_name: marquesplace
+    build:
+      context: ./marquesplace
+    volumes:
+      - marquesplace:/app/dist
   database:
     container_name: postgres
     image: postgres
@@ -49,6 +47,22 @@ services:
       - EMAIL_SENDER=${EMAIL_SENDER}
       - MAILJET_PK=${MAILJET_PK}
       - MAILJET_SK=${MAILJET_SK}
-
+      - FRONT_URL=${FRONT_URL}
+  nginx:
+    container_name: nginx
+    image: nginx:alpine
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - ./docker/nginx/nginx.conf:/etc/nginx/conf.d/default.conf
+      - ./docker/nginx/access.log:/var/log/nginx/access.log
+      - ./docker/nginx/error.log:/var/log/nginx/error.log
+      - /etc/letsencrypt/live/kamalpay.thibautsbn.fr/fullchain.pem:/etc/pki/tls/certs/fullchain.pem
+      - /etc/letsencrypt/live/kamalpay.thibautsbn.fr/privkey.pem:/etc/pki/tls/certs/privkey.pem
+      - client:/var/www/client
+      - marquesplace:/var/www/marquesplace
 volumes:
   postgre-data: {}
+  client: {}
+  marquesplace: {}

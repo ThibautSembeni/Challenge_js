@@ -9,6 +9,13 @@
       </a>
 
       <div class="flex items-center md:order-2">
+          <div v-if="impersonatedMerchant">
+              <button class="block px-4 py-2 text-sm text-white"
+                      @click="switchToAdminProfile">
+                  Revenir au compte admin
+                  <i class="fa-solid fa-right-from-bracket ml-2"></i>
+              </button>
+          </div>
         <button
           type="button"
           class="flex mr-3 text-sm bg-gray-800 rounded-full md:mr-0 focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-600"
@@ -121,14 +128,41 @@
 </template>
 
 <script setup>
-import { onMounted } from 'vue'
+import { onMounted, ref } from 'vue'
 import { initFlowbite } from 'flowbite'
-import { getCurrentUser } from '../services/auth'
+import { isConnectedByImpersonation, stopImpersonatingUser } from '@/services/users'
+import { getCurrentUser } from "@/services/auth";
 
-const currentUser = getCurrentUser()
-const role = currentUser.role
+const currentUser = ref({})
+const role = ref('')
 
-onMounted(() => {
-  initFlowbite()
+const impersonatedMerchant = ref(false)
+
+const switchToAdminProfile = async () => {
+    try {
+        await stopImpersonatingUser()
+        impersonatedMerchant.value = false
+    } catch (error) {
+        console.error(error)
+    }
+}
+
+onMounted(async () => {
+    initFlowbite()
+
+    currentUser.value = await getCurrentUser()
+    role.value = currentUser.value.role
+
+    if (currentUser.value.hasOwnProperty('role') && currentUser.value.role === 'admin') {
+        try {
+            impersonatedMerchant.value = await isConnectedByImpersonation()
+        } catch (error) {
+            console.error(error)
+        }
+    }
 })
+
 </script>
+
+
+

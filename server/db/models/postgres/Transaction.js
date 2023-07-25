@@ -16,20 +16,14 @@ module.exports = (connection) => {
     }
 
     let updateInProgress = false;
-
     class Transaction extends Model {
-        static associate(models) {
-            Transaction.belongsTo(models.User, {foreignKey: "user_id", as: "user"});
-            Transaction.hasMany(models.Operation, {
-                foreignKey: "transaction_id",
-                as: "operations",
-            });
-            Transaction.hasMany(models.Notification, {
-                foreignKey: "transaction_id",
-                as: "notifications",
-            });
-        }
-    }
+      static associate(models) {
+          Transaction.belongsTo(models.User, { foreignKey: 'user_id', as: 'user' });
+          Transaction.belongsTo(models.User, { foreignKey: 'merchant_id', as: 'merchant' });
+          Transaction.hasMany(models.Operation, { foreignKey: 'transaction_id', as: 'operations' });
+          Transaction.hasMany(models.Notification, { foreignKey: 'transaction_id', as: 'notifications' });
+      }
+  }
 
     Transaction.init(
         {
