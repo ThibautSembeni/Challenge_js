@@ -226,7 +226,7 @@ const submitForm = async () => {
               </div>
             </div>
           </div>
-          <p class="mb-4 text-xl font-bold text-gray-900">Ajouter une transaction</p>
+          <p class="mb-4 text-xl font-bold text-gray-900">Mettre à jour une transaction</p>
           <form @submit.prevent="submitForm">
             <div class="grid gap-4 sm:grid-cols-2 sm:gap-6">
               <div class="w-full">

@@ -9,13 +9,15 @@ import PaymentDetailLine from '@/components/Payment/PaymentDetailLine.vue'
 import FormatEuro from '@/components/Payment/FormatEuro.vue'
 import moment from 'moment'
 import Table from '@/components/Table.vue'
-import { getTransaction } from '@/services/transactions'
+import { getTransaction, getTransactionHistory } from '@/services/transactions'
 
 onMounted(async () => {
   await getTransactionById()
+  await showHistory()
 })
 
 const payment = reactive({})
+const history = reactive({})
 const isLoading = ref(true)
 
 async function getTransactionById() {
@@ -23,6 +25,12 @@ async function getTransactionById() {
   Object.assign(payment, transaction)
   isLoading.value = false
 }
+
+async function showHistory() {
+  const transactionHistory = await getTransactionHistory(useRoute().params.reference)
+  Object.assign(history, transactionHistory)
+}
+
 const formatEuro = (value, currency) => {
   return new Intl.NumberFormat('fr-FR', { style: 'currency', currency: currency }).format(value)
 }

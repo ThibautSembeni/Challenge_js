@@ -33,7 +33,7 @@ module.exports = function TransactionService() {
       try {
         const createdTransaction = await Transaction.create(data);
 
-        const transactionHistory = await TransactionHistory.create({
+        await TransactionHistory.create({
           transaction_id: createdTransaction.id,
           status: createdTransaction.status,
         });
@@ -53,8 +53,14 @@ module.exports = function TransactionService() {
     replace: async function (filters, newData) {
       try {
         const nbDeleted = await this.delete(filters);
-        const user = await this.create(newData);
-        return [[user, nbDeleted === 0]];
+        const transaction = await this.create(newData);
+
+        await TransactionHistory.create({
+          transaction_id: transaction.id,
+          status: transaction.status,
+        });
+
+        return [[transaction, nbDeleted === 0]];
       } catch (e) {
         if (e instanceof Sequelize.ValidationError) {
           throw ValidationError.fromSequelizeValidationError(e);
@@ -70,12 +76,10 @@ module.exports = function TransactionService() {
           individualHooks: true,
         });
 
-        const transactionHistory = await TransactionHistory.create({
+        await TransactionHistory.create({
           transaction_id: transactions[0].id,
-          status: newData.status,
+          status: transactions[0].status,
         });
-
-        transactionHistory.save();
 
         return transactions;
       } catch (e) {
