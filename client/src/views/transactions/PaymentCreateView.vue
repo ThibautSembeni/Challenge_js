@@ -18,7 +18,7 @@ const formData = reactive({
     cart: {},
     amount: '',
     currency: '',
-    status: 'pending',
+    status: 'created',
 })
 
 const returnData = reactive({
@@ -90,7 +90,7 @@ const resetForm = () => {
     formData.cart = {}
     formData.amount = ''
     formData.currency = ''
-    formData.status = 'pending'
+    formData.status = 'created'
 }
 
 const copyShippingToBilling = () => {
@@ -101,8 +101,6 @@ const submitForm = async () => {
     if (!isFormValid.value) return
 
     const result = await createTransaction(formData)
-
-    //TODO: la reference n'est pas rendu dans le template
 
     if (result && result.reference) {
         returnData.flashMessage = `La transaction ${result.reference} a été créée avec succès. Cliquez ici pour la voir.`
@@ -184,8 +182,12 @@ const submitForm = async () => {
                             <div class="sm:col-span-2">
                                 <SelectInput
                                     :options="[
-                                        { value: 'pending', label: 'En attente' },
-                                        { value: 'paid', label: 'Payée' },
+                                        { value: 'created', label: 'En attente' },
+                                        { value: 'captured', label: 'Capturée' },
+                                        { value: 'cancelled', label: 'Annulé' },
+                                        { value: 'waiting_refund', label: 'En attente de remboursement' },
+                                        { value: 'partially_refunded', label: 'Remboursée partiellement' },
+                                        { value: 'refunded', label: 'Refusée' },
                                         { value: 'failed', label: 'Échouée' }
                                       ]"
                                     v-model="status"

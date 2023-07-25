@@ -1,31 +1,41 @@
 <script setup>
-import { onMounted, reactive, ref } from 'vue'
-import { useRoute } from 'vue-router'
-import '../../assets/index.css'
-import SideBar from '@/components/SideBar.vue'
-import NavBar from '@/components/NavBar.vue'
-import PaymentDetail from '@/components/Payment/PaymentDetail.vue'
-import PaymentDetailLine from '@/components/Payment/PaymentDetailLine.vue'
-import FormatEuro from '@/components/Payment/FormatEuro.vue'
-import moment from 'moment'
-import Table from '@/components/Table.vue'
-import { getTransaction } from '@/services/transactions'
+    import { onMounted, reactive, ref } from 'vue'
+    import { useRoute } from 'vue-router'
+    import '../../assets/index.css'
+    import SideBar from '@/components/SideBar.vue'
+    import NavBar from '@/components/NavBar.vue'
+    import PaymentDetail from '@/components/Payment/PaymentDetail.vue'
+    import PaymentDetailLine from '@/components/Payment/PaymentDetailLine.vue'
+    import FormatEuro from '@/components/Payment/FormatEuro.vue'
+    import moment from 'moment'
+    import Table from '@/components/Table.vue'
+    import { getTransaction, getTransactionTimeline } from '@/services/transactions'
+    import Chronologie from "@/components/Payment/Chronologie.vue";
 
-onMounted(async () => {
-  await getTransactionById()
-})
+    const payment = reactive({})
+    const timeline = reactive([])
+    const isLoading = ref(true)
+    const params_reference = useRoute().params.reference
 
-const payment = reactive({})
-const isLoading = ref(true)
+    onMounted(async () => {
+        await getTransactionById()
+        await getTransactionTimelineById()
+    })
+    async function getTransactionById() {
+        const transaction = await getTransaction(params_reference)
+        Object.assign(payment, transaction)
+        isLoading.value = false
+    }
 
-async function getTransactionById() {
-  const transaction = await getTransaction(useRoute().params.reference)
-  Object.assign(payment, transaction)
-  isLoading.value = false
-}
-const formatEuro = (value, currency) => {
-  return new Intl.NumberFormat('fr-FR', { style: 'currency', currency: currency }).format(value)
-}
+    async function getTransactionTimelineById() {
+        const transactionTimeline = await getTransactionTimeline(params_reference)
+        Object.assign(timeline, transactionTimeline)
+        isLoading.value = false
+    }
+
+    const formatEuro = (value, currency) => {
+      return new Intl.NumberFormat('fr-FR', { style: 'currency', currency: currency }).format(value)
+    }
 </script>
 
 <template>
@@ -68,20 +78,23 @@ const formatEuro = (value, currency) => {
           <span class="font-light text-gray-400 uppercase ml-2">{{ payment.currency }}</span>
           <span
             :class="`${
-              payment.status === 'pending'
-                ? 'bg-orange-100 text-orange-800'
+              payment.status === 'created'
+                ? 'bg-gray-100 text-gray-800'
                 : payment.status === 'paid'
                 ? 'bg-green-100 text-green-800'
-                : 'bg-red-100 text-red-800'
+                : payment.status === 'canceled'
+                ? 'bg-red-100 text-red-800'
+                : 'bg-orange-100 text-orange-800'
             } text-sm font-medium ml-2 px-2.5 py-0.5 rounded`"
             >{{
-              payment.status === 'pending'
-                ? 'En attente'
+              payment.status === 'created'
+                ? 'En création'
                 : payment.status === 'paid'
                 ? 'Réussi'
-                : 'Échec'
-            }}</span
-          >
+                : payment.status === 'canceled'
+                ? 'Annulé'
+                : 'Remboursé'
+            }}</span>
         </p>
         <button
           class="relative inline-flex items-center justify-center p-0.5 mb-2 overflow-hidden text-sm font-medium text-gray-900 rounded-lg group bg-gradient-to-br from-cyan-500 to-blue-500 focus:outline-none"
@@ -127,34 +140,12 @@ const formatEuro = (value, currency) => {
         </table>
       </div>
 
-      <PaymentDetail title="Chronologie">
-        <ol class="relative border-l border-gray-200 mt-4">
-          <li class="mb-7 ml-6">
-            <span
-              class="absolute flex items-center justify-center w-6 h-6 bg-green-100 rounded-full -left-3"
-            >
-              <i class="fa-solid fa-circle-check text-green-600"></i>
-            </span>
-            <h3 class="mb-1">Paiement réussi</h3>
-            <time class="block mb-2 text-sm font-normal leading-none text-gray-400">{{
-              moment(payment.updatedAt).format('LLLL')
-            }}</time>
-          </li>
-          <li class="ml-6">
-            <span
-              class="absolute flex items-center justify-center w-6 h-6 bg-blue-100 rounded-full -left-3"
-            >
-              <i class="fa-solid fa-hourglass-start text-blue-800"></i>
-            </span>
-            <h3 class="mb-1">Paiement démarré</h3>
-            <time class="block mb-2 text-sm font-normal leading-none text-gray-400">{{
-              moment(payment.createdAt).format('LLLL')
-            }}</time>
-          </li>
-        </ol>
-      </PaymentDetail>
+        <PaymentDetail title="Chronologie">
+          <Chronologie :timeline="timeline" />
+        </PaymentDetail>
 
-      <PaymentDetail title="Détails du paiement">
+
+        <PaymentDetail title="Détails du paiement">
         <div class="flex flex-wrap justify-between my-4">
           <div class="w-full md:w-1/2">
             <div class="flex flex-wrap">

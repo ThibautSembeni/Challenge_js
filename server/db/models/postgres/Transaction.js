@@ -1,3 +1,4 @@
+const {DataTypes} = require("sequelize");
 module.exports = (connection) => {
   const mongo = require("../mongo");
   const { DataTypes, Model } = require("sequelize");
@@ -6,24 +7,23 @@ module.exports = (connection) => {
   function uniqueRef() {
     let code = "tr_";
     let authorizedChar =
-      "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
     for (let i = 0; i < 20; i++) {
       code += authorizedChar.charAt(
-        Math.floor(Math.random() * authorizedChar.length)
+          Math.floor(Math.random() * authorizedChar.length)
       );
     }
     return code;
   }
 
-
-    let updateInProgress = false;
-    class Transaction extends Model {
-      static associate(models) {
-          Transaction.belongsTo(models.User, { foreignKey: 'user_id', as: 'user' });
-          Transaction.belongsTo(models.User, { foreignKey: 'merchant_id', as: 'merchant' });
-          Transaction.hasMany(models.Operation, { foreignKey: 'transaction_id', as: 'operations' });
-          Transaction.hasMany(models.Notification, { foreignKey: 'transaction_id', as: 'notifications' });
-      }
+  let updateInProgress = false;
+  class Transaction extends Model {
+    static associate(models) {
+      Transaction.belongsTo(models.User, { foreignKey: 'user_id', as: 'user' });
+      Transaction.belongsTo(models.User, { foreignKey: 'merchant_id', as: 'merchant' });
+      Transaction.hasMany(models.Notification, { foreignKey: 'transaction_id', as: 'notifications' });
+      Transaction.hasMany(models.Event, { foreignKey: 'aggregate_id', as: 'events' });
+    }
   }
 
   Transaction.init(
@@ -89,7 +89,7 @@ module.exports = (connection) => {
       },
       status: {
         type: DataTypes.ENUM,
-        values: ["pending", "paid", "failed"],
+        values: ["created", "captured", "cancelled", "waiting_refund", "partially_refunded", "refunded", "failed"],
         defaultValue: "pending",
         allowNull: false,
         validate: {

@@ -193,22 +193,24 @@ const filteredPaymentsAll = computed(() => {
                 >
                   <FormatEuro :price="payment.amount" :currency="payment.currency" />
                   <span class="ml-4 font-light text-gray-400">{{ payment.currency }}</span>
-                  <span
-                    :class="`text-sm font-medium mr-2 px-2.5 py-0.5 rounded ml-4 ${
-                      payment.status === 'pending'
-                        ? 'bg-orange-100 text-orange-800'
-                        : payment.status === 'paid'
-                        ? 'bg-green-100 text-green-800'
-                        : 'bg-red-100 text-red-800'
-                    }`"
+                    <span :class="`${
+                            payment.status === 'created'
+                              ? 'bg-gray-100 text-gray-800'
+                              : payment.status === 'paid'
+                              ? 'bg-green-100 text-green-800'
+                              : payment.status === 'canceled'
+                              ? 'bg-red-100 text-red-800'
+                              : 'bg-orange-100 text-orange-800'
+                          } text-sm font-medium ml-2 px-2.5 py-0.5 rounded`"
                     >{{
-                      payment.status === 'pending'
-                        ? 'En attente'
-                        : payment.status === 'paid'
-                        ? 'Réussi'
-                        : 'Échec'
-                    }}</span
-                  >
+                      payment.status === 'created'
+                          ? 'En création'
+                          : payment.status === 'paid'
+                              ? 'Réussi'
+                              : payment.status === 'canceled'
+                                  ? 'Annulé'
+                                  : 'Remboursé'
+                      }}</span>
                 </router-link>
               </td>
               <td class="px-6 py-4">

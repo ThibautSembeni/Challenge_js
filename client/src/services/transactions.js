@@ -1,4 +1,5 @@
 import httpClient from '@/services/httpClient'
+import eventPayment from '@/services/eventPayment'
 
 export async function getTransactions() {
     const response = await httpClient.get('/transactions');
@@ -27,25 +28,11 @@ export async function getTransactionsOfUserById(id) {
 }
 
 export async function createTransaction(transaction) {
-    const response = await httpClient.post('/transactions', transaction, {
-        headers: {
-            'Content-Type': 'application/json'
-        }
-    });
-    if (response.status === 201) {
-        return response.data;
-    } else {
-        console.log(response);
-        throw new Error(`Error: ${response.status} - Une erreur s'est produite lors de la création de la transaction`);
-    }
+    return await eventPayment.createTransactionMerchantEvent(transaction);
 }
 
 export async function updateTransaction(transaction) {
-    const response = await httpClient.put(`/transactions/${transaction.id}`, transaction, {
-        headers: {
-            'Content-Type': 'application/json'
-        }
-    });
+    const response = await httpClient.put(`/transactions/${transaction.id}`, transaction);
     if (response.status === 200) {
         return response.data;
     } else {
@@ -60,5 +47,14 @@ export async function deleteTransaction(id) {
         return response.data;
     } else {
         throw new Error(`Error: ${response.status} - Une erreur s'est produite lors de la suppression de la transaction`);
+    }
+}
+
+export async function getTransactionTimeline(reference) {
+    const response = await httpClient.get(`/transactions/transaction/timeline/${reference}`);
+    if (response.status === 200) {
+        return response.data;
+    } else {
+        throw new Error(`Error: ${response.status} - Une erreur s'est produite lors de la récupération de la chronologie de la transaction`);
     }
 }

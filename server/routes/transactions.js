@@ -22,6 +22,7 @@ module.exports = new genericRouter(
             { method: 'get', path: '/stats/amountbyday', middleware: [checkAuth], handler: 'getTransactionsVolumeByDays' },
             { method: 'get', path: '/stats/numberbyday', middleware: [checkAuth], handler: 'getTransactionsNumberByDays' },
             { method: 'get', path: '/stats/numberbyyear', middleware: [checkAuth], handler: 'getTransactionsNumberByYear' },
+            { method: 'get', path: '/transaction/timeline/:reference', middleware: [checkAuth], handler: 'getTransactionTimeline' }
         ],
         defaultRoutes: {
             getAll: { method: 'get', path: '/', middleware: [checkAuth, checkMerchant], active: true },
