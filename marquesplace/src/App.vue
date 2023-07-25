@@ -1,6 +1,11 @@
 <script setup>
 import HelloWorld from "./components/HelloWorld.vue";
 import TheWelcome from "./components/TheWelcome.vue";
+
+fetch(`${import.meta.env.VITE_API_URL}/`)
+  .then((res) => res.json())
+  .then((data) => console.log(data))
+  .catch((err) => console.log(err));
 </script>
 
 <template>

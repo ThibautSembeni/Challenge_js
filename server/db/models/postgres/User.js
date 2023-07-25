@@ -111,6 +111,10 @@ module.exports = (connection) => {
             type: DataTypes.STRING,
             allowNull: true,
         },
+        merchant_url: {
+            type: DataTypes.STRING,
+            allowNull: true,
+        },
         payout_currency: {
             type: DataTypes.STRING,
             allowNull: true,

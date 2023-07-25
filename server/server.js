@@ -20,13 +20,23 @@ const verifyCredentials = require("./middlewares/verify-credentials");
 
 const CronService = require("./utils/cron");
 
+const UserService = require("./services/user");
+
 const app = express();
 
 app.use(
   cors({
-    origin: process.env.FRONT_URL,
+    origin: async (origin, callback) => {
+      const origins = await UserService().getOrigins();
+      if (origin === process.env.FRONT_URL || origins.includes(origin)) {
+        return callback(null, true);
+      } else {
+        return callback(new Error("Not allowed by CORS"), false);
+      }
+    }
   })
 );
+
 
 app.use(trustProxy);
 
