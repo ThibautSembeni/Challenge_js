@@ -49,11 +49,11 @@ app.use("/transactions", TransactionRouter);
 
 app.use("/products", checkAuth, ProductRouter);
 
-app.use("/cart", CartRouter);
+app.use("/cart", checkAuth, CartRouter);
 
 app.use("/credentials", checkAuth, CredentialRouter);
 
-app.use("/operation", OperationRouter);
+app.use("/operation", checkAuth, OperationRouter);
 
 app.get("/", (req, res) => {
   res.status(200).json({ message: "Hello World!" });
