@@ -1,10 +1,10 @@
 <script setup>
 import { RouterView } from 'vue-router'
-import { computed } from 'vue'
+import {computed, onMounted} from 'vue'
 import store from '@/stores/store'
 import Spinner from '@/components/Spinner.vue'
 import {initFlowbite} from "flowbite";
-initFlowbite()
+
 
 const isLoading = computed(() => store.state.isLoading)
 </script>

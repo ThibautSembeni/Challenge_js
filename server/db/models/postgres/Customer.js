@@ -1,3 +1,4 @@
+const {DataTypes} = require("sequelize");
 module.exports = (connection) => {
   const { DataTypes, Model } = require("sequelize");
   const bcrypt = require("bcryptjs");
@@ -57,6 +58,18 @@ module.exports = (connection) => {
           is: /^[a-zA-Z0-9!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]*$/,
           notNull: {
             msg: "Le mot de passe est obligatoire",
+          },
+        },
+      },
+      role: {
+        type: DataTypes.ENUM,
+        values: ["merchant", "customer"],
+        defaultValue: "customer",
+        allowNull: false,
+        validate: {
+          isIn: {
+            args: [["merchant", "customer"]],
+            msg: "Le rôle doit être admin, merchant ou customer",
           },
         },
       },

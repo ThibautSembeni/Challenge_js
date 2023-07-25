@@ -11,7 +11,6 @@ module.exports = new genericRouter(
     customRoutes: [
       { method: "post", path: "/login", middleware: [], handler: "login" },
     ],
-
     defaultRoutes: {
       create: { method: "post", path: "/", middleware: [], active: true },
     },

@@ -1,8 +1,9 @@
 const bcrypt = require("bcryptjs");
+const {generateVerificationToken} = require("../utils/user");
 
 module.exports = function CustomerController(CustomerService) {
   return {
-    async create(req, res) {
+    create: async (req, res, next) => {
       try {
         const { body } = req;
         const customer = await CustomerService.create(body);
@@ -18,11 +19,13 @@ module.exports = function CustomerController(CustomerService) {
         }
       }
     },
-    async login(req, res) {
+    login: async (req, res, next) => {
       try {
         const { email, password } = req.body;
         const customer = await CustomerService.login(email, password);
-        res.json(customer);
+        const token = await generateVerificationToken(customer);
+        res.cookie('token', token, { httpOnly: true });
+        res.json({ token });
       } catch (e) {
         console.error(e);
         if (e.name === "UnauthorizedError") {
@@ -31,6 +34,10 @@ module.exports = function CustomerController(CustomerService) {
           next(e);
         }
       }
+    },
+    me: async (req, res, next) => {
+      console.log("ok")
+      res.json("aezaeza")
     },
   };
 };

@@ -61,11 +61,13 @@ app.use("/products", checkAuth, ProductRouter);
 
 app.use("/cart", checkAuth, CartRouter);
 
+
 app.use("/credentials", checkAuth, CredentialRouter);
 
 app.use("/operation", checkAuth, OperationRouter);
 
 app.use("/customer", CustomerRouter);
+
 
 app.get("/", (req, res) => {
   res.status(200).json({ message: "Hello World!" });

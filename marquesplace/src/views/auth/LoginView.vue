@@ -4,7 +4,7 @@ import router from '@/router'
 import GenericButton from '@/components/GenericButton.vue'
 import Input from '@/components/form/Input.vue'
 import Form from '@/components/form/Form.vue'
-import {fetchUser, login} from '@/services/auth'
+import {fetchUser, loginCustomer} from '@/services/auth'
 
 const defaultValue = {
   email: '',
@@ -17,7 +17,7 @@ const requestError = ref('')
 async function loginUser(_user) {
   if (requestError.value) requestError.value = ''
   try {
-    await login(_user)
+    await loginCustomer(_user)
     const currentUser = await fetchUser()
     if (currentUser.role) {
       router.push({path: '/', replace: true})

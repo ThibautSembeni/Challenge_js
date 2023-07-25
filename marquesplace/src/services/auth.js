@@ -1,8 +1,10 @@
 import store from '@/stores/store'
 import httpClient from '@/services/httpClient'
 
-export async function login(userCredentials) {
-    const response = await httpClient.post('/login', userCredentials)
+export async function loginCustomer(userCredentials) {
+    const response = await httpClient.post('/customer/login', userCredentials)
+
+    console.log("res", response)
     if (response.status === 200) {
         const { token } = response.data
         localStorage.setItem('access_token', token)
@@ -38,7 +40,7 @@ export function isLoggedIn() {
 }
 
 export async function fetchUser() {
-    const userData = await httpClient.get('/me')
+    const userData = await httpClient.get('/customer/me')
     store.commit('setUser', userData.data)
     return userData.data
 }
