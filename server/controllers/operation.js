@@ -1,5 +1,8 @@
 const transactionService = require("../services/transactions")
 const TransactionService = new transactionService()
+const EmailSender = require("../services/emailSender");
+const userService = require("../services/user")
+const UserService = new userService()
 module.exports = function OperationController(OperationService, options = {}) {
     return {
         capture: async (req, res, next) => {
@@ -76,7 +79,10 @@ module.exports = function OperationController(OperationService, options = {}) {
                 const {result, operation_id} = req.body
                 const status = result === true ? 'captured' : 'failed'
                 const operation = await OperationService.findOne({id: operation_id})
-                const transaction = await TransactionService.update({id: operation.transaction_id}, {status})
+                const transactions = await TransactionService.update({id: operation.transaction_id}, {status})
+                const transaction = transactions[0]
+                const user = await UserService.findOne({id:transaction.user_id})
+                await EmailSender.sendEmailForOperation(user, status)
                 res.status(200);
             } catch (e) {
                 console.log(e);

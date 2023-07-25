@@ -109,10 +109,10 @@ module.exports = function transactionController(TransactionService, options = {}
                 const results = await TransactionService.create(transaction);
                 messages.push(results);
                 notify({id: results.id, name: "transaction", data: results}, false, subscribers, eventsSent);
-                const userId = results.user_id
-                const user = await UserService.findOne({id: userId})
-                const operationLink = `${process.env.FRONT_URL}/payment/capture/${results.reference}`
-                await EmailSender.sendEmailForPendingOperation(user, operationLink)
+                // const userId = results.user_id
+                // const user = await UserService.findOne({id: userId})
+                // const operationLink = `${process.env.FRONT_URL}/payment/capture/${results.reference}`
+                // await EmailSender.sendEmailForPendingOperation(user, operationLink)
                 res.status(201).json(results);
             } catch (error) {
                 console.error(error);
