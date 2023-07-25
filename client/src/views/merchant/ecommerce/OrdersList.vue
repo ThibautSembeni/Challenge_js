@@ -20,7 +20,7 @@ onMounted(async () => {
 
 const defaultValue = {
   currentTab: 'Tous les paiements',
-  tabs: ['Tous les paiements'],
+  tabs: 'Tous les paiements',
   currentFilterAll: 'Tous',
 
   pager: {
@@ -82,12 +82,10 @@ const filteredPaymentsAll = computed(() => {
     <div class="p-4 lg:p-10">
 
       <div class="flex items-center">
-        <h1 class="text-3xl font-bold mr-3">Transactions</h1>
+        <h1 class="text-3xl font-bold mr-3">Historique des commandes</h1>
+  </div>
 
-        <router-link :to="{ name: 'transactionAdd' }" class="px-3 py-2 text-xs font-medium text-center inline-flex items-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300">Ajouter une transaction</router-link>
-      </div>
-
-      <div class="text-sm font-medium text-center text-gray-500 border-b border-gray-200">
+      <!--<div class="text-sm font-medium text-center text-gray-500 border-b border-gray-200">
         <ul class="flex flex-wrap -mb-px">
           <li v-for="tab in data.tabs" :key="tab" class="mr-2" @click="data.currentTab = tab">
             <a
@@ -101,9 +99,9 @@ const filteredPaymentsAll = computed(() => {
             >
           </li>
         </ul>
-      </div>
+      </div>-->
 
-      <div class="relative overflow-x-auto" v-if="data.currentTab === 'Tous les paiements'">
+     <div class="relative overflow-x-auto" v-if="data.currentTab === 'Tous les paiements'">
         <div class="flex justify-end my-3">
           <!--<button
               v-for="filter in data.filtersAll"
@@ -127,8 +125,8 @@ const filteredPaymentsAll = computed(() => {
           <template #thead>
             <tr>
               <th scope="col" class="px-6 py-3">Montant</th>
-              <th scope="col" class="px-6 py-3">Description</th>
               <th scope="col" class="px-6 py-3">Client</th>
+              <th scope="col" class="px-6 py-3">Reférence</th>
               <th scope="col" class="px-6 py-3">Date</th>
               <th scope="col" class="px-6 py-3 text-center">Actions</th>
             </tr>
@@ -160,10 +158,10 @@ const filteredPaymentsAll = computed(() => {
                 </router-link>
               </th>
               <td class="px-6 py-4">
-                Achat par :
+
                 {{ payment.client_info.name }}
               </td>
-              <td class="px-6 py-4">###</td>
+              <td class="px-6 py-4">{{payment.reference}}</td>
               <td class="px-6 py-4">
                 {{ moment(payment.createdAt).format('LLLL') }}
               </td>
