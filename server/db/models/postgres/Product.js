@@ -11,7 +11,10 @@ module.exports = (connection) => {
         return code;
     }
     class Product extends Model {
-
+        static associate(models) {
+            Product.hasMany(models.CartItem, { foreignKey: 'product_id', as: 'cart_items' });
+            Product.belongsTo(models.User, { foreignKey: 'merchant_id', as: 'merchant' });
+        }
     }
 
     Product.init({
@@ -61,7 +64,18 @@ module.exports = (connection) => {
                     msg: "Le stock est obligatoire"
                 }
             }
-        }
+        },
+        status: {
+            type: DataTypes.ENUM,
+            values: ['active', 'archived'],
+            defaultValue: 'active',
+            allowNull: false,
+            validate: {
+                notNull: {
+                    msg: "Le statut est obligatoire"
+                },
+            }
+        },
     }, { sequelize: connection, tableName: 'products' });
 
     return Product;

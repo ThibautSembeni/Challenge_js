@@ -10,11 +10,17 @@
     "format": "prettier --write src/"
   },
   "dependencies": {
+    "@vuepic/vue-datepicker": "^5.4.0",
+    "axios": "^1.4.0",
+    "chart.js": "^4.3.0",
+    "chartjs-adapter-moment": "^1.0.1",
     "flowbite": "^1.6.6",
     "moment": "^2.29.4",
     "vite": "^4.3.9",
     "vue": "^3.3.4",
-    "vue-router": "^4.2.2"
+    "vue-router": "^4.2.2",
+    "vuex": "^4.1.0",
+    "vuex-persistedstate": "^4.1.0"
   },
   "devDependencies": {
     "@rushstack/eslint-patch": "^1.2.0",

@@ -12,9 +12,8 @@ module.exports = function genericController(Service, options = {}) {
             }
         },
         getOne: async (req, res) => {
-            const { id } = req.params;
             try {
-                const result = await Service.findOne({ id: parseInt(id, 10) });
+                const result = await Service.findOne(req.params);
                 if (result)
                     res.json(result);
                 else res.sendStatus(404);

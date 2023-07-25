@@ -77,7 +77,66 @@ Content-Type: application/json
 ###
 GET http://localhost:3000/check
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NzY0LCJmdWxsTmFtZSI6IkRvZSBKb2huIiwiaWF0IjoxNjg4ODMzNjMzLCJleHAiOjE2ODg4MzcyMzN9.nzC_gToW-c2yNvbonhlk7ElOGQ8ga4hmtsQsBcy_bZw
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Miwicm9sZSI6ImN1c3RvbWVyIiwiaWF0IjoxNjkwMDQ0NzcyLCJleHAiOjE2OTAwNDY1NzJ9.wDLvHJ_DA0nVAiyPdVTigfVp9DKD7u6VfhFL8A4LVAE
 
 ### 
 GET http://localhost:3000/verify/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NzY0LCJmdWxsTmFtZSI6IkRvZSBKb2huIiwiaWF0IjoxNjg4ODMzNjMzLCJleHAiOjE2ODg4MzcyMzN9.nzC_gToW-c2yNvbonhlk7ElOGQ8ga4hmtsQsBcy_bZw
+
+###
+GET http://localhost:3000/cart/user/1
+
+###
+POST http://localhost:3000/cart/add
+Content-Type: application/json
+
+{
+    "cartId": 1,
+    "productRef": "prod_bfekhkegnegukfzu",
+    "quantity": 35
+}
+
+###
+DELETE http://localhost:3000/cart/remove/6/prod_bfekhkegnegukfzu
+Content-Type: application/json
+
+###
+GET http://localhost:3000/products
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6ImN1c3RvbWVyIiwiaWF0IjoxNjg5OTg2NTUyLCJleHAiOjE2ODk5ODgzNTJ9.fkizUKZOUb5oaP7DPKGy1CVhrXGj7zENspsYE2vC-cA
+
+###
+POST  http://localhost:3000/operation/refund
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Miwicm9sZSI6ImFkbWluIiwiaWF0IjoxNjkwMDQ2MTkwLCJleHAiOjE2OTAwNDc5OTB9.41hUgZPBfWavDk9sZDOftl8fugLftREggwoPRNXM9fY
+
+{
+    "transaction_ref": "tr_dGOJySDPt2vYbTXGNZE9",
+    "refunded_amount": 500
+}
+
+###
+GET http://localhost:3000/operation/transaction/tr_dGOJySDPt2vYbTXGNZE9
+Content-Type: application/json
+
+###
+GET http://localhost:3000/products
+Content-Type: application/json
+
+###
+GET http://localhost:3000/transactions/stats/amountbyday?date=2023-07-21
+Content-Type: application/json
+
+###
+GET http://localhost:3000/transactions/stats/numberbyday?start_date=2023-07-01&end_date=2023-07-30
+Content-Type: application/json 
+
+###
+GET http://localhost:3000/transactions/stats/numberbyyear?year=2023
+Content-Type: application/json 
+
+###
+GET http://localhost:3000/get-sse-token
+Content-Type: application/json 
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Miwicm9sZSI6ImFkbWluIiwiaWF0IjoxNjkwMDcwOTkyLCJleHAiOjE2OTAwNzI3OTJ9.nBF9qwZBCTq2oPtcDHyPd86NOgj6BNK6k4bbFb1eS2s
+X-Forwarded-By: test
+

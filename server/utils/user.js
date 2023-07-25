@@ -2,14 +2,13 @@ const jwt = require("jsonwebtoken");
 const UnauthorizedError = require("./../errors/UnauthorizedError");
 
 const generateVerificationToken = async (user) => {
-    const token = jwt.sign(
-        { id: user.id, fullName: user.lastname + " " + user.firstname },
+    return jwt.sign(
+        {id: user.id,role: user.role},
         process.env.JWT_SECRET,
         {
-            expiresIn: "1h",
+            expiresIn: "30m",
         }
     );
-    return token;
 };
 
 const getUserFromJWTToken = (token) => {
@@ -22,5 +21,15 @@ const getUserFromJWTToken = (token) => {
     }
 };
 
+const generateToken = () => {
+    const tokenLength = 64;
+    const characters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    let token = '';
+    for (let i = 0; i < tokenLength; i++) {
+        const randomIndex = Math.floor(Math.random() * characters.length);
+        token += characters.charAt(randomIndex);
+    }
+    return token
+};
 
-module.exports = { generateVerificationToken, getUserFromJWTToken };
+module.exports = {generateVerificationToken, getUserFromJWTToken, generateToken};
