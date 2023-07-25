@@ -31,7 +31,6 @@ module.exports = function productController(productService, options = {}) {
                     criteria = {merchant_id: req.user.id}
                 }
                 const results = await productService.findAll(criteria)
-                console.log("resu", results, criteria)
                 if (results) {
                     res.json(results)
                 } else {
