@@ -3,11 +3,19 @@ module.exports = function productController(productService, options = {}) {
         getOne: async function (req, res, next) {
             try {
                 const reference = req.params.reference
-                const product = await productService.findOne({ merchant_id: req.user.id, reference: reference })
+                let criteria = {}
+                if (req?.user?.id) {
+                    console.log("ok")
+                    criteria = {merchant_id: req.user.id, reference: reference}
+                } else {
+                    console.log("ok")
+                    criteria = {reference: reference}
+                }
+                const product = await productService.findOne(criteria)
                 if (product) {
                     res.json(product)
                 } else {
-                    res.status(404).json({ error: "Product not found" })
+                    res.status(404).json({error: "Product not found"})
                 }
             } catch (e) {
                 next(e)
@@ -15,11 +23,19 @@ module.exports = function productController(productService, options = {}) {
         },
         getAll: async (req, res, next) => {
             try {
-                const results = await productService.findAll({ merchant_id: req.user.id })
+                let criteria = {}
+                if (req?.user?.role === 'customer') {
+                    criteria = {}
+                }
+                else {
+                    criteria = {merchant_id: req.user.id}
+                }
+                const results = await productService.findAll(criteria)
+                console.log("resu", results, criteria)
                 if (results) {
                     res.json(results)
                 } else {
-                    res.status(404).json({ error: "Product not found" })
+                    res.status(404).json({error: "Product not found"})
                 }
             } catch (e) {
                 next(e)

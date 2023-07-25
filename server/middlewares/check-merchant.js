@@ -14,6 +14,7 @@ module.exports = async (req, res, next) => {
     }
     try {
         const user = getUserFromJWTToken(token);
+        console.log("user", user.role)
         if (user.role === 'admin') {
             const impersonationRecord = await Impersonation.findOne({ where: { adminId: user.id } });
 
@@ -25,7 +26,11 @@ module.exports = async (req, res, next) => {
             }
         } else if (user.role === 'merchant') {
             req.user = user;
-        } else {
+        }
+        else if (user.role === 'customer') {
+
+        }
+        else {
             return next(new UnauthorizedError());
         }
     } catch (err) {
