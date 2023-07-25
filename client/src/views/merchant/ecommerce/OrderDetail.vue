@@ -55,7 +55,7 @@ const formatEuro = (value, currency) => {
       <div class="md:flex md:flex-wrap md:justify-between font-light text-sm text-gray-400 mb-6">
         <div class="flex flex-wrap items-center">
           <router-link
-              :to="{ name: 'orderslist' }"
+              :to="{ name: 'ordersList' }"
               class="bg-blue-100 text-blue-800 text-sm font-medium ml-2 px-2.5 py-0.5 rounded-full mr-2"
           ><i class="fa-solid fa-chevron-left mr-2"></i> Retour</router-link>
           <h1 class="uppercase"><i class="fa-solid fa-dollar-sign mr-2"></i> Chargement...</h1>
@@ -66,7 +66,7 @@ const formatEuro = (value, currency) => {
       <div class="md:flex md:flex-wrap md:justify-between font-light text-sm text-gray-400 mb-6">
         <div class="flex flex-wrap items-center">
           <router-link
-              :to="{ name: 'orderslist' }"
+              :to="{ name: 'ordersList' }"
               class="bg-blue-100 text-blue-800 text-sm font-medium ml-2 px-2.5 py-0.5 rounded-full mr-2"
           ><i class="fa-solid fa-chevron-left mr-2"></i> Retour</router-link
           >
