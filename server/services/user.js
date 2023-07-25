@@ -5,10 +5,10 @@ const UnauthorizedError = require("../errors/UnauthorizedError");
 const UniqueConstraintError = require("../errors/UniqueConstraintError");
 const { generateVerificationToken } = require("../utils/user");
 const UserMongoService = require('./mongo/user')
-const {Transaction} = require("../db/models/postgres");
+const { Transaction } = require("../db/models/postgres");
 
 
-module.exports = function UserService(MongoService) {
+module.exports = function UserService() {
     return {
         findAll: async function (filters, options) {
             let dbOptions = {
@@ -93,7 +93,7 @@ module.exports = function UserService(MongoService) {
                 throw error;
             }
         },
-        count:async function (filters){
+        count: async function (filters) {
             const dbOptions = {
                 where: filters
             }
@@ -124,6 +124,14 @@ module.exports = function UserService(MongoService) {
             }
 
             return merchant;
+        },
+        getOrigins: async () => {
+            try {
+                const origins = await User.findAll({ where: { role: "merchant" } });
+                return origins.map((origin) => origin.merchant_url);
+            } catch (error) {
+                throw new Error('Erreur lors du comptage des utilisateurs en attente.');
+            }
         }
     };
 };

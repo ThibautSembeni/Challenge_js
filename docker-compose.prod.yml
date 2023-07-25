@@ -60,7 +60,7 @@ services:
       - /etc/letsencrypt/live/kamalpay.thibautsbn.fr/fullchain.pem:/etc/pki/tls/certs/fullchain.pem
       - /etc/letsencrypt/live/kamalpay.thibautsbn.fr/privkey.pem:/etc/pki/tls/certs/privkey.pem
       - client:/var/www/client
-      - marquesplace:/var/www/front
+      - marquesplace:/var/www/marquesplace
 volumes:
   postgre-data: {}
   client: {}
