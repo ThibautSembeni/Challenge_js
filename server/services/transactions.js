@@ -24,6 +24,7 @@ module.exports = function TransactionService() {
     findOne: async function (filters) {
       return Transaction.findOne({ where: filters });
     },
+
     create: async function (data) {
       try {
         const createdTransaction = await Transaction.create(data);
@@ -79,9 +80,7 @@ module.exports = function TransactionService() {
         throw e;
       }
     },
-    delete: async (filters) => {
-      return Transaction.destroy({ where: filters });
-    },
+
     getTransactionsVolumeByDays: async (data) => {
       try {
         const transactions = await mongoDB.Transaction.aggregate([

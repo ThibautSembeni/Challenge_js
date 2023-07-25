@@ -99,7 +99,6 @@ module.exports = function adminController(UserService) {
             }
         },
 
-
         stopImpersonating: async (req, res, next) => {
             try {
                 const adminId = req.user.id;

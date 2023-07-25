@@ -1,18 +1,18 @@
 <script setup>
 import { computed, onMounted, onUnmounted, reactive, ref } from 'vue'
-import '../../assets/index.css'
 import SideBar from '@/components/SideBar.vue'
 import NavBar from '@/components/NavBar.vue'
 import moment from 'moment'
 import FormatEuro from '@/components/Payment/FormatEuro.vue'
 import Table from '@/components/Table.vue'
 import store from '@/stores/store'
-
-const user = store.state.user
 import router from '@/router'
 import Dropdown from '@/components/Dropdown.vue'
-import { getSSEToken } from '../../services/auth'
-import { deleteTransaction, getTransactions } from '@/services/transactions'
+import { getSSEToken } from '@/services/auth'
+import { getTransactions } from '@/services/transactions'
+import PaymentStatus from "@/components/Payment/PaymentStatus.vue";
+
+const user = store.state.user
 
 onMounted(async () => {
   data.payments = await getTransactions()
@@ -27,9 +27,17 @@ onUnmounted(async () => {
 
 const defaultValue = {
   currentTab: 'Tous les paiements',
-  tabs: ['Tous les paiements', 'Litiges', 'Toutes les transactions'],
+  tabs: ['Tous les paiements'],
   currentFilterAll: 'Tous',
-  filtersAll: ['Tous', 'Réussi', 'En attente', 'Échoué'],
+  filtersAll: {
+      'Tous' : 'all',
+      'En attente' : 'created',
+      'Capturée' : 'captured',
+      'Annulé' : 'cancelled',
+      'En attente de remboursement' : 'waiting_refund',
+      'Remboursée partiellement' : 'partially_refunded',
+      'Refusée' : 'refunded'
+  },
   pager: {
     currentPage: 1,
     perPage: 20
@@ -64,61 +72,37 @@ function bindEventSource(eventSource) {
     localStorage.setItem('last-id', event.lastEventId)
   })
 }
-const deletePayment = async (paymentId) => {
-  await deleteTransaction(paymentId)
-  data.payments = await getTransactions()
-}
 
-// eslint-disable-next-line vue/return-in-computed-property
 const filteredPaymentsAll = computed(() => {
-  const payments = data.payments
+    const payments = data.payments
 
-  switch (data.currentFilterAll) {
-    case 'Tous':
-      return Object.values(payments)
-        .sort(
-          (firstItem, secondItem) =>
-            new Date(secondItem.createdAt).getTime() - new Date(firstItem.createdAt).getTime()
-        )
-        .slice(
-          (data.pager.currentPage - 1) * data.pager.perPage,
-          data.pager.currentPage * data.pager.perPage
-        )
-    case 'Réussi':
-      return payments
-        .filter((p) => p.status === 'paid')
-        .sort(
-          (firstItem, secondItem) =>
-            new Date(secondItem.createdAt).getTime() - new Date(firstItem.createdAt).getTime()
-        )
-        .slice(
-          (data.pager.currentPage - 1) * data.pager.perPage,
-          data.pager.currentPage * data.pager.perPage
-        )
-    case 'En attente':
-      return payments
-        .filter((p) => p.status === 'pending')
-        .sort(
-          (firstItem, secondItem) =>
-            new Date(secondItem.createdAt).getTime() - new Date(firstItem.createdAt).getTime()
-        )
-        .slice(
-          (data.pager.currentPage - 1) * data.pager.perPage,
-          data.pager.currentPage * data.pager.perPage
-        )
-    case 'Échoué':
-      return payments
-        .filter((p) => p.status === 'failed')
-        .sort(
-          (firstItem, secondItem) =>
-            new Date(secondItem.createdAt).getTime() - new Date(firstItem.createdAt).getTime()
-        )
-        .slice(
-          (data.pager.currentPage - 1) * data.pager.perPage,
-          data.pager.currentPage * data.pager.perPage
-        )
-  }
+    const filterStatus = data.filtersAll[data.currentFilterAll]
+
+    if (filterStatus === 'all') {
+        return Object.values(payments)
+            .sort(
+                (firstItem, secondItem) =>
+                    new Date(secondItem.createdAt).getTime() - new Date(firstItem.createdAt).getTime()
+            )
+            .slice(
+                (data.pager.currentPage - 1) * data.pager.perPage,
+                data.pager.currentPage * data.pager.perPage
+            )
+    } else {
+        return Object.values(payments)
+            .filter((p) => p.status === filterStatus)
+            .sort(
+                (firstItem, secondItem) =>
+                    new Date(secondItem.createdAt).getTime() - new Date(firstItem.createdAt).getTime()
+            )
+            .slice(
+                (data.pager.currentPage - 1) * data.pager.perPage,
+                data.pager.currentPage * data.pager.perPage
+            )
+    }
 })
+
+
 </script>
 
 <template>
@@ -156,66 +140,46 @@ const filteredPaymentsAll = computed(() => {
       </div>
 
       <div class="relative overflow-x-auto" v-if="data.currentTab === 'Tous les paiements'">
-        <div class="flex justify-end my-3">
-          <button
-            v-for="filter in data.filtersAll"
-            :key="filter"
-            @click="data.currentFilterAll = filter"
-            :class="`relative inline-flex items-center justify-center p-0.5 mb-2 mr-2 overflow-hidden text-sm font-medium text-gray-900 rounded-lg group bg-gradient-to-br focus:outline-none transition duration-150 ease-in-out ${
-              filter === data.currentFilterAll
-                ? 'from-green-400 to-blue-600'
-                : 'hover:from-green-400 hover:to-blue-600 from-gray-400 to-gray-400'
-            }`"
-          >
-            <span
-              class="relative px-5 py-2.5 transition-all ease-in duration-75 bg-white rounded-md"
-            >
-              {{ filter }}
-            </span>
-          </button>
-        </div>
+          <div class="flex justify-end my-3">
+              <button v-for="(filterStatus, filter) in data.filtersAll"
+                      :key="filterStatus"
+                      @click="data.currentFilterAll = filter"
+                      :class="`relative inline-flex items-center justify-center p-0.5 mb-2 mr-2 overflow-hidden text-sm font-medium text-gray-900 rounded-lg group bg-gradient-to-br focus:outline-none transition duration-150 ease-in-out ${
+                      filter === data.currentFilterAll
+                        ? 'from-green-400 to-blue-600'
+                        : 'hover:from-green-400 hover:to-blue-600 from-gray-400 to-gray-400'
+                    }`"
+              >
+                <span class="relative px-5 py-2.5 transition-all ease-in duration-75 bg-white rounded-md">{{ filter }}</span>
+              </button>
+          </div>
 
-        <Table>
+
+          <Table>
           <template #thead>
             <tr>
               <th scope="col" class="px-6 py-3">Montant</th>
               <th scope="col" class="px-6 py-3">Description</th>
-              <th scope="col" class="px-6 py-3">Client</th>
               <th scope="col" class="px-6 py-3">Date</th>
               <th scope="col" class="px-6 py-3 text-center">Actions</th>
             </tr>
           </template>
           <template #tbody>
             <tr v-for="payment in filteredPaymentsAll" :key="payment.id" class="bg-white border-b">
-              <td scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
+              <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
                 <router-link
                   :to="{ name: 'paymentDetail', params: { reference: payment.reference } }"
                 >
                   <FormatEuro :price="payment.amount" :currency="payment.currency" />
                   <span class="ml-4 font-light text-gray-400">{{ payment.currency }}</span>
-                  <span
-                    :class="`text-sm font-medium mr-2 px-2.5 py-0.5 rounded ml-4 ${
-                      payment.status === 'pending'
-                        ? 'bg-orange-100 text-orange-800'
-                        : payment.status === 'paid'
-                        ? 'bg-green-100 text-green-800'
-                        : 'bg-red-100 text-red-800'
-                    }`"
-                    >{{
-                      payment.status === 'pending'
-                        ? 'En attente'
-                        : payment.status === 'paid'
-                        ? 'Réussi'
-                        : 'Échec'
-                    }}</span
-                  >
+                  <PaymentStatus :payment="payment" class="ml-4" />
+
                 </router-link>
               </td>
               <td class="px-6 py-4">
                 Achat par :
                 {{ payment.client_info.name }}
               </td>
-              <td class="px-6 py-4">###</td>
               <td class="px-6 py-4">
                 {{ moment(payment.createdAt).format('LLLL') }}
               </td>
@@ -229,20 +193,6 @@ const filteredPaymentsAll = computed(() => {
                           name: 'paymentDetail',
                           params: { reference: payment.reference }
                         })
-                    },
-                    {
-                      label: 'Modifier',
-                      onClick: () =>
-                        router.push({
-                          name: 'paymentUpdate',
-                          params: { reference: payment.reference }
-                        }),
-                      divider: true
-                    },
-                    {
-                      label: 'Supprimer',
-                      textColor: 'text-red-600 font-bold',
-                      onDelete: () => deletePayment(payment.id)
                     }
                   ]"
                   :dropdownId="payment.id"
@@ -295,33 +245,6 @@ const filteredPaymentsAll = computed(() => {
             </button>
           </div>
         </div>
-      </div>
-
-      <div class="relative overflow-x-auto" v-if="data.currentTab === 'Toutes les transactions'">
-        <Table>
-          <template #thead>
-            <tr>
-              <th scope="col" class="px-6 py-3">Type</th>
-              <th scope="col" class="px-6 py-3">Net</th>
-              <th scope="col" class="px-6 py-3">Montant</th>
-              <th scope="col" class="px-6 py-3">Frais</th>
-              <th scope="col" class="px-6 py-3">Description</th>
-              <th scope="col" class="px-6 py-3">Disponible le</th>
-            </tr>
-          </template>
-          <template #tbody>
-            <tr class="bg-white border-b">
-              <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
-                Paiement
-              </th>
-              <td class="px-6 py-4">208 975,98 €</td>
-              <td class="px-6 py-4">200 000,00 €</td>
-              <td class="px-6 py-4">(8 975,98 €) EUR</td>
-              <td class="px-6 py-4">Achat par : Romain Lethumier</td>
-              <td class="px-6 py-4">4 mai</td>
-            </tr>
-          </template>
-        </Table>
       </div>
     </div>
   </div>

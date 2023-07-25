@@ -22,7 +22,6 @@ import DashboardMerchant from '@/views/merchant/DashboardMerchant.vue'
 import SetupMerchant from '@/views/merchant/SetupMerchant.vue'
 import ProfileView from '@/views/auth/ProfileView.vue'
 import PaymentCreateView from '@/views/transactions/PaymentCreateView.vue'
-import PaymentUpdateView from '@/views/transactions/PaymentUpdateView.vue'
 import ForgotPassword from '@/views/auth/ForgotPassword.vue'
 import ResetPassword from '@/views/auth/ResetPassword.vue'
 import ShoppingCartView from '@/views/customer/ShoppingCartView.vue'
@@ -149,12 +148,6 @@ const merchantRoutes = [
     path: '/paiement/:reference',
     name: 'paymentDetail',
     component: PaymentDetailView,
-    meta: { requiresAuth: true, requiresMerchantAccess: true }
-  },
-  {
-    path: '/paiement/:reference/update',
-    name: 'paymentUpdate',
-    component: PaymentUpdateView,
     meta: { requiresAuth: true, requiresMerchantAccess: true }
   },
   {
