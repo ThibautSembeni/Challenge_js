@@ -10,6 +10,7 @@ const CartRouter = require("./routes/cart");
 const AdminRouter = require("./routes/admin");
 const CredentialRouter = require("./routes/credentials");
 const OperationRouter = require("./routes/operation");
+const CustomerRouter = require("./routes/customer");
 
 const checkFormat = require("./middlewares/check-format");
 const errorHandler = require("./middlewares/error-handler");
@@ -33,10 +34,9 @@ app.use(
       } else {
         return callback(new Error("Not allowed by CORS"), false);
       }
-    }
+    },
   })
 );
-
 
 app.use(trustProxy);
 
@@ -64,6 +64,8 @@ app.use("/cart", checkAuth, CartRouter);
 app.use("/credentials", checkAuth, CredentialRouter);
 
 app.use("/operation", checkAuth, OperationRouter);
+
+app.use("/customer", CustomerRouter);
 
 app.get("/", (req, res) => {
   res.status(200).json({ message: "Hello World!" });
