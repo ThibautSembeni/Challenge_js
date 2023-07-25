@@ -86,7 +86,7 @@ const filteredPaymentsAll = computed(() => {
         )
     case 'Réussi':
       return payments
-        .filter((p) => p.status === 'paid')
+        .filter((p) => p.status === 'captured')
         .sort(
           (firstItem, secondItem) =>
             new Date(secondItem.createdAt).getTime() - new Date(firstItem.createdAt).getTime()
@@ -97,7 +97,7 @@ const filteredPaymentsAll = computed(() => {
         )
     case 'En attente':
       return payments
-        .filter((p) => p.status === 'pending')
+        .filter((p) => p.status === 'created')
         .sort(
           (firstItem, secondItem) =>
             new Date(secondItem.createdAt).getTime() - new Date(firstItem.createdAt).getTime()
@@ -195,16 +195,16 @@ const filteredPaymentsAll = computed(() => {
                   <span class="ml-4 font-light text-gray-400">{{ payment.currency }}</span>
                   <span
                     :class="`text-sm font-medium mr-2 px-2.5 py-0.5 rounded ml-4 ${
-                      payment.status === 'pending'
+                      payment.status === 'created'
                         ? 'bg-orange-100 text-orange-800'
-                        : payment.status === 'paid'
+                        : payment.status === 'captured'
                         ? 'bg-green-100 text-green-800'
                         : 'bg-red-100 text-red-800'
                     }`"
                     >{{
-                      payment.status === 'pending'
+                      payment.status === 'created'
                         ? 'En attente'
-                        : payment.status === 'paid'
+                        : payment.status === 'captured'
                         ? 'Réussi'
                         : 'Échec'
                     }}</span

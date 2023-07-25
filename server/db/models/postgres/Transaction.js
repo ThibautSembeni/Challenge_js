@@ -107,6 +107,7 @@ module.exports = (connection) => {
           "waiting_refund",
           "partially_refunded",
           "refunded",
+          "failed",
         ],
         defaultValue: "created",
         allowNull: false,

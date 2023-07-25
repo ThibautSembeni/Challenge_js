@@ -165,16 +165,16 @@ module.exports = function transactionController(
     transaction: async (req, res, next) => {
       try {
         const transaction = req.body;
-        // transaction.merchant_id = req.user.id;
+        transaction.merchant_id = req.user.id;
         console.log(transaction);
         const results = await TransactionService.create(transaction);
-        // messages.push(results);
-        // notify(
-        //   { id: results.id, name: "transaction", data: results },
-        //   false,
-        //   subscribers,
-        //   eventsSent
-        // );
+        messages.push(results);
+        notify(
+          { id: results.id, name: "transaction", data: results },
+          false,
+          subscribers,
+          eventsSent
+        );
         res.status(201).json(results);
       } catch (error) {
         console.log(error);

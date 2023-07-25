@@ -24,7 +24,12 @@ module.exports = new genericRouter(
         middleware: [checkSSE],
         handler: "subscribe",
       },
-      { method: "post", path: "/", middleware: [], handler: "transaction" },
+      {
+        method: "post",
+        path: "/",
+        middleware: [checkAuth, checkMerchant],
+        handler: "transaction",
+      },
       {
         method: "get",
         path: "/stats/subscribe",
@@ -53,13 +58,13 @@ module.exports = new genericRouter(
       {
         method: "get",
         path: "/history/:reference",
-        middleware: [],
+        middleware: [checkAuth, checkMerchant],
         handler: "getTransactionHistoryByReference",
       },
       {
         method: "get",
         path: "/operation/history/:reference",
-        middleware: [],
+        middleware: [checkAuth, checkMerchant],
         handler: "getOperationHistoryByReference",
       },
     ],
@@ -67,13 +72,13 @@ module.exports = new genericRouter(
       getAll: {
         method: "get",
         path: "/",
-        middleware: [],
+        middleware: [checkAuth, checkMerchant],
         active: true,
       },
       create: {
         method: "post",
         path: "/",
-        middleware: [],
+        middleware: [checkAuth, checkMerchant],
         active: false,
       },
       getOne: {
@@ -91,7 +96,7 @@ module.exports = new genericRouter(
       update: {
         method: "patch",
         path: "/:id",
-        middleware: [],
+        middleware: [checkAuth, checkMerchant],
         active: true,
       },
       delete: {

@@ -68,16 +68,16 @@ const formatEuro = (value, currency) => {
           <span class="font-light text-gray-400 uppercase ml-2">{{ payment.currency }}</span>
           <span
             :class="`${
-              payment.status === 'pending'
+              payment.status === 'created'
                 ? 'bg-orange-100 text-orange-800'
-                : payment.status === 'paid'
+                : payment.status === 'captured'
                 ? 'bg-green-100 text-green-800'
                 : 'bg-red-100 text-red-800'
             } text-sm font-medium ml-2 px-2.5 py-0.5 rounded`"
             >{{
-              payment.status === 'pending'
+              payment.status === 'created'
                 ? 'En attente'
-                : payment.status === 'paid'
+                : payment.status === 'captured'
                 ? 'Réussi'
                 : 'Échec'
             }}</span
@@ -176,9 +176,9 @@ const formatEuro = (value, currency) => {
               <PaymentDetailLine
                 title="Statut"
                 :content="
-                  payment.status === 'pending'
+                  payment.status === 'created'
                     ? 'En attente'
-                    : payment.status === 'paid'
+                    : payment.status === 'captured'
                     ? 'Réussi'
                     : 'Échec'
                 "
@@ -250,16 +250,16 @@ const formatEuro = (value, currency) => {
                 />
                 <span
                   :class="`${
-                    payment.status === 'pending'
+                    payment.status === 'created'
                       ? 'bg-orange-100 text-orange-800'
-                      : payment.status === 'paid'
+                      : payment.status === 'captured'
                       ? 'bg-green-100 text-green-800'
                       : 'bg-red-100 text-red-800'
                   } text-sm font-medium ml-2 px-2.5 py-0.5 rounded`"
                   >{{
-                    payment.status === 'pending'
+                    payment.status === 'created'
                       ? 'En attente'
-                      : payment.status === 'paid'
+                      : payment.status === 'captured'
                       ? 'Réussi'
                       : 'Échec'
                   }}</span
