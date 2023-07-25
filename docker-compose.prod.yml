@@ -47,6 +47,7 @@ services:
       - EMAIL_SENDER=${EMAIL_SENDER}
       - MAILJET_PK=${MAILJET_PK}
       - MAILJET_SK=${MAILJET_SK}
+      - FRONT_URL=${FRONT_URL}
   nginx:
     container_name: nginx
     image: nginx:alpine
