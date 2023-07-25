@@ -1,5 +1,5 @@
 const bcrypt = require("bcryptjs");
-const {generateVerificationToken} = require("../utils/user");
+const { generateVerificationToken } = require("../utils/user");
 
 module.exports = function CustomerController(CustomerService) {
   return {
@@ -24,7 +24,7 @@ module.exports = function CustomerController(CustomerService) {
         const { email, password } = req.body;
         const customer = await CustomerService.login(email, password);
         const token = await generateVerificationToken(customer);
-        res.cookie('token', token, { httpOnly: true });
+        res.cookie("token", token, { httpOnly: true });
         res.json({ token });
       } catch (e) {
         console.error(e);
@@ -36,8 +36,17 @@ module.exports = function CustomerController(CustomerService) {
       }
     },
     me: async (req, res, next) => {
-      console.log("ok")
-      res.json("aezaeza")
+      try {
+        const { id } = req.user;
+        const user = await CustomerService.findOne({ id });
+        if (!user) {
+          res.status(404).json({ message: "User not found" });
+        }
+        return res.status(200).json(user);
+      } catch (e) {
+        console.error(e);
+        next(e);
+      }
     },
   };
 };
