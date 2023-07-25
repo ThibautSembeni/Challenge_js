@@ -65,7 +65,7 @@
                   /
                   <label for="cardYear" class="card-item__dateItem">
                     <transition name="slide-fade-up">
-                      <span v-if="cardYear" :key="cardYear">{{ String(cardYear).slice(2, 4) }}</span>
+                      <span v-if="cardYear" :key="cardYear">{{ cardYear }}</span>
                       <span v-else :key="2">YY</span>
                     </transition>
                   </label>
@@ -96,7 +96,7 @@
       <div class="card-form__inner">
         <div class="card-input">
           <label for="cardNumber" class="card-input__label">Card Number</label>
-          <input type="text" id="cardNumber" class="card-input__input" @input="onInput" v-model="cardNumber"
+          <input type="text" id="cardNumber" class="card-input__input" v-model="cardNumber"
                  @focus="focusInput" @blur="blurInput" data-ref="cardNumber" autocomplete="off">
         </div>
         <div class="card-input">
@@ -118,11 +118,8 @@
               <select class="card-input__input -select" id="cardYear" v-model="cardYear" @focus="focusInput"
                       @blur="blurInput" data-ref="cardDate">
                 <option value="" disabled selected>Year</option>
-                <option :value="n" v-for="n in 10" :key="n">
+                <option :value="String(currentYear + n).slice(2, 4)" v-for="n in 20" :key="n">
                   {{ String(currentYear + n).slice(2, 4) }}
-                </option>
-                <option :value="n < 10 ? '0' + n : n" v-for="n in 12" :disabled="n < minCardMonth" :key="n">
-                  {{ n < 10 ? '0' + n : n }}
                 </option>
               </select>
             </div>
@@ -130,7 +127,7 @@
           <div class="card-form__col -cvv">
             <div class="card-input">
               <label for="cardCvv" class="card-input__label">CVV</label>
-              <input type="text" class="card-input__input" id="cardCvv" v-mask="'###'" v-model="cardCvv"
+              <input type="text" class="card-input__input" id="cardCvv" v-model="cardCvv"
                      @focus="flipCard(true)" @blur="flipCard(false)" data-ref="cardCvv" autocomplete="off">
             </div>
           </div>
@@ -182,16 +179,16 @@ const blurInput = () => {
 
 const getCardType = () => {
   let re = new RegExp("^4");
-  if (cardNumber.value.match(re) != null) return "visa";
+  if (cardNumber.value.toString().match(re) != null) return "visa";
 
   re = new RegExp("^(34|37)");
-  if (cardNumber.value.match(re) != null) return "amex";
+  if (cardNumber.value.toString().match(re) != null) return "amex";
 
   re = new RegExp("^5[1-5]");
-  if (cardNumber.value.match(re) != null) return "mastercard";
+  if (cardNumber.value.toString().match(re) != null) return "mastercard";
 
   re = new RegExp("^6011");
-  if (cardNumber.value.match(re) != null) return "discover";
+  if (cardNumber.value.toString().match(re) != null) return "discover";
 
   return "visa"; // default type
 };
@@ -214,24 +211,31 @@ watch(cardNumber, (newVal, oldVal) => {
   if (newVal.length === 0 && oldVal.length === 4) {
     flipCard(false);
   }
-});
+  const filteredValue = newVal.replace(/\D/g, '');
+  cardNumber.value = cardNumber.value.slice(0, 16);
 
-
-const onInput = (event) => {
-  const {data, inputType} = event;
-
-  if (cardNumber.value.length > 16) {
-    cardNumber.value = cardNumber.value.slice(0, 16);
+  if (filteredValue !== newVal) {
+    cardNumber.value = filteredValue;
+  }
+  if (cardNumber.value.length <= 16) {
+    maskCard(cardNumber.value)
     return
   }
-  if (inputType === 'deleteContentBackward' || inputType === 'deleteContentForward') {
-    const result = CardMask.value.pop();
-    if (result === ' ') {
-      CardMask.value.pop();
+});
+watch(cardCvv, (newVal) => {
+  cardCvv.value = cardCvv.value.slice(0, 3);
 
-    }
+  const filteredValue = newVal.replace(/\D/g, '');
 
-  } else {
+  if (filteredValue !== newVal) {
+    cardCvv.value = filteredValue;
+  }
+});
+
+const maskCard = (cardNumber) => {
+  CardMask.value.length = []
+  for (const data of cardNumber) {
+
     if (CardMask.value.length <= 18) {
       if ([0, 1, 17, 18].includes(CardMask.value.length)) {
         CardMask.value.push(data);
@@ -245,7 +249,7 @@ const onInput = (event) => {
       CardMask.value.push(data);
     }
   }
-};
+}
 
 </script>
 
