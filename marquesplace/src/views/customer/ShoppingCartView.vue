@@ -26,11 +26,13 @@ onMounted(async () => {
 })
 
 const removeItem = async (cartItem) => {
-  const cartId = cart.value.id;
-  const cartItemId = cartItem.id;
-  await removeItemService(cartId, cartItemId)
-  cart.value = await getCartItemsService(userId);
+    const cartId = cart.value.id;
+    const cartItemId = cartItem.id;
+    await removeItemService(cartId, cartItemId)
+    cart.value = await getCartItemsService(userId);
+    price.value = cart.value.cart_items.reduce((acc, item) => acc + item.price * item.quantity, 0) // Recalculate total price
 }
+
 
 const handleSubmit = async () => {
     try {
