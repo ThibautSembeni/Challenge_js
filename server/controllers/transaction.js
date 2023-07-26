@@ -95,8 +95,8 @@ module.exports = function transactionController(TransactionService, options = {}
             }
         },
         subscribe: async (req, res, next) => {
-            const username = req.query.username;
-            subscribers[username] = res;
+            const { id } = req.query;
+            subscribers[id] = res;
             const headers = {
                 'Content-Type': 'text/event-stream',
                 'Connection': 'keep-alive',

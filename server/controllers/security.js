@@ -70,6 +70,7 @@ module.exports = function SecurityController(UserService) {
         },
         me: async (req, res, next) => {
             try {
+                console.log(req.user)
                 const { id } = req.user;
                 const user = await UserService.findOne({ id });
                 if (!user) {

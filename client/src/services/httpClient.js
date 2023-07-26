@@ -29,7 +29,7 @@ const handleResponse = (response) => {
 const handleRequestError = async (error) => {
     store.commit('setIsLoading', false);
     const originalRequest = error.config;
-    if (error.response && error.response.status === 401 && !originalRequest._retry) {
+    if ((error.response && error.response.status === 401 && !originalRequest._retry) || error.response.status === 403) {
         originalRequest._retry = true;
 
         try {

@@ -13,10 +13,9 @@ const OperationRouter = require("./routes/operation");
 
 const checkFormat = require("./middlewares/check-format");
 const errorHandler = require("./middlewares/error-handler");
-const checkAuth = require("./middlewares/check-auth");
-const checkAdmin = require("./middlewares/check-admin-role");
 const trustProxy = require("./middlewares/trust-proxy");
-const verifyCredentials = require("./middlewares/verify-credentials");
+const checkAuth = require("./middlewares/check-auth");
+
 const cookieParser = require('cookie-parser')
 
 const CronService = require("./utils/cron");
@@ -49,7 +48,7 @@ app.use(express.json());
 
 app.use("/", SecurityRouter);
 
-app.use("/admin", checkAdmin, AdminRouter);
+app.use("/admin", checkAuth, AdminRouter);
 
 app.use("/template", checkAuth, TemplateRouter);
 
