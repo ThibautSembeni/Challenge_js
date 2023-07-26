@@ -12,6 +12,7 @@ import ForgotPassword from '@/views/auth/ForgotPassword.vue'
 import ResetPassword from '@/views/auth/ResetPassword.vue'
 import ShoppingCartView from '@/views/customer/ShoppingCartView.vue'
 import ProductsView from "@/views/customer/ProductsView.vue";
+import TransactionsView from "@/views/merchant/TransactionsView.vue";
 
 const authRoutes = [
   {
@@ -63,13 +64,19 @@ const customerRoutes = [
     path: '/panier',
     name: 'panier',
     component: ShoppingCartView,
-    meta: { requiresAuth: false }
+    meta: { requiresAuth: true }
   },
   {
     path: '/products',
     name: 'products',
     component: ProductsView,
-    meta: { requiresAuth: false }
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/transactions',
+    name: 'transactions',
+    component: TransactionsView,
+    meta: { requiresAuth: true }
   }
 ]
 
