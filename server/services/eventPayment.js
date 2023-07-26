@@ -1,5 +1,4 @@
 const { Transaction, Operation, Event } = require("../db/models/postgres");
-const Sequelize = require("sequelize");
 const ValidationError = require("../errors/ValidationError");
 
 module.exports = function EventPaymentService() {

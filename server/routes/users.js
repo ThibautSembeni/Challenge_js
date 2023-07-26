@@ -12,7 +12,6 @@ module.exports = new genericRouter(
         }
     ),
     {
-        // `customRoutes` is optional is for add others custom routes
         customRoutes: [
             { method: 'get', path: '/user/customers', middleware: [checkAuth,], handler: 'getUsersByMerchantId' },
             { method: 'get', path: '/admin/impersonate', middleware: [checkAuth,], handler: 'isImpersonating' },
@@ -28,7 +27,6 @@ module.exports = new genericRouter(
             update: { method: 'patch', path: '/:id', middleware: [], active: true },
             delete: { method: 'delete', path: '/:id', middleware: [], active: true },
         },
-        // `middlewares` is for set a middleware on all routes over
         middlewares: []
     }
 );

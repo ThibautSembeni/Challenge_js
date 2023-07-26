@@ -6,7 +6,6 @@ const SecurityRouter = require("./routes/security");
 const TemplateRouter = require("./routes/route.template");
 const TransactionRouter = require("./routes/transactions");
 const ProductRouter = require("./routes/products");
-const CartRouter = require("./routes/cart");
 const AdminRouter = require("./routes/admin");
 const CredentialRouter = require("./routes/credentials");
 const OperationRouter = require("./routes/operation");
@@ -16,10 +15,7 @@ const checkFormat = require("./middlewares/check-format");
 const errorHandler = require("./middlewares/error-handler");
 const trustProxy = require("./middlewares/trust-proxy");
 const checkAuth = require("./middlewares/check-auth");
-
 const cookieParser = require('cookie-parser')
-
-const CronService = require("./utils/cron");
 
 const UserService = require("./services/user");
 
@@ -64,8 +60,6 @@ app.use("/transactions", TransactionRouter);
 
 app.use("/products", checkAuth, ProductRouter);
 
-app.use("/cart", checkAuth, CartRouter);
-
 app.use("/credentials", checkAuth, CredentialRouter);
 
 app.use("/operation", checkAuth, OperationRouter);
@@ -81,8 +75,5 @@ app.post("/", (req, res) => {
 });
 
 app.use(errorHandler);
-
-const cronService = new CronService();
-cronService.start();
 
 module.exports = app;
