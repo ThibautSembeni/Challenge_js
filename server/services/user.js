@@ -111,20 +111,6 @@ module.exports = function UserService() {
                 group: ['User.id']
             });
         },
-        getMerchantById: async function (merchantId) {
-            const merchant = await User.findOne({
-                where: {
-                    id: merchantId,
-                    role: 'merchant'
-                }
-            });
-
-            if (!merchant) {
-                throw new Error(`Merchant with id ${merchantId} not found`);
-            }
-
-            return merchant;
-        },
         getOrigins: async () => {
             try {
                 const origins = await User.findAll({ where: { role: "merchant" } });

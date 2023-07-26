@@ -1,5 +1,6 @@
 const crypto = require("crypto");
 const jwt = require("jsonwebtoken");
+const UnauthorizedError = require('./../errors/UnauthorizedError');
 
 function createHash(payload) {
     const hash = crypto.createHash("sha256");
