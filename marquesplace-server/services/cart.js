@@ -113,6 +113,7 @@ module.exports = function CartService() {
 
         return cart;
       } catch (e) {
+        console.error(e);
         if (
           e instanceof Sequelize.ValidationError ||
           e instanceof ValidationError
@@ -196,6 +197,7 @@ module.exports = function CartService() {
 
         return users;
       } catch (e) {
+        console.error(e);
         if (e instanceof Sequelize.ValidationError) {
           throw ValidationError.fromSequelizeValidationError(e);
         }
@@ -203,50 +205,50 @@ module.exports = function CartService() {
       }
     },
 
-/*    removeItemFromCart: async (cartId, productRef) => {
-      const cart = await Cart.findOne({ where: { id: cartId } });
-      if (!cart) {
-        throw new ValidationError("Le panier n'existe pas");
-      }
-
-      const product = await Product.findOne({
-        where: { reference: productRef },
-      });
-      if (!product) {
-        throw new ValidationError("Le produit n'existe pas");
-      }
-
-      const cartItem = await CartItem.findOne({
-        where: { cart_id: cartId, product_id: product.id },
-      });
-      if (!cartItem) {
-        throw new ValidationError("Le produit n'est pas dans le panier");
-      }
-
-      const deletedCartItem = await cartItem.destroy();
-
-      if (!deletedCartItem) {
-        throw new ValidationError("Le produit n'est pas dans le panier");
-      } else {
-        const itemQuantity = cartItem.quantity;
-        const currentStock = product.stock;
-
-        if (isNaN(itemQuantity) || isNaN(currentStock)) {
-          throw new ValidationError("Quantité ou stock invalide");
-        }
-
-        const newStock = parseInt(currentStock) + parseInt(itemQuantity);
-
-        if (newStock < 0) {
-          throw new ValidationError("Stock insuffisant");
-        }
-
-        await product.update({ stock: newStock });
-
-        await updateCartTotalPrice(cartId);
-        return deletedCartItem;
-      }
-    },*/
+    /*    removeItemFromCart: async (cartId, productRef) => {
+          const cart = await Cart.findOne({ where: { id: cartId } });
+          if (!cart) {
+            throw new ValidationError("Le panier n'existe pas");
+          }
+    
+          const product = await Product.findOne({
+            where: { reference: productRef },
+          });
+          if (!product) {
+            throw new ValidationError("Le produit n'existe pas");
+          }
+    
+          const cartItem = await CartItem.findOne({
+            where: { cart_id: cartId, product_id: product.id },
+          });
+          if (!cartItem) {
+            throw new ValidationError("Le produit n'est pas dans le panier");
+          }
+    
+          const deletedCartItem = await cartItem.destroy();
+    
+          if (!deletedCartItem) {
+            throw new ValidationError("Le produit n'est pas dans le panier");
+          } else {
+            const itemQuantity = cartItem.quantity;
+            const currentStock = product.stock;
+    
+            if (isNaN(itemQuantity) || isNaN(currentStock)) {
+              throw new ValidationError("Quantité ou stock invalide");
+            }
+    
+            const newStock = parseInt(currentStock) + parseInt(itemQuantity);
+    
+            if (newStock < 0) {
+              throw new ValidationError("Stock insuffisant");
+            }
+    
+            await product.update({ stock: newStock });
+    
+            await updateCartTotalPrice(cartId);
+            return deletedCartItem;
+          }
+        },*/
 
   };
 };

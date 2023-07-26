@@ -8,7 +8,8 @@
     "watch": "node --watch index.js",
     "d:s:u": "node migration.js",
     "test:dev": "jest --verbose ./tests --watch --runInBand --detectOpenHandles",
-    "test": "jest --verbose ./tests --runInBand --forceExit"
+    "test": "jest --verbose ./tests --runInBand --forceExit",
+    "d:f:l": "node fixtures.js"
   },
   "keywords": [],
   "author": "",
@@ -27,6 +28,7 @@
     "sequelize": "^6.32.1"
   },
   "devDependencies": {
+    "@faker-js/faker": "^8.0.2",
     "jest": "^29.5.0",
     "supertest": "^6.3.3"
   }

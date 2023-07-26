@@ -14,6 +14,8 @@ module.exports = new genericRouter(
     {
         customRoutes: [
             { handler: 'login', method: 'post', path: '/login', middleware: [] },
+            { handler: 'logout', method: 'post', path: '/logout', middleware: [] },
+            { handler: 'check', method: 'post', path: '/check', middleware: [checkAuth] },
             { handler: 'create', method: 'post', path: '/register', middleware: [] },
             { handler: 'verify', method: 'get', path: '/verify/:token/', middleware: [] },
             { handler: 'me', method: 'get', path: '/me', middleware: [checkAuth] },

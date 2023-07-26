@@ -19,4 +19,19 @@ const authenticationVisitor = (req, res, next) => {
     });
 };
 
+function checkAuth(handlers) {
+
+    return (req, res, next) => {
+        try {
+            for (let handler of handlers) {
+                if (handler.supports(req)) {
+                    return handler.handle(req, res, next)
+                }
+            }
+            throw new UnauthorizedError();
+        } catch (error) {
+        }
+    }
+}
+
 module.exports = authenticationVisitor;

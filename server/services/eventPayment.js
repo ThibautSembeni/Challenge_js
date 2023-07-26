@@ -6,6 +6,8 @@ module.exports = function EventPaymentService() {
         createTransaction: async (data) => {
             const transaction = await Transaction.create(data);
 
+            data.status = 'created';
+
             await Event.create({
                 aggregate_id: transaction.id,
                 aggregate_type: 'Transaction',
@@ -13,7 +15,7 @@ module.exports = function EventPaymentService() {
                 payload: data
             });
 
-            return transaction;
+            return transaction.reference;
         },
 
         updateTransaction: async (reference, data) => {
@@ -55,7 +57,7 @@ module.exports = function EventPaymentService() {
                 payload: changes,
             });
 
-            return transaction;
+            return transaction.reference;
         },
 
         getTransaction: async (reference) => {

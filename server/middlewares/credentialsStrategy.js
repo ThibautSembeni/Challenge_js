@@ -1,9 +1,10 @@
 const credentialsStrategy = (req, res, next) => {
-    const { publicKey, privateKey } = req.headers;
+    const headers = req.headers;
 
-    if (publicKey && privateKey) {
+    if (headers["x-public-key"] && headers["x-secret-key"]) {
+        console.log("credentialsStrategy", headers["x-public-key"], headers["x-secret-key"]);
         req.authMethod = "credentials";
-        req.credentials = { publicKey, privateKey };
+        req.credentials = { publicKey: headers["x-public-key"], privateKey: headers["x-secret-key"] };
     }
 
     next();
