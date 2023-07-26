@@ -14,7 +14,7 @@ export async function removeItemService(cartId, cartItemId) {
     return response.data
 }
 export async function createCharge(customerAddress, customerCity, customerPostalCode, customerCountry, currentUser, cart) {
-    /*const charge = {
+    const charge = {
         "billing_info": {
             "address": customerAddress.value,
             "city": customerCity.value,
@@ -44,9 +44,7 @@ export async function createCharge(customerAddress, customerCity, customerPostal
         "currency": "EUR",
     }
 
-    const response = await httpClient.post("http://localhost:3000/eventPayment/transaction",  charge);*/
-
-    // TODO : A modifier pour la suite
+    const response = await httpClient.post(`${import.meta.env.VITE_API_URL}/transactions`, charge);
 
     console.log("response", response.data);
     return response.data;

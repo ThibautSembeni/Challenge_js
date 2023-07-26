@@ -7,6 +7,7 @@ const CartRouter = require("./routes/cart");
 const checkFormat = require("./middlewares/check-format");
 const checkAuth = require("./middlewares/check-auth");
 
+const StrapeSDK = require("./middlewares/StrapeSDK");
 const app = express();
 
 app.use(
@@ -20,6 +21,8 @@ app.use(checkFormat);
 
 app.use(express.json());
 
+app.use(StrapeSDK.bind(app)({ client_token: process.env.KAMALPAY_PK, client_secret: process.env.KAMALPAY_SK }))
+
 app.use("/", SecurityRouter);
 
 // TODO : a modifiler l'emplacement
@@ -31,7 +34,7 @@ app.get('/transactions', async (req, res, next) => {
 
 app.post('/transactions', async (req, res, next) => {
   const [statusCode, data] = await app.createTransaction(req.body)
-  res.sendStatus(statusCode).json(data)
+  res.status(statusCode).json(data)
 })
 
 app.use("/cart", checkAuth, CartRouter);
@@ -43,16 +46,6 @@ const errorHandler = (err, req, res, next) => {
 
   console.error(err);
   const statusCode = err.statusCode || 500;
-  res.status(statusCode).json({ error: err.message || 'Internal Server Error' });
-};
-
-
-
-
-  console.error(err);
-
-  const statusCode = err.statusCode || 500;
-
   res.status(statusCode).json({ error: err.message || 'Internal Server Error' });
 };
 
