@@ -1,5 +1,4 @@
 <script setup>
-import SideBar from '@/components/SideBar.vue'
 import NavBar from '@/components/NavBar.vue'
 import TabPanel from '@/components/TabPanel.vue'
 import { changePassword, getCurrentUser } from '@/services/auth'
@@ -74,7 +73,6 @@ const confirmRegenerate = async () => {
 }
 </script>
 <template>
-  <SideBar v-if="currentUser.role !== 'customer'" />
   <div :class="{ 'sm:ml-64': currentUser.role !== 'customer' }">
     <NavBar />
     <div class="p-4 lg:p-10">

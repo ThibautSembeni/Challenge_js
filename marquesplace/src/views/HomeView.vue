@@ -1,5 +1,4 @@
 <script setup>
-import SideBar from '@/components/SideBar.vue'
 import NavBar from '@/components/NavBar.vue'
 import { getCurrentUser } from '@/services/auth'
 import router from '@/router'
@@ -10,7 +9,6 @@ if (user?.role === 'merchant') {
 </script>
 
 <template>
-  <SideBar v-if="user?.role !== 'customer'" />
   <div :class="{ 'sm:ml-64': user?.role !== 'customer' }">
     <NavBar />
     <div class="p-4 lg:p-10">

@@ -7,11 +7,7 @@ import ForbiddenView from '@/views/errors/ForbiddenView.vue'
 import NotFoundView from '@/views/errors/NotFoundView.vue'
 
 import LogoutView from '@/views/auth/LogoutView.vue'
-import DashboardMerchant from '@/views/merchant/DashboardMerchant.vue'
-import SetupMerchant from '@/views/merchant/SetupMerchant.vue'
 import ProfileView from '@/views/auth/ProfileView.vue'
-import PaymentCreateView from '@/views/transactions/PaymentCreateView.vue'
-import PaymentUpdateView from '@/views/transactions/PaymentUpdateView.vue'
 import ForgotPassword from '@/views/auth/ForgotPassword.vue'
 import ResetPassword from '@/views/auth/ResetPassword.vue'
 import ShoppingCartView from '@/views/customer/ShoppingCartView.vue'
@@ -77,22 +73,6 @@ const customerRoutes = [
   }
 ]
 
-
-const merchantRoutes = [
-  {
-    path: '/merchant',
-    name: 'merchant',
-    component: DashboardMerchant,
-    meta: { requiresAuth: true, requiresMerchantAccess: true }
-  },
-  {
-    path: '/merchant/setup',
-    name: 'setupMerchant',
-    component: SetupMerchant,
-    meta: { requiresAuth: true, requiresMerchantAccess: true }
-  },
-]
-
 const errorRoutes = [
   {
     path: '/404',
@@ -106,7 +86,7 @@ const errorRoutes = [
   }
 ]
 
-const routes = [...authRoutes,  ...merchantRoutes, ...customerRoutes, ...errorRoutes]
+const routes = [...authRoutes, ...customerRoutes, ...errorRoutes]
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
