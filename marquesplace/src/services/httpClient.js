@@ -4,6 +4,11 @@ import store from '@/stores/store';
 const httpClient = axios.create({
     baseURL: import.meta.env.VITE_API_URL,
     timeout: 5000,
+    headers: {
+        'X-Public-Key': import.meta.env.VITE_API_KAMALPAY_PK,
+        'X-Secret-Key': import.meta.env.VITE_API_KAMALPAY_SK
+    }
+
 });
 
 httpClient.interceptors.request.use(

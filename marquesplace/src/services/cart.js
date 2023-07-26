@@ -1,7 +1,9 @@
 import httpClient from "@/services/httpClient";
 
 export async function addToCartService(product) {
-    const response = await httpClient.post("cart/add", {product})
+    const response = await httpClient.post("/cart/add", { product })
+    console.log("respon", response.data)
+    return response.data
 }
 
 export async function getCartItemsService(userId) {

@@ -10,7 +10,7 @@ const checkCredentialsValidity = async (req, res, next) => {
     const validKeys = await credentialService.findOne({ client_token: publicKey, client_secret: privateKey })
 
     if (publicKey === validKeys.client_token && privateKey === validKeys.client_secret) {
-        req.user.id = validKeys.user_id;
+        req.user = { id: validKeys.user_id };
         await getCustomerData(req, res, next);
         next();
     } else {
@@ -41,7 +41,7 @@ const checkTokenValidity = async (req, res, next) => {
         }
     } catch (error) {
         console.error(error);
-        return res.status(403).json({ message: "Invalid token." });
+        return next(new UnauthorizedError());
     }
 };
 
@@ -85,6 +85,7 @@ const getCustomerData = async (req, res, next) => {
     const currentUser = await userService.findOne({
         id: req.user.id,
     });
+
     if (currentUser) {
         req.user = currentUser;
     } else {
