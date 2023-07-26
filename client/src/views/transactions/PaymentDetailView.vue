@@ -11,6 +11,7 @@ import { getTransaction } from '@/services/transactions'
 import Chronologie from '@/components/Payment/Chronologie.vue'
 import PaymentStatus from '@/components/Payment/PaymentStatus.vue'
 import RefundModal from '@/components/Payment/RefundModal.vue'
+import { createOperation } from '@/services/operations'
 
 const payment = reactive({})
 const timeline = reactive([])
@@ -22,8 +23,8 @@ function openRefundModal() {
   isRefundModalOpen.value = true
 }
 
-function closeModal(amount) {
-  console.log('Montant à rembourser :', amount)
+async function closeModal(amount) {
+  await createOperation(payment.reference, amount)
   isRefundModalOpen.value = false
 }
 

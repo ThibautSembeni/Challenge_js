@@ -8,36 +8,39 @@ module.exports = function EventPaymentService() {
 
             await Event.create({
                 aggregate_id: transaction.id,
-                aggregate_type: 'Transaction',
-                type: 'TransactionCreated',
-                payload: data
+                aggregate_type: "Transaction",
+                type: "TransactionCreated",
+                payload: data,
             });
 
             return transaction;
         },
 
         updateTransaction: async (reference, data) => {
-            let _ = require('lodash');
+            let _ = require("lodash");
 
-            const transaction = await Transaction.findOne( {where :{ reference: reference }});
+            const transaction = await Transaction.findOne({
+                where: { reference: reference },
+            });
 
             if (!transaction) {
-                throw new ValidationError('No transaction found');
+                throw new ValidationError("No transaction found");
             }
 
             const transactionEvents = await Event.findAll({
                 where: {
                     aggregate_id: transaction.id,
-                    aggregate_type: 'Transaction'
+                    aggregate_type: "Transaction",
                 },
-                order: [
-                    ['createdAt', 'ASC']
-                ]
+                order: [["createdAt", "ASC"]],
             });
 
-            const reconstructedPayload = transactionEvents.reduce((acc, event) => {
-                return _.merge({}, acc, event.payload);
-            }, {});
+            const reconstructedPayload = transactionEvents.reduce(
+                (acc, event) => {
+                    return _.merge({}, acc, event.payload);
+                },
+                {}
+            );
 
             const changes = {};
             for (const key in data) {
@@ -50,8 +53,8 @@ module.exports = function EventPaymentService() {
 
             await Event.create({
                 aggregate_id: transaction.id,
-                aggregate_type: 'Transaction',
-                type: 'TransactionUpdated',
+                aggregate_type: "Transaction",
+                type: "TransactionUpdated",
                 payload: changes,
             });
 
@@ -59,63 +62,65 @@ module.exports = function EventPaymentService() {
         },
 
         getTransaction: async (reference) => {
-            let _ = require('lodash');
+            let _ = require("lodash");
 
-            const transaction = await Transaction.findOne( {where :{ reference: reference }});
+            const transaction = await Transaction.findOne({
+                where: { reference: reference },
+            });
 
             if (!transaction) {
-                throw new ValidationError('No transaction found');
+                throw new ValidationError("No transaction found");
             }
 
             const transactionEvents = await Event.findAll({
                 where: {
                     aggregate_id: transaction.id,
-                    aggregate_type: 'Transaction'
+                    aggregate_type: "Transaction",
                 },
-                order: [
-                    ['createdAt', 'ASC']
-                ]
+                order: [["createdAt", "ASC"]],
             });
 
             if (!transactionEvents.length) {
-                throw new ValidationError('No events found for this transaction');
+                throw new ValidationError(
+                    "No events found for this transaction"
+                );
             }
 
             let currentState = transactionEvents[0].payload;
 
             for (let i = 1; i < transactionEvents.length; i++) {
                 const event = transactionEvents[i];
-                if(event.type === 'TransactionUpdated'){
+                if (event.type === "TransactionUpdated") {
                     currentState = _.merge({}, currentState, event.payload);
                 }
             }
 
             currentState.reference = transaction.reference;
 
-            let timeline = transactionEvents.map(event => ({
+            let timeline = transactionEvents.map((event) => ({
                 timestamp: event.createdAt,
                 type: event.type,
-                payload: event.payload
+                payload: event.payload,
             }));
 
-            const operations = await Operation.findAll({ where: { transaction_reference: reference } });
+            const operations = await Operation.findAll({
+                where: { transaction_reference: reference },
+            });
 
             for (const operation of operations) {
                 const operationEvents = await Event.findAll({
                     where: {
                         aggregate_id: operation.id,
-                        aggregate_type: 'Operation'
+                        aggregate_type: "Operation",
                     },
-                    order: [
-                        ['createdAt', 'ASC']
-                    ]
+                    order: [["createdAt", "ASC"]],
                 });
 
                 timeline = timeline.concat(
-                    operationEvents.map(event => ({
+                    operationEvents.map((event) => ({
                         timestamp: event.createdAt,
                         type: event.type,
-                        payload: event.payload
+                        payload: event.payload,
                     }))
                 );
             }
@@ -126,7 +131,7 @@ module.exports = function EventPaymentService() {
         },
 
         getAllTransactions: async () => {
-            let _ = require('lodash');
+            let _ = require("lodash");
 
             const transactions = await Transaction.findAll();
 
@@ -135,22 +140,22 @@ module.exports = function EventPaymentService() {
                 const events = await Event.findAll({
                     where: {
                         aggregate_id: transaction.id,
-                        aggregate_type: 'Transaction'
+                        aggregate_type: "Transaction",
                     },
-                    order: [
-                        ['createdAt', 'ASC']
-                    ]
+                    order: [["createdAt", "ASC"]],
                 });
 
                 if (!events.length) {
-                    throw new ValidationError('No events found for this transaction');
+                    throw new ValidationError(
+                        "No events found for this transaction"
+                    );
                 }
 
                 let currentState = events[0].payload;
 
                 for (let i = 1; i < events.length; i++) {
                     const event = events[i];
-                    if(event.type === 'TransactionUpdated'){
+                    if (event.type === "TransactionUpdated") {
                         currentState = { ...currentState, ...event.payload };
                     }
                 }
@@ -163,17 +168,75 @@ module.exports = function EventPaymentService() {
             return updatedTransactions;
         },
 
-
-
         createOperation: async (data) => {
-            const operation = await Operation.create(data);
+            let operation = await Operation.create(data);
 
-            await Event.create({
-                aggregate_id: operation.id,
-                aggregate_type: 'Operation',
-                type: 'OperationCreated',
-                payload: data
-            });
+            if (data.payload.type === "capture") {
+                await Event.create({
+                    aggregate_id: operation.id,
+                    aggregate_type: "Operation",
+                    type: "OperationCreated",
+                    payload: data,
+                });
+            } else {
+                const captureEvent = await Event.findOne({
+                    where: {
+                        aggregate_type: "Operation",
+                        type: "OperationCreated",
+                        "payload.transaction_reference":
+                            data.payload.transaction_reference,
+                        "payload.type": "capture",
+                    },
+                });
+
+                if (!captureEvent) {
+                    throw new ValidationError("Capture operation not found");
+                }
+
+                const capturedAmount = captureEvent.payload.amount;
+
+                const refundedEvents = await Event.findAll({
+                    where: {
+                        aggregate_type: "Operation",
+                        type: "OperationCreated",
+                        "payload.transaction_reference":
+                            data.payload.transaction_reference,
+                        "payload.type": "refund",
+                    },
+                });
+
+                const refundedAmount = refundedEvents.reduce(
+                    (acc, event) => acc + event.payload.amount,
+                    0
+                );
+
+                const remainingAmount = capturedAmount - refundedAmount;
+
+                if (remainingAmount <= 0) {
+                    throw new ValidationError(
+                        "Transaction is already fully refunded"
+                    );
+                }
+
+                if (data.payload.amount > remainingAmount) {
+                    throw new ValidationError(
+                        "Refunded amount cannot exceed remaining amount"
+                    );
+                }
+
+                await Event.create({
+                    aggregate_id: operation.id,
+                    aggregate_type: "Operation",
+                    type: "OperationCreated",
+                    payload: {
+                        type: "refund",
+                        amount: data.payload.amount,
+                        currency: data.payload.currency,
+                        transaction_reference:
+                            data.payload.transaction_reference,
+                    },
+                });
+            }
 
             return operation;
         },
@@ -182,22 +245,23 @@ module.exports = function EventPaymentService() {
             const operation = await Operation.findByPk(id);
 
             if (!operation) {
-                throw new ValidationError('No operation found');
+                throw new ValidationError("No operation found");
             }
 
             const operationEvents = await Event.findAll({
                 where: {
                     aggregate_id: operation.id,
-                    aggregate_type: 'Operation'
+                    aggregate_type: "Operation",
                 },
-                order: [
-                    ['createdAt', 'ASC']
-                ]
+                order: [["createdAt", "ASC"]],
             });
 
-            const reconstructedPayload = operationEvents.reduce((acc, event) => {
-                return _.merge({}, acc, event.payload);
-            }, {});
+            const reconstructedPayload = operationEvents.reduce(
+                (acc, event) => {
+                    return _.merge({}, acc, event.payload);
+                },
+                {}
+            );
 
             const changes = {};
             for (const key in data) {
@@ -210,8 +274,8 @@ module.exports = function EventPaymentService() {
 
             await Event.create({
                 aggregate_id: operation.id,
-                aggregate_type: 'Operation',
-                type: 'OperationUpdated',
+                aggregate_type: "Operation",
+                type: "OperationUpdated",
                 payload: changes,
             });
 
@@ -222,33 +286,32 @@ module.exports = function EventPaymentService() {
             const operation = await Operation.findByPk(id);
 
             if (!operation) {
-                throw new ValidationError('No operation found');
+                throw new ValidationError("No operation found");
             }
 
             const events = await Event.findAll({
                 where: {
                     aggregate_id: operation.id,
-                    aggregate_type: 'Operation'
+                    aggregate_type: "Operation",
                 },
-                order: [
-                    ['createdAt', 'ASC']
-                ]
+                order: [["createdAt", "ASC"]],
             });
 
             if (!events.length) {
-                throw new ValidationError('No events found for this operation');
+                throw new ValidationError("No events found for this operation");
             }
 
             let currentState = events[0].payload;
 
             for (let i = 1; i < events.length; i++) {
                 const event = events[i];
-                if(event.type === 'OperationUpdated'){
+                if (event.type === "OperationUpdated") {
                     currentState = _.merge({}, currentState, event.payload);
                 }
             }
 
-            currentState.transaction_reference = operation.transaction_reference;
+            currentState.transaction_reference =
+                operation.transaction_reference;
 
             return currentState;
         },
@@ -261,27 +324,28 @@ module.exports = function EventPaymentService() {
                 const events = await Event.findAll({
                     where: {
                         aggregate_id: operation.id,
-                        aggregate_type: 'Operation'
+                        aggregate_type: "Operation",
                     },
-                    order: [
-                        ['createdAt', 'ASC']
-                    ]
+                    order: [["createdAt", "ASC"]],
                 });
 
                 if (!events.length) {
-                    throw new ValidationError('No events found for this operation');
+                    throw new ValidationError(
+                        "No events found for this operation"
+                    );
                 }
 
                 let currentState = events[0].payload;
 
                 for (let i = 1; i < events.length; i++) {
                     const event = events[i];
-                    if(event.type === 'OperationUpdated'){
+                    if (event.type === "OperationUpdated") {
                         currentState = _.merge({}, currentState, event.payload);
                     }
                 }
 
-                currentState.transaction_reference = operation.transaction_reference;
+                currentState.transaction_reference =
+                    operation.transaction_reference;
 
                 updatedOperations.push(currentState);
             }
