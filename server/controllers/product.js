@@ -6,7 +6,7 @@ module.exports = function productController(productService, options = {}) {
                 let criteria = {}
                 if (req?.user?.id) {
                     console.log("ok")
-                    criteria = {merchant_id: req.user.id, reference: reference}
+                    criteria = {merchant_id: req?.user?.id, reference: reference}
                 } else {
                     console.log("ok")
                     criteria = {reference: reference}
@@ -28,7 +28,7 @@ module.exports = function productController(productService, options = {}) {
                     criteria = {}
                 }
                 else {
-                    criteria = {merchant_id: req.user.id}
+                    criteria = {}
                 }
                 const results = await productService.findAll(criteria)
                 if (results) {
@@ -43,7 +43,7 @@ module.exports = function productController(productService, options = {}) {
         create: async (req, res, next) => {
             try {
                 const product = req.body;
-                product.merchant_id = req.user.id;
+                product.merchant_id = req?.user?.id;
                 const results = await productService.create(product);
                 res.status(201).json(results);
             } catch (error) {

@@ -86,7 +86,7 @@ services:
     container_name: postgres_marquesplace
     image: postgres
     volumes:
-      - postgre-data:/var/lib/postgresql/data/
+      - postgre-data-marquesplace:/var/lib/postgresql/data/
     expose:
       - "5433" # Publishes 5433 to other containers but NOT to host machine
     ports:
@@ -107,4 +107,5 @@ services:
 volumes:
   mongo-data: {}
   postgre-data: {}
+  postgre-data-marquesplace: {}
   mongo-replica-data: {}

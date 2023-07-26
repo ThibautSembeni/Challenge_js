@@ -13,7 +13,6 @@ const OperationRouter = require("./routes/operation");
 const CustomerRouter = require("./routes/customer");
 
 const checkFormat = require("./middlewares/check-format");
-const errorHandler = require("./middlewares/error-handler");
 const checkAuth = require("./middlewares/check-auth");
 const checkAdmin = require("./middlewares/check-admin-role");
 const trustProxy = require("./middlewares/trust-proxy");
@@ -25,18 +24,44 @@ const UserService = require("./services/user");
 
 const app = express();
 
+// app.use(
+//   cors({
+//     origin: async (origin, callback) => {
+//       const origins = await UserService().getOrigins();
+//       if (origin === process.env.FRONT_URL || origins.includes(origin) || origin === 'http://localhost:5175') {
+//         return callback(null, true);
+//       } else {
+//         return callback(new Error("Not allowed by CORS"), false);
+//       }
+//     },
+//   })
+// );
+
+// app.use(
+//     cors({
+//       origin: 'http://localhost:5175'
+//     })
+// );
+
 app.use(
-  cors({
-    origin: async (origin, callback) => {
-      const origins = await UserService().getOrigins();
-      if (origin === process.env.FRONT_URL || origins.includes(origin) || origin === 'http://localhost:5175') {
-        return callback(null, true);
-      } else {
-        return callback(new Error("Not allowed by CORS"), false);
-      }
-    },
-  })
+    cors()
 );
+
+const errorHandler = (err, req, res, next) => {
+  // Assurez-vous que l'objet d'erreur existe
+  if (!err) {
+    return next();
+  }
+
+  // Affichez l'erreur dans la console pour le débogage
+  console.error(err);
+
+  // Vérifiez si l'erreur a un code HTTP personnalisé (dans l'objet d'erreur)
+  const statusCode = err.statusCode || 500;
+
+  // Réponse avec l'erreur et le statut approprié
+  res.status(statusCode).json({ error: err.message || 'Internal Server Error' });
+};
 
 app.use(trustProxy);
 
@@ -57,7 +82,7 @@ app.use("/transactions", TransactionRouter);
 // Pour activer la vérification des credentials pour les marchands
 // app.use("/transactions", verifyCredentials, TransactionRouter);
 
-app.use("/products", checkAuth, ProductRouter);
+app.use("/products",  ProductRouter);
 
 app.use("/cart", checkAuth, CartRouter);
 
