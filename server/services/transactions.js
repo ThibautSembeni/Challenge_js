@@ -1,7 +1,6 @@
-const { Transaction, Operation } = require("../db/models/postgres");
+const { Transaction } = require("../db/models/postgres");
 const Sequelize = require("sequelize");
 const ValidationError = require("../errors/ValidationError");
-
 const mongoDB = require("../db/models/mongo");
 
 module.exports = function TransactionService() {
@@ -27,17 +26,7 @@ module.exports = function TransactionService() {
 
     create: async function (data) {
       try {
-        const createdTransaction = await Transaction.create(data);
-
-        await Operation.create({
-          type: "capture",
-          amount: data.amount,
-          currency: data.currency,
-          status: data.status,
-          transaction_id: createdTransaction.id,
-        });
-
-        return createdTransaction;
+        return await Transaction.create(data);
       } catch (e) {
         if (
           e instanceof Sequelize.ValidationError ||
@@ -48,7 +37,6 @@ module.exports = function TransactionService() {
         throw e;
       }
     },
-
     replace: async function (filters, newData) {
       try {
         const nbDeleted = await this.delete(filters);

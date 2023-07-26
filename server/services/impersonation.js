@@ -1,7 +1,6 @@
 const { Impersonation } = require("../db/models/postgres");
 const Sequelize = require("sequelize");
 const ValidationError = require("../errors/ValidationError");
-const UnauthorizedError = require("../errors/UnauthorizedError");
 const UniqueConstraintError = require("../errors/UniqueConstraintError");
 
 
@@ -11,9 +10,7 @@ module.exports = function ImpersonationService() {
             let dbOptions = {
                 where: filters,
             };
-            // options.order = {name: "ASC", dob: "DESC"}
             if (options.order) {
-                // => [["name", "ASC"], ["dob", "DESC"]]
                 dbOptions.order = Object.entries(options.order);
             }
             if (options.limit) {

@@ -12,7 +12,6 @@ module.exports = (connection) => {
     }
     class Product extends Model {
         static associate(models) {
-            Product.hasMany(models.CartItem, { foreignKey: 'product_id', as: 'cart_items' });
             Product.belongsTo(models.User, { foreignKey: 'merchant_id', as: 'merchant' });
         }
     }

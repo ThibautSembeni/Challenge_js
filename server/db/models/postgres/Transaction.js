@@ -1,9 +1,8 @@
 const {DataTypes} = require("sequelize");
 module.exports = (connection) => {
-  const mongo = require("../mongo");
-  const { DataTypes, Model } = require("sequelize");
-  const db = require("../postgres");
-
+    const mongo = require("../mongo");
+    const {DataTypes, Model} = require("sequelize");
+    const db = require("../postgres");
   function uniqueRef() {
     let code = "tr_";
     let authorizedChar =
@@ -19,7 +18,6 @@ module.exports = (connection) => {
   let updateInProgress = false;
   class Transaction extends Model {
     static associate(models) {
-      Transaction.belongsTo(models.User, { foreignKey: 'user_id', as: 'user' });
       Transaction.belongsTo(models.User, { foreignKey: 'merchant_id', as: 'merchant' });
       Transaction.hasMany(models.Event, { foreignKey: 'aggregate_id', as: 'events' });
     }
@@ -46,13 +44,13 @@ module.exports = (connection) => {
     { sequelize: connection, tableName: "transactions" }
   );
 
-  Transaction.addHook("afterCreate", (transaction) => {
-    mongo.Transaction.create(transaction.dataValues).catch((error) => {
-      if (error.name === "MongoServerError" && error.code === 11000) {
-        console.log("duplicate key error");
-      }
+    Transaction.addHook("afterCreate", (transaction) => {
+        mongo.Transaction.create(transaction.dataValues).catch((error) => {
+            if (error.name === "MongoServerError" && error.code === 11000) {
+                console.log("duplicate key error");
+            }
+        });
     });
-  });
 
   return Transaction;
 };

@@ -79,23 +79,21 @@ const filteredItems = computed(() => {
                 <Highlight :text="user.id" :search="searchQuery" />
               </td>
               <td class="px-6 py-4 font-bold">
-                <router-link :to="{ name: 'adminUserDetails', params: { userId: user.id } }">
-                  <span class="uppercase">
-                    <Highlight :text="user.firstname" :search="searchQuery" class="mr-1" />
+                <span class="uppercase">
+                  <Highlight :text="user.firstname" :search="searchQuery" class="mr-1" />
 
-                    <Highlight :text="user.lastname" :search="searchQuery" />
-                  </span>
-                  <span
-                    v-if="user.role === 'merchant'"
-                    class="text-sm font-medium mr-2 px-2.5 py-0.5 rounded ml-4 bg-orange-200 text-orange-500"
-                    >Marchant</span
-                  >
-                  <span
-                    v-if="user.role === 'admin'"
-                    class="text-sm font-medium mr-2 px-2.5 py-0.5 rounded ml-4 bg-green-200 text-green-500"
-                    >Admin</span
-                  >
-                </router-link>
+                  <Highlight :text="user.lastname" :search="searchQuery" />
+                </span>
+                <span
+                  v-if="user.role === 'merchant'"
+                  class="text-sm font-medium mr-2 px-2.5 py-0.5 rounded ml-4 bg-orange-200 text-orange-500"
+                  >Marchant</span
+                >
+                <span
+                  v-if="user.role === 'admin'"
+                  class="text-sm font-medium mr-2 px-2.5 py-0.5 rounded ml-4 bg-green-200 text-green-500"
+                  >Admin</span
+                >
               </td>
               <td class="px-6 py-4">
                 <Highlight :text="user.email" :search="searchQuery" />

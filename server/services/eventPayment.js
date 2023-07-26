@@ -1,5 +1,4 @@
 const { Transaction, Operation, Event } = require("../db/models/postgres");
-const Sequelize = require("sequelize");
 const ValidationError = require("../errors/ValidationError");
 
 module.exports = function EventPaymentService() {
@@ -93,7 +92,6 @@ module.exports = function EventPaymentService() {
 
             currentState.reference = transaction.reference;
 
-            // Start creating timeline
             let timeline = transactionEvents.map(event => ({
                 timestamp: event.createdAt,
                 type: event.type,
@@ -122,7 +120,6 @@ module.exports = function EventPaymentService() {
                 );
             }
 
-            // Sort timeline events by timestamp
             timeline.sort((a, b) => a.timestamp - b.timestamp);
 
             return { currentState, timeline };
