@@ -23,7 +23,6 @@ const checkTokenValidity = async (req, res, next) => {
 
     try {
         const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
-
         if (decodedToken.role === "admin" && decodedToken.merchantId) {
             req.user = decodedToken;
             await getImpersonationData(req, res, next);
@@ -35,6 +34,9 @@ const checkTokenValidity = async (req, res, next) => {
         } else if (decodedToken.role === "merchant") {
             req.user = decodedToken;
             await getMerchantData(req, res, next);
+            next();
+        } else if (decodedToken.role === "customer") {
+            req.user = decodedToken;
             next();
         } else {
             return next(new UnauthorizedError());

@@ -12,7 +12,7 @@ module.exports = function SecurityController(UserService) {
                 const { email, password } = req.body;
                 const user = await UserService.login(email, password);
                 const token = await generateVerificationToken(user);
-                res.cookie('token', token, { httpOnly: true });
+                res.cookie('token', token, { maxAge: 10 * 60 * 1000, httpOnly: true });
                 res.json({ token });
             } catch (err) {
                 console.error(err);
@@ -64,9 +64,6 @@ module.exports = function SecurityController(UserService) {
                     next(error);
                 }
             }
-        },
-        check: async (req, res, next) => {
-            return res.status(200).send();
         },
         me: async (req, res, next) => {
             try {

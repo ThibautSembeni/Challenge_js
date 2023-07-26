@@ -10,6 +10,7 @@ import ProductDetailView from '@/views/products/ProductDetailView.vue'
 import ProductUpdateView from '@/views/products/ProductUpdateView.vue'
 import ProductCreateView from '@/views/products/ProductCreateView.vue'
 import { canUserAccess } from '@/utils/auth'
+import { check } from '@/services/auth'
 import ForbiddenView from '@/views/errors/ForbiddenView.vue'
 import NotFoundView from '@/views/errors/NotFoundView.vue'
 import DashboardView from '@/views/admin/DashboardView.vue'
@@ -194,5 +195,8 @@ router.beforeEach(async (to, from, next) => {
     next()
   }
 })
-
+router.afterEach(async (to, from, next) => {
+  await check()
+  // next()
+})
 export default router

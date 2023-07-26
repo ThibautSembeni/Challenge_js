@@ -8,7 +8,7 @@ const httpClient = axios.create({
 });
 
 httpClient.interceptors.request.use(
-    (config) => {
+    async (config) => {
         store.commit('setIsLoading', true);
         return config;
     },
@@ -29,7 +29,7 @@ const handleResponse = (response) => {
 const handleRequestError = async (error) => {
     store.commit('setIsLoading', false);
     const originalRequest = error.config;
-    if ((error.response && error.response.status === 401 && !originalRequest._retry) || error.response.status === 403) {
+    if (error.response && error.response.status === 401 && !originalRequest._retry) {
         originalRequest._retry = true;
 
         try {
@@ -56,6 +56,7 @@ const makeRequest = async (method, url, data, config) => {
             ...config,
         });
     } catch (error) {
+        console.error(error);
         return error.response;
     } finally {
         store.commit('setIsLoading', false);

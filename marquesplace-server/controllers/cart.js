@@ -9,17 +9,12 @@ module.exports = function CartController(CartService, options = {}) {
                 const { quantity, price } = product
                 const product_id = +product.id
                 const totalPrice = +(quantity * price)
-                console.log("before find one")
                 let cart = await CartService.findOne({ user_id: user.id })
-                console.log("after find one", cart)
 
                 if (!cart) {
-                    console.log("okk")
                     cart = await CartService.create({ user_id: user.id, total_price: totalPrice })
                 }
-                console.log("before item create")
                 const cartItem = await CartItemService.findOne({ cart_id: cart.id, product_id: product_id })
-                console.log("after item create", cartItem)
 
                 if (cartItem) {
                     const ancienQuantity = cartItem.quantity
@@ -39,7 +34,7 @@ module.exports = function CartController(CartService, options = {}) {
                     })
 
                 }
-                res.status(201)
+                res.sendStatus(201);
             } catch (error) {
                 console.error(error);
                 res.status(error.status || 500).json({ error: error.message });

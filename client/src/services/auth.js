@@ -17,6 +17,13 @@ export async function login(userCredentials) {
 
 }
 
+export async function logout() {
+    await httpClient.post('/logout', {})
+}
+export async function check() {
+    await httpClient.post('/check', {})
+}
+
 export async function registerUser(userCredentials) {
     for (let key in userCredentials) {
         if (userCredentials[key] === null || userCredentials[key] === '') {
