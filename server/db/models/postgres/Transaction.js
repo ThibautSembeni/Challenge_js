@@ -1,7 +1,7 @@
 module.exports = (connection) => {
   const mongo = require("../mongo");
   const { DataTypes, Model } = require("sequelize");
-  const sequelize = require('../../../../config/sequelize');
+  //const sequelize = require('../../../../config/sequelize');
   const db = require("../postgres");
 
   function uniqueRef() {

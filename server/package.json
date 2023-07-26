@@ -9,7 +9,7 @@
     "d:s:u": "node migration.js",
     "test:dev": "jest --verbose ./tests --watch --runInBand --detectOpenHandles",
     "test": "jest --verbose ./tests --runInBand --forceExit",
-    "d:f:l": "node fakers.js"
+    "d:f:l": "node fixtures.js"
   },
   "keywords": [],
   "author": "",
