@@ -4,7 +4,6 @@ const ResetPasswordService = require("../services/resetPassword");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const ResetPassword = new ResetPasswordService()
-const { createHash } = require('../utils/security')
 module.exports = function SecurityController(UserService) {
     return {
         login: async (req, res, next) => {
@@ -139,16 +138,6 @@ module.exports = function SecurityController(UserService) {
 
             await ResetPassword.delete({ user_id })
             res.sendStatus(200)
-        },
-        getSSEToken: async (req, res, next) => {
-            const forwardedBy = req.headers['x-forwarded-by'];
-            const token = jwt.sign(
-                { ip: forwardedBy },
-                process.env.JWT_SECRET,
-                {
-                    expiresIn: "10s",
-                })
-            res.status(201).json({ token })
         }
     };
 };

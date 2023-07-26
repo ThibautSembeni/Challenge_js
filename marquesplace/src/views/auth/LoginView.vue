@@ -19,7 +19,7 @@ async function loginUser(_user) {
   try {
     await login(_user)
     await fetchUser()
-    router.push({ path: '/', replace: true })
+    router.push({ path: '/products', replace: true })
   } catch (error) {
     requestError.value = error.message
   }

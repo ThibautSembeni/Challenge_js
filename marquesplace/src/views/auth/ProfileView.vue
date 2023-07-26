@@ -6,22 +6,16 @@ import { reactive, ref } from 'vue'
 import Input from '@/components/form/Input.vue'
 import EditPasswordSection from '@/components/EditPasswordSection.vue'
 import { updateUser } from '@/services/users'
-import { getCurrentCredentials, regenerateCredentials } from '@/services/credentials'
-import CopyToClipboard from '@/components/CopyToClipboard.vue'
-import store from '@/stores/store'
 
 const tabs = [
-  { title: 'My details', name: 'details' },
-  { title: 'Security', name: 'security' },
-  { title: 'My orders', name: 'orders' }
+  { title: 'Détails', name: 'details' },
+  { title: 'Mot de passe', name: 'security' },
 ]
 
 const currentUser = getCurrentUser()
-const currentCredentials = ref(getCurrentCredentials())
 
 const isDisabled = ref(true)
 const editMode = ref(false)
-const regenerateMode = ref(false)
 const userDetails = reactive({
   lastname: '',
   firstname: '',
@@ -64,31 +58,24 @@ const sendRequest = async (payload) => {
     console.error(`Error lors de changement de votre mot de passe : ${error}`)
   }
 }
-
-const confirmRegenerate = async () => {
-  const newCredentials = await regenerateCredentials()
-  store.commit('setCredentials', null)
-  currentCredentials.value = newCredentials
-  regenerateMode.value = false
-}
 </script>
 <template>
-  <div :class="{ 'sm:ml-64': currentUser.role !== 'customer' }">
+  <div>
     <NavBar />
     <div class="p-4 lg:p-10">
-      <h1 class="text-3xl font-bold">My Account</h1>
+      <h1 class="text-3xl font-bold">Mon compte</h1>
       <TabPanel :tabs="tabs" :is-vertical="true">
         <template #details>
           <template v-if="currentUser !== null">
             <div>
               <div class="flex items-center">
-                <h2 class="text-2xl font-bold my-4">Personnel Information</h2>
+                <h2 class="text-2xl font-bold my-4">Informations personnelles</h2>
                 <button
                   class="ml-4 px-3 py-2 text-xs font-medium inline-flex text-white bg-blue-700 rounded-lg hover:bg-blue-800"
                   @click="editProfile"
                   v-if="editMode === false"
                 >
-                  Modifier mon Profile
+                  Modifier mon profil
                 </button>
                 <button
                   class="ml-4 px-3 py-2 text-xs font-medium inline-flex text-white bg-green-700 rounded-lg hover:bg-green-800"
@@ -101,7 +88,7 @@ const confirmRegenerate = async () => {
               <div class="flex flex-row mb-4">
                 <div class="flex-1 mr-2">
                   <Input
-                    label="Lastname"
+                    label="Nom"
                     :value="userDetails.lastname"
                     :disabled="isDisabled"
                     v-model="userDetails.lastname"
@@ -109,7 +96,7 @@ const confirmRegenerate = async () => {
                 </div>
                 <div class="flex-1 ml-2">
                   <Input
-                    label="Firstname"
+                    label="Prénom"
                     :value="userDetails.firstname"
                     :disabled="isDisabled"
                     v-model="userDetails.firstname"
@@ -120,7 +107,7 @@ const confirmRegenerate = async () => {
                 <div class="w-1/2 pr-2">
                   <Input
                     type="number"
-                    label="Phone Number"
+                    label="Numéro de téléphone"
                     :value="userDetails.phone_number"
                     :disabled="isDisabled"
                     v-model="userDetails.phone_number"
@@ -129,7 +116,7 @@ const confirmRegenerate = async () => {
               </div>
             </div>
             <div>
-              <h2 class="text-2xl font-bold my-4">E-mail Address</h2>
+              <h2 class="text-2xl font-bold my-4">Adresse email</h2>
               <div class="flex flex-row mb-4">
                 <div class="w-1/2 pr-2">
                   <Input
@@ -141,71 +128,12 @@ const confirmRegenerate = async () => {
                 </div>
               </div>
             </div>
-            <div v-if="currentUser.role === 'merchant'">
-              <h2 class="text-2xl font-bold my-4">Information Merchant</h2>
-              <div class="flex flex-row mb-4">
-                <div class="flex-1 mr-2">
-                  <Input label="Kbis" :value="currentUser.kbis" :disabled="true" />
-                </div>
-                <div class="flex-1 ml-2">
-                  <Input label="Company" :value="currentUser.company" :disabled="true" />
-                </div>
-              </div>
-            </div>
           </template>
-          <template v-else> is Loading ...</template>
+          <template v-else>Chargement ...</template>
         </template>
-
-        <template #orders> orders</template>
 
         <template #security>
           <EditPasswordSection @passwordEvent="sendRequest" />
-
-          <div v-if="currentUser.role === 'merchant'">
-            <div class="flex items-center">
-              <h2 class="text-2xl font-bold my-4">Credentials Merchant</h2>
-              <button
-                class="ml-4 px-3 py-2 text-xs font-medium inline-flex text-white bg-blue-700 rounded-lg hover:bg-blue-800"
-                v-if="regenerateMode === false"
-                @click="() => (regenerateMode = true)"
-              >
-                Regenerer votre credentials
-              </button>
-              <button
-                class="ml-4 px-3 py-2 text-xs font-medium inline-flex items-center rounded-lg bg-green-500 hover:bg-green-800 text-white"
-                v-if="regenerateMode === true"
-                @click="confirmRegenerate"
-              >
-                <i class="far fa-check-circle mr-2"></i>
-
-                Confirmer
-              </button>
-
-              <button
-                class="ml-4 px-3 py-2 text-xs font-medium inline-flex items-center rounded-lg bg-blue-500 text-white hover:bg-blue-600 transition-colors duration-300"
-                @click="() => (regenerateMode = false)"
-                v-if="regenerateMode === true"
-              >
-                <svg class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M6 18L18 6M6 6l12 12"
-                  />
-                </svg>
-                Cancel
-              </button>
-            </div>
-            <div class="flex flex-row mb-4">
-              <div class="flex-1 mr-2">
-                <CopyToClipboard label="Client Token" :text-to-copy="currentCredentials?.client_token"/>
-              </div>
-              <div class="flex-1 ml-2">
-                <CopyToClipboard label="Client Secret" :text-to-copy="currentCredentials?.client_secret"/>
-              </div>
-            </div>
-          </div>
         </template>
       </TabPanel>
     </div>

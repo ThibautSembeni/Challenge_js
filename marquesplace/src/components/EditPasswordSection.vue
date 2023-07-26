@@ -55,7 +55,7 @@ watch(passwordValues, () => {
 			@click="editPassword"
 			v-if="editMode === false"
 		>
-			Modifier le password
+			Modifier le mot de passe
 		</button>
 		<button
 			class="ml-4 px-3 py-2 text-xs font-medium inline-flex rounded-lg hover:bg-green-800"
@@ -87,7 +87,7 @@ watch(passwordValues, () => {
 	<div class="flex flex-row mb-4">
 		<div class="w-1/2 pr-2">
 			<Input
-				label="Old password"
+				label="Ancien mot de passe"
 				type="password"
 				:disabled="isDisabled"
 				:validator="validatePassword"
@@ -98,7 +98,7 @@ watch(passwordValues, () => {
 	<div class="flex flex-row mb-4">
 		<div class="flex-1 mr-2">
 			<Input
-				label="New password"
+				label="Nouveau mot de passe"
 				:value="passwordValues.newPassword"
 				:disabled="isDisabled"
 				v-model="passwordValues.newPassword"
@@ -108,7 +108,7 @@ watch(passwordValues, () => {
 		</div>
 		<div class="flex-1 ml-2">
 			<Input
-				label="Confirm new password"
+				label="Confirmer le nouveau mot de passe"
 				:value="passwordValues.confirmNewPassword"
 				:disabled="isDisabled"
 				v-model="passwordValues.confirmNewPassword"
