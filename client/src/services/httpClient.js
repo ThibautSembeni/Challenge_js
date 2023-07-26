@@ -8,7 +8,7 @@ const httpClient = axios.create({
 });
 
 httpClient.interceptors.request.use(
-    (config) => {
+    async (config) => {
         store.commit('setIsLoading', true);
         return config;
     },
@@ -29,11 +29,11 @@ const handleResponse = (response) => {
 const handleRequestError = async (error) => {
     store.commit('setIsLoading', false);
     const originalRequest = error.config;
-    if ((error.response && error.response.status === 401 && !originalRequest._retry) || error.response.status === 403) {
+    if (error.response && error.response.status === 401 && !originalRequest._retry) {
         originalRequest._retry = true;
 
         try {
-            await axios.get(`${import.meta.env.VITE_API_URL}/refresh-token`, { withCredentials: true });
+            // await axios.get(`${import.meta.env.VITE_API_URL}/refresh-token`, { withCredentials: true });
             return httpClient(originalRequest);
         } catch (refreshError) {
             return Promise.reject(refreshError);
@@ -56,6 +56,7 @@ const makeRequest = async (method, url, data, config) => {
             ...config,
         });
     } catch (error) {
+        console.error(error);
         return error.response;
     } finally {
         store.commit('setIsLoading', false);

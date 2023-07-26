@@ -22,6 +22,19 @@ module.exports = function SecurityController(UserService) {
                 }
             }
         },
+        logout: async (req, res, next) => {
+            try {
+                res.clearCookie('token');
+                return res.sendStatus(200);
+            } catch (err) {
+                console.error(err);
+                if (err.name === 'UnauthorizedError') {
+                    res.status(401).json(err.errors);
+                } else {
+                    next(err);
+                }
+            }
+        },
         create: async (req, res, next) => {
             try {
                 const { body } = req;
@@ -79,8 +92,9 @@ module.exports = function SecurityController(UserService) {
             }
         },
         refreshToken: async (req, res, next) => {
-            const { token } = req.cookies;
             try {
+                const { token } = req.cookies;
+                if (!token) return res.sendStatus(401)
                 const user = jwt.verify(token, process.env.JWT_SECRET, {
                     ignoreExpiration: true,
                 })
@@ -90,6 +104,10 @@ module.exports = function SecurityController(UserService) {
             } catch (e) {
                 next(e)
             }
+        },
+        check: async (req, res, next) => {
+            res.cookie('token', req.cookies.token, { maxAge: 10 * 60 * 1000, httpOnly: true });
+            return res.sendStatus(200);
         },
         changePassword: async (req, res, next) => {
             const { currentPassword, newPassword } = req.body
