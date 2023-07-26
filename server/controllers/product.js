@@ -1,17 +1,9 @@
 module.exports = function productController(productService, options = {}) {
-    let result = {
+    return {
         getOne: async function (req, res, next) {
             try {
                 const reference = req.params.reference
-                let criteria = {}
-                if (req?.user?.id) {
-                    console.log("ok")
-                    criteria = {merchant_id: req?.user?.id, reference: reference}
-                } else {
-                    console.log("ok")
-                    criteria = {reference: reference}
-                }
-                const product = await productService.findOne(criteria)
+                const product = await productService.findOne({merchant_id: req.user.id, reference: reference})
                 if (product) {
                     res.json(product)
                 } else {
@@ -23,14 +15,7 @@ module.exports = function productController(productService, options = {}) {
         },
         getAll: async (req, res, next) => {
             try {
-                let criteria = {}
-                if (req?.user?.role === 'customer') {
-                    criteria = {}
-                }
-                else {
-                    criteria = {}
-                }
-                const results = await productService.findAll(criteria)
+                const results = await productService.findAll({merchant_id: req.user.id})
                 if (results) {
                     res.json(results)
                 } else {
@@ -43,7 +28,7 @@ module.exports = function productController(productService, options = {}) {
         create: async (req, res, next) => {
             try {
                 const product = req.body;
-                product.merchant_id = req?.user?.id;
+                product.merchant_id = req.user.id;
                 const results = await productService.create(product);
                 res.status(201).json(results);
             } catch (error) {
@@ -51,7 +36,5 @@ module.exports = function productController(productService, options = {}) {
                 next(error);
             }
         },
-    }
-
-    return result;
+    };
 }

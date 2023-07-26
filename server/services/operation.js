@@ -26,8 +26,7 @@ module.exports = function OperationService() {
     },
     create: async (data) => {
       try {
-        const operation = await Operation.create(data);
-        return operation;
+        return await Operation.create(data);
       } catch (e) {
         if (e instanceof Sequelize.ValidationError) {
           throw ValidationError.fromSequelizeValidationError(e);

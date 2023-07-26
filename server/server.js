@@ -6,62 +6,39 @@ const SecurityRouter = require("./routes/security");
 const TemplateRouter = require("./routes/route.template");
 const TransactionRouter = require("./routes/transactions");
 const ProductRouter = require("./routes/products");
-const CartRouter = require("./routes/cart");
 const AdminRouter = require("./routes/admin");
 const CredentialRouter = require("./routes/credentials");
 const OperationRouter = require("./routes/operation");
-const CustomerRouter = require("./routes/customer");
+const PspRouter = require("./routes/psp");
+const EventPaymentRouter = require("./routes/eventPayment");
 
 const checkFormat = require("./middlewares/check-format");
-const checkAuth = require("./middlewares/check-auth");
-const checkAdmin = require("./middlewares/check-admin-role");
+const errorHandler = require("./middlewares/error-handler");
 const trustProxy = require("./middlewares/trust-proxy");
-const verifyCredentials = require("./middlewares/verify-credentials");
-
-const CronService = require("./utils/cron");
+const checkAuth = require("./middlewares/check-auth");
+const cookieParser = require('cookie-parser')
 
 const UserService = require("./services/user");
 
 const app = express();
 
-// app.use(
-//   cors({
-//     origin: async (origin, callback) => {
-//       const origins = await UserService().getOrigins();
-//       if (origin === process.env.FRONT_URL || origins.includes(origin) || origin === 'http://localhost:5175') {
-//         return callback(null, true);
-//       } else {
-//         return callback(new Error("Not allowed by CORS"), false);
-//       }
-//     },
-//   })
-// );
+app.use(cookieParser())
 
-// app.use(
-//     cors({
-//       origin: 'http://localhost:5175'
-//     })
-// );
-
-app.use(
-    cors()
-);
-
-const errorHandler = (err, req, res, next) => {
-  // Assurez-vous que l'objet d'erreur existe
-  if (!err) {
-    return next();
-  }
-
-  // Affichez l'erreur dans la console pour le débogage
-  console.error(err);
-
-  // Vérifiez si l'erreur a un code HTTP personnalisé (dans l'objet d'erreur)
-  const statusCode = err.statusCode || 500;
-
-  // Réponse avec l'erreur et le statut approprié
-  res.status(statusCode).json({ error: err.message || 'Internal Server Error' });
-};
+if (process.env.NODE_ENV !== "test") {
+  app.use(
+    cors({
+      origin: async (origin, callback) => {
+        const origins = await UserService().getOrigins();
+        if (origin === process.env.FRONT_URL || origins.includes(origin)) {
+          return callback(null, true);
+        } else {
+          console.error("Not allowed by CORS", origin);
+          return callback(new Error("Not allowed by CORS"), false);
+        }
+      }, credentials: true
+    })
+  );
+}
 
 app.use(trustProxy);
 
@@ -71,7 +48,7 @@ app.use(express.json());
 
 app.use("/", SecurityRouter);
 
-app.use("/admin", checkAdmin, AdminRouter);
+app.use("/admin", checkAuth, AdminRouter);
 
 app.use("/template", checkAuth, TemplateRouter);
 
@@ -82,16 +59,15 @@ app.use("/transactions", TransactionRouter);
 // Pour activer la vérification des credentials pour les marchands
 // app.use("/transactions", verifyCredentials, TransactionRouter);
 
-app.use("/products",  ProductRouter);
-
-app.use("/cart", checkAuth, CartRouter);
-
+app.use("/products", checkAuth, ProductRouter);
 
 app.use("/credentials", checkAuth, CredentialRouter);
 
 app.use("/operation", checkAuth, OperationRouter);
 
-app.use("/customer", CustomerRouter);
+app.use("/psp", PspRouter);
+
+app.use('/eventPayment', checkAuth, EventPaymentRouter);
 
 
 app.get("/", (req, res) => {
@@ -103,8 +79,5 @@ app.post("/", (req, res) => {
 });
 
 app.use(errorHandler);
-
-const cronService = new CronService();
-cronService.start();
 
 module.exports = app;

@@ -4,9 +4,6 @@ const ResetPasswordService = require("../services/resetPassword");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const ResetPassword = new ResetPasswordService()
-const { createHash } = require('../utils/security')
-const Customer = require("../services/customer")
-const CustomerService = new Customer()
 module.exports = function SecurityController(UserService) {
     return {
         login: async (req, res, next) => {
@@ -67,11 +64,9 @@ module.exports = function SecurityController(UserService) {
                 }
             }
         },
-        check: async (req, res, next) => {
-            return res.status(200).send();
-        },
         me: async (req, res, next) => {
             try {
+                console.log(req.user)
                 const { id } = req.user;
                 const user = await UserService.findOne({ id });
                 if (!user) {
@@ -84,12 +79,13 @@ module.exports = function SecurityController(UserService) {
             }
         },
         refreshToken: async (req, res, next) => {
-            const { token } = req.body;
+            const { token } = req.cookies;
             try {
                 const user = jwt.verify(token, process.env.JWT_SECRET, {
                     ignoreExpiration: true,
                 })
                 const newToken = await generateVerificationToken(user)
+                res.cookie('token', newToken, { httpOnly: true });
                 return res.status(200).json({ token: newToken });
             } catch (e) {
                 next(e)
@@ -151,7 +147,7 @@ module.exports = function SecurityController(UserService) {
                 { ip: forwardedBy },
                 process.env.JWT_SECRET,
                 {
-                    expiresIn: "10s",
+                    expiresIn: 10000,
                 })
             res.status(201).json({ token })
         }

@@ -1,11 +1,7 @@
 module.exports = (connection) => {
     const { DataTypes, Model } = require('sequelize');
 
-    class Notification extends Model {
-        static associate(models) {
-            Notification.belongsTo(models.Transaction, { foreignKey: 'transaction_id', as: 'transaction' });
-        }
-    }
+    class Notification extends Model {}
 
     Notification.init({
         id: {

@@ -13,7 +13,7 @@ class EmailSender {
     }
 
     static async sendForgotPasswordEmail(user, confirmationLink) {
-        const {firstname ,lastname , email} = user;
+        const {firstname, lastname, email} = user;
 
         if (!email) throw new Error("Erreur : champ 'email' non défini");
         if (!confirmationLink) throw new Error("Erreur : champ 'confirmationLink' non défini");
@@ -31,8 +31,28 @@ class EmailSender {
             throw err;
         }
     }
+
+    static async sendEmailForOperation(user, status) {
+        const {firstname, lastname, email} = user;
+
+        if (!email) throw new Error("Erreur : champ 'email' non défini");
+        if (!EmailSender.validateEmail(email)) throw new Error("Erreur : format d'e-mail invalide");
+
+        const data = {
+            template_id: 4971789,
+            username: `${lastname} ${firstname}`,
+            email: email,
+            status: status
+        }
+        try {
+            return await EmailSender.sendEmail(data);
+        } catch (err) {
+            throw err;
+        }
+    }
+
     static async accountValidationEmail(user, confirmationLink) {
-        const {firstname ,lastname , email} = user;
+        const {firstname, lastname, email} = user;
 
         if (!email) throw new Error("Erreur : champ 'email' non défini");
         if (!confirmationLink) throw new Error("Erreur : champ 'confirmationLink' non défini");
@@ -104,6 +124,7 @@ class EmailSender {
             username: firstname + " " + lastname,
             email: email
         }
+        console.log("ok")
         try {
             return await EmailSender.sendEmail(data);
         } catch (err) {
@@ -112,7 +133,7 @@ class EmailSender {
     }
 
     static async sendEmail(data) {
-        const {template_id, username, email, confirmation_link, client_token, client_secret} = data
+        const {template_id, username, email, confirmation_link, status, client_token, client_secret} = data
         const variables = {
             name: username
         };
@@ -122,6 +143,9 @@ class EmailSender {
         if (client_token && client_secret) {
             variables.public_key = client_token;
             variables.private_key = client_secret;
+        }
+        if (status!== undefined) {
+            variables.status = status;
         }
         const body = {
             From: {

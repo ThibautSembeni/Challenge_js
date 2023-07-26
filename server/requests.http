@@ -70,7 +70,7 @@ POST http://localhost:3000/login
 Content-Type: application/json
 
 {
-    "email": "test1@test.com",
+    "email": "user@user.fr",
     "password": "password"
 }
 
@@ -105,7 +105,7 @@ Content-Type: application/json
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6ImN1c3RvbWVyIiwiaWF0IjoxNjg5OTg2NTUyLCJleHAiOjE2ODk5ODgzNTJ9.fkizUKZOUb5oaP7DPKGy1CVhrXGj7zENspsYE2vC-cA
 
 ###
-POST  http://localhost:3000/operation/refund
+POST  http://localhost:3000/operations/refund
 Content-Type: application/json
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Miwicm9sZSI6ImFkbWluIiwiaWF0IjoxNjkwMDQ2MTkwLCJleHAiOjE2OTAwNDc5OTB9.41hUgZPBfWavDk9sZDOftl8fugLftREggwoPRNXM9fY
 
@@ -115,7 +115,7 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Miwicm9sZSI6I
 }
 
 ###
-GET http://localhost:3000/operation/transaction/tr_dGOJySDPt2vYbTXGNZE9
+GET http://localhost:3000/operations/transaction/tr_dGOJySDPt2vYbTXGNZE9
 Content-Type: application/json
 
 ###

@@ -1,14 +1,15 @@
-const { Product } = require("../db/models/postgres");
+const { Impersonation } = require("../db/models/postgres");
 const Sequelize = require("sequelize");
 const ValidationError = require("../errors/ValidationError");
+const UniqueConstraintError = require("../errors/UniqueConstraintError");
 
-module.exports = function ProductService() {
+
+module.exports = function ImpersonationService() {
     return {
-        findAll: async function (filters, options = {}) {
+        findAll: async function (filters, options) {
             let dbOptions = {
                 where: filters,
             };
-
             if (options.order) {
                 dbOptions.order = Object.entries(options.order);
             }
@@ -16,26 +17,30 @@ module.exports = function ProductService() {
                 dbOptions.limit = options.limit;
                 dbOptions.offset = options.offset;
             }
-            return Product.findAll(dbOptions);
+            return Impersonation.findAll(dbOptions);
         },
         findOne: async function (filters) {
-            return Product.findOne({ where: filters });
+            return Impersonation.findOne({ where: filters });
         },
         create: async function (data) {
             try {
-                return await Product.create(data);
+                return await Impersonation.create(data);
             } catch (e) {
-                if (e instanceof Sequelize.ValidationError || e instanceof ValidationError) {
+                if (e instanceof Sequelize.UniqueConstraintError) {
+                    throw UniqueConstraintError.fromSequelizeUniqueConstraintError(e);
+                }
+                if (e instanceof Sequelize.ValidationError) {
                     throw ValidationError.fromSequelizeValidationError(e);
                 }
+
                 throw e;
             }
         },
         replace: async function (filters, newData) {
             try {
                 const nbDeleted = await this.delete(filters);
-                const user = await this.create(newData);
-                return [[user, nbDeleted === 0]];
+                const impersonation = await this.create(newData);
+                return [[impersonation, nbDeleted === 0]];
             } catch (e) {
                 if (e instanceof Sequelize.ValidationError) {
                     throw ValidationError.fromSequelizeValidationError(e);
@@ -45,13 +50,12 @@ module.exports = function ProductService() {
         },
         update: async (filters, newData) => {
             try {
-                const [nbUpdated, users] = await Product.update(newData, {
+                const [nbUpdated, impersonations] = await Impersonation.update(newData, {
                     where: filters,
                     returning: true,
                     individualHooks: true,
                 });
-
-                return users;
+                return impersonations;
             } catch (e) {
                 if (e instanceof Sequelize.ValidationError) {
                     throw ValidationError.fromSequelizeValidationError(e);
@@ -60,7 +64,7 @@ module.exports = function ProductService() {
             }
         },
         delete: async (filters) => {
-            return Product.destroy({ where: filters });
+            return User.destroy({ where: filters });
         },
     };
 };
