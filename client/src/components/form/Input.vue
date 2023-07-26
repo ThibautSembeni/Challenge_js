@@ -74,13 +74,13 @@ const handleInput = (event) => {
       v-model="inputValue"
       :type="type"
       @input="handleInput"
-      :class="{ 'is-invalid': showError, 'disabled-input': disabled }"
+      :class="{ 'is-invalid': showError && !disabled, 'disabled-input': disabled }"
       :placeholder="placeholder"
       :disabled="disabled"
       :required="required"
       :autocomplete="autocomplete"
     />
-    <span v-if="showError" class="error-message">{{ errorMessage }}</span>
+    <span v-if="showError && !disabled" class="error-message">{{ errorMessage }}</span>
   </div>
 </template>
 

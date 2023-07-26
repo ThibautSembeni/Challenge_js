@@ -17,8 +17,12 @@ const requestError = ref('')
 async function loginUser(_user) {
   if (requestError.value) requestError.value = ''
   try {
-    await login(_user)
+     await login(_user)
     const currentUser = await fetchUser()
+    if (currentUser?.role === 'merchant' && currentUser?.status === 'created') {
+      await router.push({path: '/profile', replace: true})
+      return
+    }
 
     switch (currentUser.role) {
       case 'admin':
