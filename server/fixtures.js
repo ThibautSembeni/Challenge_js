@@ -2,21 +2,21 @@ const { faker } = require('@faker-js/faker');
 const { QueryTypes } = require('sequelize');
 const db = require('./db/models/postgres');
 
-
+const randomMerchantId = [1, 2, 3, 4, 5];
 
 const generateRandomUser = async () => {
-    const product_name = faker.commerce.productName();
+    const name = faker.commerce.productName();
     const description = faker.commerce.productDescription();
-    const price = faker.commerce.price();
+    const price = faker.number.int({ min: 10, max: 500 });
     const reference = faker.string.alphanumeric(15);
-    const stock = faker.string.numeric(2);
+    const stock = faker.number.int({ min: 10, max: 500 });
     const status = "active"
     const createdAt = faker.date.past();
     const updatedAt = faker.date.recent();
-    const merchantId = 1
+    const merchant_id = randomMerchantId[Math.floor(Math.random() * randomMerchantId.length)];
 
     await db.Product.create({
-        product_name,
+        name,
         description,
         price,
         reference,
@@ -24,7 +24,7 @@ const generateRandomUser = async () => {
         status,
         createdAt,
         updatedAt,
-        merchantId
+        merchant_id
     });
 };
 
