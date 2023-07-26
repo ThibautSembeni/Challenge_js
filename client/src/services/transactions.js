@@ -17,7 +17,7 @@ export async function getTransaction(reference) {
     return await eventPayment.getTransactionEvent(reference);
 }
 export async function createTransaction(transaction) {
-    return await eventPayment.createTransactionMerchantEvent(transaction);
+    return await eventPayment.createTransactionEvent(transaction);
 }
 
 export async function updateTransaction(transaction) {

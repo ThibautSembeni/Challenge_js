@@ -1,7 +1,7 @@
 import httpClient from '@/services/httpClient';
 
 export default {
-    async createTransaction(transaction) {
+    async createTransactionEvent(transaction) {
         const response = await httpClient.post('/eventPayment/transaction', transaction);
         if (response.status !== 201) {
             throw new Error(`Error: ${response.status} - An error occurred when creating the transaction`);

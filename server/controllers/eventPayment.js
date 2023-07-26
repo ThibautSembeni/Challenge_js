@@ -2,6 +2,8 @@ module.exports = function TransactionController(Service) {
     return {
         createTransaction: async (req, res, next) => {
             try {
+                req.body.merchant_id = req.user.id;
+
                 const response = await Service.createTransaction(req.body);
                 res.status(201).send(response);
             } catch (error) {

@@ -196,7 +196,7 @@ const filteredPaymentsAll = computed(() => {
                         })
                     }
                   ]"
-                  :dropdownId="payment.id"
+                  :dropdownId="payment.reference"
                   @deleted="data.payments = getTransactions()"
                 />
               </td>
