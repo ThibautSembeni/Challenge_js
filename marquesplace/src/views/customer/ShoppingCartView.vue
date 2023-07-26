@@ -13,10 +13,13 @@ const currentUser = getCurrentUser()
 const userId = currentUser.id
 
 const cart = ref({})
+const price = ref(0)
 
 onMounted(async () => {
   try {
     cart.value = await getCartItemsService(userId)
+    price.value = cart.value.cart_items.reduce((acc, item) => acc + item.price * item.quantity, 0)
+
   } catch (error) {
     console.error('Error fetching cart items:', error)
   }
@@ -156,7 +159,7 @@ const handleSubmit = async () => {
 
     <div class="mt-8">
       <h2 class="text-3xl font-semibold">Montant de la commande</h2>
-      <p class="text-2xl font-semibold mt-4">Total: {{ cart.total_price }}€</p>
+      <p class="text-2xl font-semibold mt-4">Total: {{ price }}€</p>
     </div>
   </main>
 </template>

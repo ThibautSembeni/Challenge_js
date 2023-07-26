@@ -8,21 +8,18 @@ module.exports = function CartController(CartService, options = {}) {
                 const { product } = req.body
                 const { quantity, price } = product
                 const product_id = +product.id
-                const totalPrice = +(quantity * price)
                 let cart = await CartService.findOne({ user_id: user.id })
 
                 if (!cart) {
-                    cart = await CartService.create({ user_id: user.id, total_price: totalPrice })
+                    cart = await CartService.create({ user_id: user.id })
                 }
                 const cartItem = await CartItemService.findOne({ cart_id: cart.id, product_id: product_id })
 
                 if (cartItem) {
                     const ancienQuantity = cartItem.quantity
                     const newQuantity = cartItem.quantity + quantity
-                    const newPrice = +(newQuantity * price)
                     const updateCartItem = await CartItemService.update({ cart_id: cart.id }, {
                         quantity: newQuantity,
-                        price: newPrice
                     })
                 } else {
                     const newCartItem = await CartItemService.create({

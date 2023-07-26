@@ -19,15 +19,6 @@ module.exports = (connection) => {
         primaryKey: true,
         autoIncrement: true,
       },
-      total_price: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-        validate: {
-          notNull: {
-            msg: "Le prix total est obligatoire",
-          },
-        },
-      },
     },
     { sequelize: connection, tableName: "carts" }
   );
