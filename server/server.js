@@ -14,16 +14,18 @@ const EventPaymentRouter = require("./routes/eventPayment");
 
 const checkFormat = require("./middlewares/check-format");
 const errorHandler = require("./middlewares/error-handler");
-const checkAuth = require("./middlewares/check-auth");
-const checkAdmin = require("./middlewares/check-admin-role");
 const trustProxy = require("./middlewares/trust-proxy");
-const verifyCredentials = require("./middlewares/verify-credentials");
+const checkAuth = require("./middlewares/check-auth");
+
+const cookieParser = require('cookie-parser')
 
 const CronService = require("./utils/cron");
 
 const UserService = require("./services/user");
 
 const app = express();
+
+app.use(cookieParser())
 
 app.use(
   cors({
@@ -32,12 +34,12 @@ app.use(
       if (origin === process.env.FRONT_URL || origins.includes(origin)) {
         return callback(null, true);
       } else {
+        console.error("Not allowed by CORS", origin);
         return callback(new Error("Not allowed by CORS"), false);
       }
-    }
+    }, credentials: true
   })
 );
-
 
 app.use(trustProxy);
 
@@ -47,7 +49,7 @@ app.use(express.json());
 
 app.use("/", SecurityRouter);
 
-app.use("/admin", checkAdmin, AdminRouter);
+app.use("/admin", checkAuth, AdminRouter);
 
 app.use("/template", checkAuth, TemplateRouter);
 

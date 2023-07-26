@@ -54,13 +54,14 @@ const eventSource = ref(null)
 async function subscribeToSSETransaction() {
   const token = await getSSEToken()
   const params = new URLSearchParams()
-  params.set('username', user.id)
+  params.set('id', user.id)
   params.set('token', token)
   if (localStorage.getItem('last-id')) {
     params.set('last-id', localStorage.getItem('last-id'))
   }
   eventSource.value = new EventSource(
-    `${import.meta.env.VITE_API_URL}/transactions/transaction/subscribe?` + params
+    `${import.meta.env.VITE_API_URL}/transactions/transaction/subscribe?` + params,
+    { withCredentials: true }
   )
   bindEventSource(eventSource.value)
 }
