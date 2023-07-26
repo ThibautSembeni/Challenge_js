@@ -13,7 +13,6 @@ const getScrappingExchangeRates = async () => {
     }
 
     const exchangeRates = await response.json();
-    console.log(exchangeRates);
     return exchangeRates;
   } catch (error) {
     console.error("Erreur lors du scrapping des taux de change :", error);

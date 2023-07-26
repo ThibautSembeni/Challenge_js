@@ -1,4 +1,4 @@
-const {generateVerificationToken} = require("../../utils/user");
+const { generateVerificationToken } = require("../../utils/user");
 const request = require("supertest");
 const app = require("../../server");
 const postgres = require("../../db/models/postgres");
@@ -9,7 +9,7 @@ const EmailSender = require("../../services/emailSender");
 describe('Test register verify account', () => {
     EmailSender.mailjet = {
         post: jest.fn().mockReturnThis(),
-        request: jest.fn().mockResolvedValue({response: {request: {socket: {destroy: jest.fn()}}}})
+        request: jest.fn().mockResolvedValue({ response: { request: { socket: { destroy: jest.fn() } } } })
     };
 
     const registerUrl = `/register`

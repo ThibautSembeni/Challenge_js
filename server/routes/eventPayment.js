@@ -2,7 +2,6 @@ const genericRouter = require("./generic");
 const genericController = require("../controllers/generic");
 const EventService = require("../services/eventPayment");
 const eventPaymentController = require("../controllers/eventPayment");
-const checkMerchant = require("../middlewares/check-merchant");
 
 module.exports = new genericRouter(
     new genericController(new EventService(), {

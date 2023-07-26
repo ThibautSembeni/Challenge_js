@@ -2,7 +2,7 @@ const UnauthorizedError = require('./../errors/UnauthorizedError');
 const { verifyToken } = require("../utils/security");
 module.exports = (req, res, next) => {
 
-    if (process.env.NODE_ENV === 'development') return next()
+    if (process.env.NODE_ENV !== 'production') return next()
     const forwardedBy = req.headers['x-forwarded-by'];
 
     if (!forwardedBy) {

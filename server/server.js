@@ -27,19 +27,21 @@ const app = express();
 
 app.use(cookieParser())
 
-app.use(
-  cors({
-    origin: async (origin, callback) => {
-      const origins = await UserService().getOrigins();
-      if (origin === process.env.FRONT_URL || origins.includes(origin)) {
-        return callback(null, true);
-      } else {
-        console.error("Not allowed by CORS", origin);
-        return callback(new Error("Not allowed by CORS"), false);
-      }
-    }, credentials: true
-  })
-);
+if (process.env.NODE_ENV !== "test") {
+  app.use(
+    cors({
+      origin: async (origin, callback) => {
+        const origins = await UserService().getOrigins();
+        if (origin === process.env.FRONT_URL || origins.includes(origin)) {
+          return callback(null, true);
+        } else {
+          console.error("Not allowed by CORS", origin);
+          return callback(new Error("Not allowed by CORS"), false);
+        }
+      }, credentials: true
+    })
+  );
+}
 
 app.use(trustProxy);
 
@@ -68,7 +70,7 @@ app.use("/credentials", checkAuth, CredentialRouter);
 
 app.use("/operation", checkAuth, OperationRouter);
 
-app.use('/eventPayment', EventPaymentRouter);
+app.use('/eventPayment', checkAuth, EventPaymentRouter);
 
 app.get("/", (req, res) => {
   res.status(200).json({ message: "Hello World!" });
