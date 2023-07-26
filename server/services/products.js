@@ -31,6 +31,7 @@ module.exports = function ProductService() {
                 throw e;
             }
         },
+
         replace: async function (filters, newData) {
             try {
                 const nbDeleted = await this.delete(filters);
