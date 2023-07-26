@@ -13,6 +13,9 @@ import ResetPassword from '@/views/auth/ResetPassword.vue'
 import ShoppingCartView from '@/views/customer/ShoppingCartView.vue'
 import ProductsView from "@/views/customer/ProductsView.vue";
 import TransactionsView from "@/views/merchant/TransactionsView.vue";
+import ConfirmationView from "@/views/customer/ConfirmationView.vue";
+import EchecView from "@/views/customer/EchecView.vue";
+import OrdersView from "@/views/merchant/OrdersView.vue";
 
 const authRoutes = [
   {
@@ -76,6 +79,24 @@ const customerRoutes = [
     path: '/transactions',
     name: 'transactions',
     component: TransactionsView,
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/commandes',
+    name: 'orders',
+    component: OrdersView,
+    meta: { requiresAuth: false }
+  },
+  {
+    path: '/achat-reussi',
+    name: 'successPurchase',
+    component: ConfirmationView,
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/achat-refuse',
+    name: 'failedPurchase',
+    component: EchecView,
     meta: { requiresAuth: true }
   }
 ]
