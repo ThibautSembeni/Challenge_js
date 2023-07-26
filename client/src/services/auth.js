@@ -17,7 +17,15 @@ export async function login(userCredentials) {
             throw new Error("Error server")
         }
     }
+}
+export async function verifyAccount(token) {
+    try {
 
+    return await httpClient.get(`/verify/${token}`)
+    }
+    catch (e) {
+        throw new Error(`Error ${e}`)
+    }
 }
 
 export async function registerUser(userCredentials) {

@@ -14,8 +14,8 @@ module.exports = function SecurityController(UserService) {
                     res.status(401).json('Activer votre compte');
                 }
                 const token = await generateVerificationToken(user);
-                res.cookie('token', token, {httpOnly: true});
-                res.json({token});
+                res.cookie('token', token, { httpOnly: true }).json({ token });
+
             } catch (err) {
                 console.error(err);
                 if (err.name === 'UnauthorizedError') {
@@ -30,11 +30,9 @@ module.exports = function SecurityController(UserService) {
                 const {body} = req;
                 const user = await UserService.create(body);
                 const token = await generateVerificationToken(user)
-                const confirmationLink = `${process.env.API_URL}/verify/${token}`
+                const encodedToken = Buffer.from(token).toString('base64url');
+                const confirmationLink = `${process.env.FRONT_URL}/auth/verify/${encodedToken}`
                 await EmailSender.accountValidationEmail(user, confirmationLink)
-                // } else if (user.role === 'merchant') {
-                //     await EmailSender.sendPendingValidationEmail(user)
-                // }
                 return res.status(201).json(user);
             } catch (error) {
                 if (error.constructor.name === 'ValidationError') {
@@ -50,13 +48,14 @@ module.exports = function SecurityController(UserService) {
         verify: async (req, res, next) => {
             try {
                 const {token} = req.params;
-                const encodedUser = getUserFromJWTToken(token);
+                const decodedToken = Buffer.from(token, 'base64url').toString();
+                const encodedUser = getUserFromJWTToken(decodedToken);
                 const id = parseInt(encodedUser.id, 10);
                 const updatedUser = await UserService.update({id}, {isActive: true});
                 if (updatedUser.length === 0) {
                     return res.sendStatus(404);
                 }
-                return res.redirect(process.env.FRONT_URL)
+                return res.sendStatus(200)
             } catch (error) {
                 if (error.name === 'ValidationError') {
                     res.status(422).json(error.errors);
@@ -106,7 +105,6 @@ module.exports = function SecurityController(UserService) {
             catch (e) {
                 return res.status(500).json(e)
             }
-            // return res.json(updatedUser[0])
         },
         changePassword: async (req, res, next) => {
             const {currentPassword, newPassword} = req.body
