@@ -32,6 +32,7 @@ module.exports = function (Controller, options = {}) {
 
     if (options.hasOwnProperty("customRoutes")) {
         options.customRoutes.forEach((route) => {
+            console.log(route)
             if (route.hasOwnProperty("middleware") && route.middleware.length > 0) {
                 router[route.method.toLowerCase()](route.path, route.middleware, Controller[route.handler]);
             } else {
