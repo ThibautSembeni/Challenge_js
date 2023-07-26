@@ -2,7 +2,6 @@ const genericRouter = require("./generic");
 const genericController = require("../controllers/generic");
 const TransactionService = require("../services/transactions");
 const checkAuth = require("../middlewares/check-auth");
-const checkSSE = require("../middlewares/check-sse");
 const customTransactionController = require("../controllers/transaction");
 
 module.exports = new genericRouter(
@@ -15,9 +14,9 @@ module.exports = new genericRouter(
     {
         customRoutes: [
             { method: 'get', path: '/transaction/user/:id', middleware: [checkAuth], handler: 'getTransactionsByUserId' },
-            { method: 'get', path: '/transaction/subscribe', middleware: [checkSSE], handler: 'subscribe' },
+            { method: 'get', path: '/transaction/subscribe', middleware: [checkAuth], handler: 'subscribe' },
             { method: 'post', path: '/', middleware: [checkAuth], handler: 'transaction' },
-            { method: 'get', path: '/stats/subscribe', middleware: [checkSSE], handler: 'subscribeToTransactionsStats' },
+            { method: 'get', path: '/stats/subscribe', middleware: [checkAuth], handler: 'subscribeToTransactionsStats' },
             { method: 'get', path: '/stats/amountbyday', middleware: [checkAuth], handler: 'getTransactionsVolumeByDays' },
             { method: 'get', path: '/stats/numberbyday', middleware: [checkAuth], handler: 'getTransactionsNumberByDays' },
             { method: 'get', path: '/stats/numberbyyear', middleware: [checkAuth], handler: 'getTransactionsNumberByYear' },

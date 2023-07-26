@@ -65,9 +65,6 @@ module.exports = function SecurityController(UserService) {
                 }
             }
         },
-        check: async (req, res, next) => {
-            return res.status(200).send();
-        },
         me: async (req, res, next) => {
             try {
                 console.log(req.user)
