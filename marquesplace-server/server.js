@@ -1,14 +1,12 @@
 const express = require("express");
 const cors = require("cors");
 
-const UserRouter = require("./routes/users");
 const SecurityRouter = require("./routes/security");
 const CartRouter = require("./routes/cart");
 
 
 const checkFormat = require("./middlewares/check-format");
 const checkAuth = require("./middlewares/check-auth");
-const UserService = require("./services/user");
 
 
 const CronService = require("./utils/cron");
@@ -29,9 +27,6 @@ app.use(express.json());
 
 app.use("/", SecurityRouter);
 
-app.use("/users", checkAuth, UserRouter);
-
-app.use("/merchant", checkAuth, UserRouter);
 
 app.use("/cart", checkAuth, CartRouter);
 
@@ -64,7 +59,7 @@ app.post("/", (req, res) => {
 
 app.use(errorHandler);
 
-const cronService = new CronService();
-cronService.start();
+// const cronService = new CronService();
+// cronService.start();
 
 module.exports = app;
