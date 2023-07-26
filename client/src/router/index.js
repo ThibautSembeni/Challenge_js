@@ -73,7 +73,7 @@ const customerRoutes = [
     path: '/about',
     name: 'about',
     component: () => import('../views/AboutView.vue')
-  },
+  }
 ]
 
 const adminRoutes = [

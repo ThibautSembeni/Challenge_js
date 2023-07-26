@@ -1,5 +1,5 @@
 <script setup>
-import { ref, watch } from 'vue'
+import {ref, watch} from 'vue'
 
 const isActive = ref(false)
 const props = defineProps({
@@ -23,17 +23,18 @@ const props = defineProps({
 const buttonClass = `button-${props.color}`
 
 watch(
-  () => props.active,
-  (newValue) => {
-    isActive.value = newValue
-  }
+    () => props.active,
+    (newValue) => {
+      isActive.value = newValue
+    }
 )
 </script>
 
 <template>
   <button
-    :class="isActive ? buttonClass + ' is-active' : buttonClass + ' is-not-active'"
-    type="submit"
+      :class="isActive ? buttonClass + ' is-active' : buttonClass + ' is-not-active'"
+      type="submit"
+      :disabled="!isActive"
   >
     {{ text }}
   </button>

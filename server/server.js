@@ -9,6 +9,7 @@ const ProductRouter = require("./routes/products");
 const AdminRouter = require("./routes/admin");
 const CredentialRouter = require("./routes/credentials");
 const OperationRouter = require("./routes/operation");
+const PspRouter = require("./routes/psp");
 const EventPaymentRouter = require("./routes/eventPayment");
 
 const checkFormat = require("./middlewares/check-format");
@@ -64,7 +65,10 @@ app.use("/credentials", checkAuth, CredentialRouter);
 
 app.use("/operation", checkAuth, OperationRouter);
 
+app.use("/psp", PspRouter);
+
 app.use('/eventPayment', checkAuth, EventPaymentRouter);
+
 
 app.get("/", (req, res) => {
   res.status(200).json({ message: "Hello World!" });
