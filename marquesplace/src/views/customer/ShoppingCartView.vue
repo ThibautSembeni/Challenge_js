@@ -2,7 +2,7 @@
 import {ref, onMounted} from 'vue'
 import {getCurrentUser} from '@/services/auth'
 import NavBar from '@/components/NavBar.vue'
-import {getCartItemsService, removeItemService} from "@/services/cart";
+import {createCharge, getCartItemsService, removeItemService} from "@/services/cart";
 
 const customerAddress = ref('')
 const customerCity = ref('')
@@ -22,13 +22,22 @@ onMounted(async () => {
   }
 })
 
-
 const removeItem = async (cartItem) => {
-  console.log("it", cartItem, cart.value)
   const cartId = cart.value.id;
   const cartItemId = cartItem.id;
   await removeItemService(cartId, cartItemId)
+  cart.value = await getCartItemsService(userId);
 }
+
+const handleSubmit = async () => {
+    try {
+        const response = await createCharge(customerAddress, customerCity, customerPostalCode, customerCountry, currentUser, cart);
+        console.log("charge response", response);
+    } catch (error) {
+        console.error("Error creating charge:", error);
+    }
+}
+
 </script>
 
 <template>
@@ -74,7 +83,7 @@ const removeItem = async (cartItem) => {
 
     <div class="mt-8">
       <h2 class="text-3xl font-semibold mb-4">Informations Client</h2>
-      <form class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+      <form class="grid grid-cols-1 sm:grid-cols-2 gap-6" @submit.prevent="handleSubmit">
         <div class="mb-4">
           <label class="block text-lg font-semibold text-gray-800 mb-2">Adresse:</label>
           <div class="relative">
@@ -139,10 +148,7 @@ const removeItem = async (cartItem) => {
           </div>
         </div>
 
-        <button
-            class="col-span-2 sm:col-span-1 bg-blue-500 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded focus:outline-none focus:shadow-outline"
-            type="submit"
-        >
+        <button class="col-span-2 sm:col-span-1 bg-blue-500 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded focus:outline-none focus:shadow-outline" type="submit">
           Valider la commande
         </button>
       </form>
@@ -150,8 +156,6 @@ const removeItem = async (cartItem) => {
 
     <div class="mt-8">
       <h2 class="text-3xl font-semibold">Montant de la commande</h2>
-      <p class="text-xl mt-2">Sous-total: {{ cart.total_price }}€</p>
-      <p class="text-xl">Frais de port: {{ cart.total_price }}€</p>
       <p class="text-2xl font-semibold mt-4">Total: {{ cart.total_price }}€</p>
     </div>
   </main>

@@ -41,6 +41,7 @@ module.exports = function CartController(CartService, options = {}) {
             }
 
         },
+
         removeItemFromCart: async function (req, res, next) {
             // res.json("remove")
             try {
