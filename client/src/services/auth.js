@@ -3,27 +3,23 @@ import httpClient from '@/services/httpClient'
 
 export async function login(userCredentials) {
     const response = await httpClient.post('/login', userCredentials)
-    console.log("res", response.data)
     if (response.status === 200) {
         const {token} = response.data
         localStorage.setItem('access_token', token)
         store.commit('setLoggedIn', true)
         return token
+    } else if (response.status === 401) {
+        throw new Error("Compte non validé ou le mot de passe ou l'adresse email ne sont pas corrects")
     } else {
-        if (response?.data) {
-            throw new Error(response.data)
-        }
-        else{
-            throw new Error("Error server")
-        }
+        throw new Error("Error server")
     }
 }
+
 export async function verifyAccount(token) {
     try {
 
-    return await httpClient.get(`/verify/${token}`)
-    }
-    catch (e) {
+        return await httpClient.get(`/verify/${token}`)
+    } catch (e) {
         throw new Error(`Error ${e}`)
     }
 }
