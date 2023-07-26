@@ -4,7 +4,6 @@ const ResetPasswordService = require("../services/resetPassword");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const ResetPassword = new ResetPasswordService()
-const { createHash } = require('../utils/security')
 module.exports = function SecurityController(UserService) {
     return {
         login: async (req, res, next) => {
