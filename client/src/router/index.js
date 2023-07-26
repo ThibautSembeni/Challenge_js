@@ -195,8 +195,8 @@ router.beforeEach(async (to, from, next) => {
     next()
   }
 })
-router.afterEach(async (to, from, next) => {
-  await check()
-  // next()
-})
+// router.afterEach(async (to, from, next) => {
+//   await check()
+//   // next()
+// })
 export default router

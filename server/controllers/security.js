@@ -102,7 +102,6 @@ module.exports = function SecurityController(UserService) {
                 res.cookie('token', newToken, { httpOnly: true });
                 return res.status(200).json({ token: newToken });
             } catch (e) {
-                return res.redirect(process.env.FRONT_URL)
                 next(e)
             }
         },

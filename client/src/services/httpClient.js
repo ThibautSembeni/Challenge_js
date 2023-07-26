@@ -33,7 +33,7 @@ const handleRequestError = async (error) => {
         originalRequest._retry = true;
 
         try {
-            await axios.get(`${import.meta.env.VITE_API_URL}/refresh-token`, { withCredentials: true });
+            // await axios.get(`${import.meta.env.VITE_API_URL}/refresh-token`, { withCredentials: true });
             return httpClient(originalRequest);
         } catch (refreshError) {
             return Promise.reject(refreshError);
