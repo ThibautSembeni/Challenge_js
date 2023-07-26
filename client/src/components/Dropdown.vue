@@ -66,7 +66,7 @@ const data = defineProps({
     required: true
   },
   dropdownId: {
-    type: Number,
+    type: [Number, String],
     required: true
   },
   textColor: {

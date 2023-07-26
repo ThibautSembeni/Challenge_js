@@ -4,15 +4,12 @@ import store from '@/stores/store';
 const httpClient = axios.create({
     baseURL: import.meta.env.VITE_API_URL,
     timeout: 5000,
+    withCredentials: true,
 });
 
 httpClient.interceptors.request.use(
     (config) => {
         store.commit('setIsLoading', true);
-        const accessToken = localStorage.getItem('access_token');
-        if (accessToken) {
-            config.headers['Authorization'] = `Bearer ${accessToken}`;
-        }
         return config;
     },
     (error) => {
@@ -32,20 +29,11 @@ const handleResponse = (response) => {
 const handleRequestError = async (error) => {
     store.commit('setIsLoading', false);
     const originalRequest = error.config;
-    if (error.response && error.response.status === 401 && !originalRequest._retry) {
+    if ((error.response && error.response.status === 401 && !originalRequest._retry) || error.response.status === 403) {
         originalRequest._retry = true;
-        const refreshToken = localStorage.getItem('access_token');
-        if (!refreshToken) {
-            return Promise.reject(error);
-        }
-        try {
-            const response = await axios.post(`${import.meta.env.VITE_API_URL}/refresh-token`, {
-                token: refreshToken,
-            });
-            const newAccessToken = response.data.token;
-            localStorage.setItem('access_token', newAccessToken);
 
-            originalRequest.headers['Authorization'] = `Bearer ${newAccessToken}`;
+        try {
+            await axios.get(`${import.meta.env.VITE_API_URL}/refresh-token`, { withCredentials: true });
             return httpClient(originalRequest);
         } catch (refreshError) {
             return Promise.reject(refreshError);

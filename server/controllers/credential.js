@@ -1,6 +1,3 @@
-const { Credential } = require("../db/models/postgres");
-
-
 module.exports = function credentialController(CredentialService) {
     return {
         verify: async (req, res, next) => {
@@ -23,7 +20,7 @@ module.exports = function credentialController(CredentialService) {
         },
         regenerate: async (req, res, next) => {
             const user = req.user
-            const deleteCredentials = await CredentialService.delete({ user_id:user.id });
+            await CredentialService.delete({ user_id:user.id });
             const credentials = await CredentialService.create({ user_id:user.id });
             res.json(credentials)
         }

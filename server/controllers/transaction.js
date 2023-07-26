@@ -63,27 +63,46 @@ module.exports = function transactionController(TransactionService, options = {}
     let result = {
         getOne: async function (req, res, next) {
             try {
-                const reference = req.params.reference
-                const transaction = await TransactionService.findOne({ merchant_id: req.user.id, reference: reference })
-                if (transaction) {
-                    res.json(transaction)
+                const reference = req.params.reference;
+                const transactions = await TransactionService.findAll(
+                    { merchant_id: req.user.id, reference: reference },
+                    { order: { createdAt: 'DESC' }}
+                );
+
+                if (transactions && transactions.length > 0) {
+                    const transaction = transactions[0];
+                    res.json(transaction);
                 } else {
-                    res.status(404).json({error: "Transaction not found"})
+                    res.status(404).json({ error: "Transaction not found" });
                 }
             } catch (e) {
-                next(e)
+                next(e);
             }
         },
         getAll: async function (req, res, next) {
             try {
-                const transactions = await TransactionService.findAll({ merchant_id: req.user.id })
-                if (transactions) {
-                    res.json(transactions)
+                const transactions = await TransactionService.findAll(
+                    { merchant_id: req.user.id },
+                    { order: { reference: 'ASC', createdAt: 'DESC' }}
+                );
+
+                if (transactions && transactions.length > 0) {
+                    let lastTransactions = [];
+                    let lastReference = null;
+
+                    for (let transaction of transactions) {
+                        if (transaction.reference !== lastReference) {
+                            lastTransactions.push(transaction);
+                            lastReference = transaction.reference;
+                        }
+                    }
+
+                    res.json(lastTransactions);
                 } else {
-                    res.status(404).json({ error: "Transaction not found" })
+                    res.status(404).json({ error: "No transactions found" });
                 }
             } catch (e) {
-                next(e)
+                next(e);
             }
         },
         getTransactionsByUserId: async (req, res, next) => {
@@ -100,8 +119,8 @@ module.exports = function transactionController(TransactionService, options = {}
             }
         },
         subscribe: async (req, res, next) => {
-            const username = req.query.username;
-            subscribers[username] = res;
+            const { id } = req.query;
+            subscribers[id] = res;
             const headers = {
                 'Content-Type': 'text/event-stream',
                 'Connection': 'keep-alive',
@@ -175,6 +194,16 @@ module.exports = function transactionController(TransactionService, options = {}
             try {
                 const results = await getTransactionsNumberByYear(req);
                 res.json(results);
+            } catch (error) {
+                console.error(error);
+                next(error);
+            }
+        },
+        getTransactionTimeline: async (req, res, next) => {
+            try {
+                const reference = req.params.reference;
+                const transactionTimeline = await TransactionService.getTransactionTimeline(reference);
+                res.json(transactionTimeline);
             } catch (error) {
                 console.error(error);
                 next(error);

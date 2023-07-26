@@ -14,20 +14,14 @@ import ForbiddenView from '@/views/errors/ForbiddenView.vue'
 import NotFoundView from '@/views/errors/NotFoundView.vue'
 import DashboardView from '@/views/admin/DashboardView.vue'
 import UsersView from '@/views/admin/UsersView.vue'
-import UsersDetails from '@/views/admin/ShowUserView.vue'
 import PendingMerchants from '@/views/admin/PendingMerchants.vue'
-import EditUserView from '@/views/admin/EditUserView.vue'
 import LogoutView from '@/views/auth/LogoutView.vue'
 import DashboardMerchant from '@/views/merchant/DashboardMerchant.vue'
 import SetupMerchant from '@/views/merchant/SetupMerchant.vue'
 import ProfileView from '@/views/auth/ProfileView.vue'
 import PaymentCreateView from '@/views/transactions/PaymentCreateView.vue'
-import PaymentUpdateView from '@/views/transactions/PaymentUpdateView.vue'
 import ForgotPassword from '@/views/auth/ForgotPassword.vue'
 import ResetPassword from '@/views/auth/ResetPassword.vue'
-import ShoppingCartView from '@/views/customer/ShoppingCartView.vue'
-import ProductsFrontView from '@/views/customer/ProductsView.vue'
-import PaymentCapture from "@/views/customer/PaymentCapture.vue";
 
 const authRoutes = [
   {
@@ -79,18 +73,6 @@ const customerRoutes = [
     path: '/about',
     name: 'about',
     component: () => import('../views/AboutView.vue')
-  },
-  {
-    path: '/cart',
-    name: 'cart',
-    component: ShoppingCartView,
-    meta: { requiresAuth: false }
-  },
-  {
-    path: '/payment/capture/:reference',
-    name: 'paymentCapture',
-    component: PaymentCapture,
-    meta: { requiresAuth: false }
   }
 ]
 
@@ -105,18 +87,6 @@ const adminRoutes = [
     path: '/admin/users',
     name: 'UsersView',
     component: UsersView,
-    meta: { requiresAuth: true, requiresAdminAccess: true }
-  },
-  {
-    path: '/admin/users/:userId(\\d+)',
-    name: 'adminUserDetails',
-    component: UsersDetails,
-    meta: { requiresAuth: true, requiresAdminAccess: true }
-  },
-  {
-    path: '/admin/users/edit/:userId(\\d+)',
-    name: 'editUser',
-    component: EditUserView,
     meta: { requiresAuth: true, requiresAdminAccess: true }
   },
   {
@@ -159,12 +129,6 @@ const merchantRoutes = [
     meta: { requiresAuth: true, requiresMerchantAccess: true }
   },
   {
-    path: '/paiement/:reference/update',
-    name: 'paymentUpdate',
-    component: PaymentUpdateView,
-    meta: { requiresAuth: true, requiresMerchantAccess: true }
-  },
-  {
     path: '/clients',
     name: 'customers',
     component: CustomersView,
@@ -174,12 +138,6 @@ const merchantRoutes = [
     path: '/client/:id',
     name: 'customerDetail',
     component: CustomerDetailView,
-    meta: { requiresAuth: true, requiresMerchantAccess: true }
-  },
-  {
-    path: '/products',
-    name: 'productsFront',
-    component: ProductsFrontView,
     meta: { requiresAuth: true, requiresMerchantAccess: true }
   },
   {
