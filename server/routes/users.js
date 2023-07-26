@@ -16,7 +16,7 @@ module.exports = new genericRouter(
             { method: 'get', path: '/user/customers', middleware: [checkAuth,], handler: 'getUsersByMerchantId' },
             { method: 'get', path: '/admin/impersonate', middleware: [checkAuth,], handler: 'isImpersonating' },
             { method: 'post', path: '/admin/impersonate', middleware: [checkAuth,], handler: 'impersonate' },
-            { method: 'get', path: '/admin/stopImpersonating', middleware: [checkAuth], handler: 'stopImpersonating' },
+            { method: 'delete', path: '/admin/stopImpersonating', middleware: [checkAuth], handler: 'stopImpersonating' },
         ],
 
         defaultRoutes: {
