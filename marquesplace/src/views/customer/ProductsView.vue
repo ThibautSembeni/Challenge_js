@@ -2,9 +2,9 @@
 import {ref, onMounted, reactive} from 'vue'
 import NavBar from '@/components/NavBar.vue'
 import {getCurrentUser} from '@/services/auth'
-// import httpClient from '@/services/httpClient'
 import {getProducts} from "@/services/products";
 import {addToCartService} from "@/services/cart";
+
 
 const products = ref([])
 const currentUser = getCurrentUser()

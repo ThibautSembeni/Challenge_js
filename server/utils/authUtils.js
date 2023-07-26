@@ -9,8 +9,8 @@ const checkCredentialsValidity = async (req, res, next) => {
     const credentialService = new CredentialService();
     const validKeys = await credentialService.findOne({ client_token: publicKey, client_secret: privateKey })
 
-    if (publicKey === validKeys.client_token && privateKey === validKeys.client_secret) {
-        req.user.id = validKeys.user_id;
+    if (validKeys && publicKey === validKeys.client_token && privateKey === validKeys.client_secret) {
+        req.user = { id: validKeys.user_id };
         await getCustomerData(req, res, next);
         next();
     } else {
@@ -23,7 +23,6 @@ const checkTokenValidity = async (req, res, next) => {
 
     try {
         const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
-
         if (decodedToken.role === "admin" && decodedToken.merchantId) {
             req.user = decodedToken;
             await getImpersonationData(req, res, next);
@@ -36,12 +35,15 @@ const checkTokenValidity = async (req, res, next) => {
             req.user = decodedToken;
             await getMerchantData(req, res, next);
             next();
+        } else if (decodedToken.role === "customer") {
+            req.user = decodedToken;
+            next();
         } else {
             return next(new UnauthorizedError());
         }
     } catch (error) {
         console.error(error);
-        return res.status(403).json({ message: "Invalid token." });
+        return next(new UnauthorizedError());
     }
 };
 
@@ -85,6 +87,7 @@ const getCustomerData = async (req, res, next) => {
     const currentUser = await userService.findOne({
         id: req.user.id,
     });
+
     if (currentUser) {
         req.user = currentUser;
     } else {

@@ -4,13 +4,8 @@ const cors = require("cors");
 const SecurityRouter = require("./routes/security");
 const CartRouter = require("./routes/cart");
 
-
 const checkFormat = require("./middlewares/check-format");
 const checkAuth = require("./middlewares/check-auth");
-
-
-const CronService = require("./utils/cron");
-
 
 const app = express();
 
@@ -27,6 +22,8 @@ app.use(express.json());
 
 app.use("/", SecurityRouter);
 
+// TODO : a modifiler l'emplacement
+
 app.get('/transactions', async (req, res, next) => {
   const [statusCode, data] = await app.getAllTransaction()
   res.sendStatus(statusCode)
@@ -37,19 +34,29 @@ app.post('/transactions', async (req, res, next) => {
   res.sendStatus(statusCode).json(data)
 })
 
-
 app.use("/cart", checkAuth, CartRouter);
 
 const errorHandler = (err, req, res, next) => {
   if (!err) {
     return next();
   }
+
   console.error(err);
   const statusCode = err.statusCode || 500;
   res.status(statusCode).json({ error: err.message || 'Internal Server Error' });
 };
 
 
+
+
+  console.error(err);
+
+  const statusCode = err.statusCode || 500;
+
+  res.status(statusCode).json({ error: err.message || 'Internal Server Error' });
+};
+
+// END TODO
 app.get("/", (req, res) => {
   res.status(200).json({ message: "Hello World!" });
 });
@@ -59,8 +66,5 @@ app.post("/", (req, res) => {
 });
 
 app.use(errorHandler);
-
-// const cronService = new CronService();
-// cronService.start();
 
 module.exports = app;

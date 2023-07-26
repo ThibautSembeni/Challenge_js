@@ -1,6 +1,6 @@
 import store from '@/stores/store'
 import httpClient from '@/services/httpClient'
-
+import router from '@/router'
 export async function login(userCredentials) {
     const response = await httpClient.post('/login', userCredentials)
     if (response.status === 200) {
@@ -15,6 +15,15 @@ export async function login(userCredentials) {
         throw new Error("Error server")
     }
 
+}
+
+export async function logout() {
+    await httpClient.post('/logout', {})
+}
+export async function check() {
+    await httpClient.post('/check', {}).then((res) => {
+        // if (res.status === 401) return router.push({ name: 'login' })
+    })
 }
 
 export async function registerUser(userCredentials) {

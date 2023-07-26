@@ -45,16 +45,6 @@ module.exports = (connection) => {
           },
         },
       },
-      company: {
-        type: DataTypes.STRING,
-        allowNull: true,
-        validate: {
-          len: {
-            args: [2, 50],
-            msg: "Le nom de la société doit contenir entre 2 et 50 caractères",
-          },
-        },
-      },
       phone_number: {
         type: DataTypes.STRING,
         allowNull: true,
@@ -90,56 +80,6 @@ module.exports = (connection) => {
           },
         },
       },
-      kbis: {
-        type: DataTypes.STRING,
-        allowNull: true,
-        validate: {
-          len: {
-            args: [2, 100],
-            msg: "Le nom du fichier doit contenir entre 2 et 100 caractères",
-          },
-        },
-      },
-      confirmation_url: {
-        type: DataTypes.STRING,
-        allowNull: true,
-      },
-      cancellation_url: {
-        type: DataTypes.STRING,
-        allowNull: true,
-      },
-      merchant_url: {
-        type: DataTypes.STRING,
-        allowNull: true,
-      },
-      payout_currency: {
-        type: DataTypes.STRING,
-        allowNull: true,
-        validate: {
-          is: {
-            args: /^([E][U][R]|[U][S][D])$/,
-            msg: "La devise doit être EUR ou USD",
-          },
-        },
-      },
-      role: {
-        type: DataTypes.ENUM,
-        values: ["admin", "merchant", "customer"],
-        defaultValue: "customer",
-        allowNull: false,
-        validate: {
-          isIn: {
-            args: [["admin", "merchant", "customer"]],
-            msg: "Le rôle doit être admin, merchant ou customer",
-          },
-        },
-      },
-      status: {
-        type: DataTypes.ENUM,
-        values: ["pending", "approved", "declined"],
-        defaultValue: "pending",
-        allowNull: false,
-      },
     },
     { sequelize: connection, tableName: "users" }
   );
@@ -151,28 +91,6 @@ module.exports = (connection) => {
       })
     );
   }
-
-  User.addHook("beforeCreate", async (user) => {
-    if (user.dataValues.hasOwnProperty("kbis")) {
-      user.role = "merchant";
-    }
-    return updatePassword(user);
-  });
-
-  User.addHook("beforeUpdate", async (user, options) => {
-    if (options.fields.includes("password")) {
-      return updatePassword(user);
-    }
-  });
-
-  // Pour le projet et la synchro avec mongo
-  User.addHook("afterCreate", (user) => {
-    mongo.User.create(user.dataValues).catch((error) => {
-      if (error.name === "MongoServerError" && error.code === 11000) {
-        console.log("duplicate key error");
-      }
-    });
-  });
 
   return User;
 };
