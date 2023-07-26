@@ -9,7 +9,7 @@ const checkCredentialsValidity = async (req, res, next) => {
     const credentialService = new CredentialService();
     const validKeys = await credentialService.findOne({ client_token: publicKey, client_secret: privateKey })
 
-    if (publicKey === validKeys.client_token && privateKey === validKeys.client_secret) {
+    if (validKeys && publicKey === validKeys.client_token && privateKey === validKeys.client_secret) {
         req.user = { id: validKeys.user_id };
         await getCustomerData(req, res, next);
         next();

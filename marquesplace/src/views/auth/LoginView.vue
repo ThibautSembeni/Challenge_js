@@ -18,19 +18,8 @@ async function loginUser(_user) {
   if (requestError.value) requestError.value = ''
   try {
     await login(_user)
-    // const currentUser = await fetchUser()
-
-    // switch (currentUser.role) {
-    //   case 'admin':
-    //     router.push({path: '/admin', replace: true})
-    //     break
-    //   case 'merchant':
-    //     router.push({path: '/merchant', replace: true})
-    //     break
-    //   default:
-    //     router.push({path: '/', replace: true})
-    //     break
-    // }
+    await fetchUser()
+    router.push({ path: '/', replace: true })
   } catch (error) {
     requestError.value = error.message
   }
