@@ -11,21 +11,15 @@ import {getCurrentCredentials, regenerateCredentials} from '@/services/credentia
 import CopyToClipboard from '@/components/CopyToClipboard.vue'
 import store from '@/stores/store'
 import FinishDemand from "@/components/profile/FinishDemand.vue";
-import {updateDemandMerchantService} from "@/services/merchants";
 import router from "@/router";
 
 const currentUser = getCurrentUser()
 
-let tabs = [
+const tabs = [
   {title: 'My details', name: 'details'},
   {title: 'Security', name: 'security'}
 ]
-if (currentUser?.role === 'merchant' && currentUser?.status === 'created') {
-  tabs = [
-    {title: 'Completer votre demande', name: 'finish_demand'},
 
-  ]
-}
 const currentCredentials = ref(getCurrentCredentials())
 
 const isDisabled = ref(true)
@@ -78,16 +72,6 @@ const validEdit = async () => {
   router.go(0)
 }
 
-const finishEvent = async (payload) => {
-  try {
-    const updatedUser = await updateDemandMerchantService(payload)
-    store.commit('setUser', updatedUser)
-    router.go(0)
-
-  } catch (error) {
-    console.error(`Error : ${error}`)
-  }
-}
 
 const sendRequest = async (payload) => {
   try {
@@ -111,11 +95,6 @@ const confirmRegenerate = async () => {
     <div class="p-4 lg:p-10">
       <h1 class="text-3xl font-bold">My Account</h1>
       <TabPanel :tabs="tabs" :is-vertical="true">
-
-        <template #finish_demand>
-          <FinishDemand @finishEvent="finishEvent"/>
-        </template>
-
 
         <template #details>
           <template v-if="currentUser !== null">
