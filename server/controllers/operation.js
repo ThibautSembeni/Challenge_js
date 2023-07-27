@@ -4,7 +4,9 @@ const EventPayement = require('../services/eventPayment')
 const eventPayementService = new EventPayement()
 const EmailSender = require("../services/emailSender");
 const userService = require("../services/user")
+const http = require("http");
 const UserService = new userService()
+const io = require('socket.io')
 module.exports = function OperationController(OperationService, options = {}) {
     return {
         resultFromPsp: async (req, res, next) => {
@@ -40,6 +42,40 @@ module.exports = function OperationController(OperationService, options = {}) {
 
                 await eventPayementService.updateTransaction(currentOperation.transaction_reference, { status })
                 await EmailSender.sendEmailForOperation({ firstname: currentTransaction.currentState.client_info.name.split(' ')[0], lastname: currentTransaction.currentState.client_info.name.split(' ')[1], email: currentTransaction.currentState.client_info.email }, status)
+
+                const user = await UserService.findOne({id: currentTransaction.currentState.merchant_id})
+
+                let responsePsp = {}
+                if (result === true) {
+                    responsePsp = {
+                        'response' : 'success',
+                        'redirect_url' : `${user.confirmation_url}`,
+                    }
+                } else {
+                    responsePsp = {
+                        'response' : 'error',
+                        'redirect_url' : `${user.cancellation_url}`,
+                    }
+                }
+
+                ///////////////////////////////////////////////
+                // TODO pour la prod :
+                ///////////////////////////////////////////////
+
+
+                // const response = await fetch(`${user.merchant_url}/webhook`, {
+                const response = await fetch(`http://node_marquesplace:4000/webhook`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(responsePsp)
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to send notification');
+                }
+
                 res.sendStatus(200);
             } catch (e) {
                 console.log(e);

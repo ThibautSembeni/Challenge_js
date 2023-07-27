@@ -28,10 +28,7 @@ module.exports = function (credentials) {
         })
         return [response.status, await response.json()]
     }
-    this.refundTransaction = async (payload) => {
-        // Not implemented
-        // console.log("refundTransaction", payload)
-    }
+
     return (req, res, next) => {
         next()
     }
