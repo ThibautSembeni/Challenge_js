@@ -5,6 +5,7 @@ module.exports = (connection) => {
   class User extends Model {
     static associate(models) {
       User.hasMany(models.Cart, { foreignKey: 'user_id', as: 'carts' });
+      User.hasMany(models.ResetPassword, { foreignKey: 'user_id', as: 'reset_password' });
     }
 
     isPasswordValid(password) {
