@@ -1,7 +1,7 @@
 import httpClient from '@/services/httpClient'
 
 export async function getProducts() {
-    const response = await httpClient.get(`/products`)
+    const response = await httpClient.get(`${import.meta.env.VITE_KAMALPAY_URL}/products`)
     if (response.status === 200) {
         return response.data;
     } else {
