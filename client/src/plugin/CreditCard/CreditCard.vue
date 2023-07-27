@@ -10,34 +10,74 @@ export default {
       currentCardBackground: this.$creditCardForm.currentCardBackground,
       isCardFlipped: this.$creditCardForm.isCardFlipped,
       cardMasked: this.$creditCardForm.cardMasked,
-      currentYear: new Date().getFullYear()
+      currentYear: new Date().getFullYear(),
+      isValidPayload: false,
     };
   },
   methods: {
     flipCard(shouldFlip) {
       return this.$creditCardForm.flipCard(shouldFlip)
     },
+    updateCardData() {
+      this.cardData = {
+        cardNumber: this.cardNumberInput,
+        cardHolder: this.cardHolderInput,
+        cardMonth: this.cardMonthInput,
+        cardYear: this.cardYearInput,
+        cardCvv: this.cardCvvInput,
+      };
+      this.validPayload();
+    },
+    validPayload() {
+      const {cardNumber, cardHolder, cardMonth, cardYear, cardCvv} = this.cardData
+      const validCardYer = Number(cardYear) > 0
+      const validCardMonth = Number(cardMonth) > 0
+      const validCardHolder = cardHolder.length > 0 && cardHolder.length < 50
+      const validCardNumber = cardNumber.length === 16
+      const validCardCvv = cardCvv?.length === 3
+      this.isValidPayload = validCardYer && validCardMonth && validCardHolder && validCardNumber && validCardCvv;
+    },
+    submitPayment(){
+      this.$emit('submit', this.cardData);
+    },
+    cancelPayment(){
+      this.$emit('cancel');
+    },
+
   },
   watch: {
-    $data: {
-      handler(newData) {
-        const cardData = {
-          cardNumberInput: newData.cardNumberInput,
-          cardHolderInput: newData.cardHolderInput,
-          cardMonthInput: newData.cardMonthInput,
-          cardYearInput: newData.cardYearInput,
-          cardCvvInput: newData.cardCvvInput,
-        };
-        this.$emit('test', cardData);
+    cardNumberInput: {
+      handler() {
+        this.updateCardData();
       },
-      deep: true,
     },
-  }
+    cardHolderInput: {
+      handler() {
+        this.updateCardData();
+      },
+    },
+    cardMonthInput: {
+      handler() {
+        this.updateCardData();
+      },
+    },
+    cardYearInput: {
+      handler() {
+        this.updateCardData();
+      },
+    },
+    cardCvvInput: {
+      handler() {
+        this.updateCardData();
+      },
+    },
+  },
 };
 </script>
 <template>
   <div class="h-screen flex justify-center items-center">
     <div class="">
+      "{{ isValidPayload }}"
       <div class="card-form">
         <div class="card-list">
           <div class="card-item" :class="{ '-active' : isCardFlipped }">
@@ -175,7 +215,21 @@ export default {
               </div>
             </div>
           </div>
-          <button class="card-form__button" @click="validateForm">Submit</button>
+          <button
+              class="w-full h-16 bg-blue-500 rounded-md text-white text-lg font-semibold shadow-md mt-5 cursor-pointer transition-opacity duration-300"
+              :class="{ 'pointer-events-none opacity-70': !isValidPayload }"
+              :disabled="!isValidPayload"
+              @click.prevent="submitPayment"
+          >
+            Submit</button>
+          <button
+              class="w-full h-16 bg-transparent border border-red-500 hover:bg-red-100 rounded-md text-red-500 text-lg font-semibold shadow-md mt-5 cursor-pointer transition-opacity duration-300"
+              @click.prevent="cancelPayment"
+          >
+            Cancel
+          </button>
+
+
         </div>
 
       </div>
