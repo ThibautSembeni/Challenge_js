@@ -14,7 +14,7 @@ module.exports = function SecurityController(UserService) {
                     res.status(401).json('Activer votre compte');
                 }
                 const token = await generateVerificationToken(user);
-                res.cookie('token', token, { httpOnly: true }).json({ token });
+                res.cookie('token', token, {httpOnly: true}).json({token});
 
             } catch (err) {
                 console.error(err);
@@ -94,7 +94,7 @@ module.exports = function SecurityController(UserService) {
         },
         refreshToken: async (req, res, next) => {
             try {
-                const { token } = req.cookies;
+                const {token} = req.cookies;
                 if (!token) return res.sendStatus(401)
                 const user = jwt.verify(token, process.env.JWT_SECRET, {
                     ignoreExpiration: true,
@@ -106,7 +106,7 @@ module.exports = function SecurityController(UserService) {
                 next(e)
             }
         },
-       updateDemandMerchant: async (req, res, next) => {
+        updateDemandMerchant: async (req, res, next) => {
             const {id} = req.user;
             const user = await UserService.findOne({id})
             if (!user) {
@@ -115,13 +115,9 @@ module.exports = function SecurityController(UserService) {
             try {
                 const updatedUser = await UserService.update({id}, {status: 'pending', ...req.body})
                 return res.json(updatedUser[0])
-            }
-            catch (e) {
+            } catch (e) {
                 return res.status(500).json(e)
             }
-        check: async (req, res, next) => {
-            res.cookie('token', req.cookies.token, { maxAge: 10 * 60 * 1000, httpOnly: true });
-            return res.sendStatus(200);
         },
         changePassword: async (req, res, next) => {
             const {currentPassword, newPassword} = req.body
