@@ -12,7 +12,6 @@ import ForgotPassword from '@/views/auth/ForgotPassword.vue'
 import ResetPassword from '@/views/auth/ResetPassword.vue'
 import ShoppingCartView from '@/views/customer/ShoppingCartView.vue'
 import ProductsView from "@/views/customer/ProductsView.vue";
-import VerifyAccount from "@/views/auth/VerifyAccount.vue";
 
 const authRoutes = [
   {
@@ -45,12 +44,6 @@ const authRoutes = [
     component: ResetPassword,
     meta: { requiresAuth: false }
   },
-  {
-    path: '/auth/verify/:token',
-    name: 'verifyAccount',
-    component: VerifyAccount,
-    meta: { requiresAuth: false }
-  }
 ]
 
 const customerRoutes = [
