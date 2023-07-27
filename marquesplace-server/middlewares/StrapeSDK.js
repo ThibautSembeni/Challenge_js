@@ -7,7 +7,7 @@ module.exports = function (credentials) {
                     'Content-Type': 'application/json',
                     'X-Public-Key': credentials.client_token,
                     'X-Secret-Key': credentials.client_secret,
-                    'Origin': process.env.FRONT_URL,
+                    'Origin': process.env.ECOMMERCE_URL,
                 },
                 body: JSON.stringify(payload)
             })

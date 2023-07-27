@@ -26,6 +26,12 @@ jobs:
       EMAIL_SENDER: ${{ secrets.EMAIL_SENDER }}
       PROJECT_NAME: ${{ secrets.PROJECT_NAME }}
       FRONT_URL: ${{ secrets.FRONT_URL }}
+      POSTGRES_USER_FRONT: ${{ secrets.POSTGRES_USER_FRONT }}
+      POSTGRES_PASSWORD_FRONT: ${{ secrets.POSTGRES_PASSWORD_FRONT }}
+      POSTGRES_DB_FRONT: ${{ secrets.POSTGRES_DB_FRONT }}
+      API_URL: ${{ secrets.API_URL }}
+      ECOMMERCE_URL: ${{ secrets.ECOMMERCE_URL }}
+      ECOMMERCE_API_URL: ${{ secrets.ECOMMERCE_API_URL }}
 
     name: Deploy application
     steps:
@@ -51,5 +57,10 @@ jobs:
           command: |
             cd ${{ secrets.PROD_PATH }}
             docker compose -f docker-compose.prod.yml down --remove-orphans
-            FRONT_URL=${{ secrets.FRONT_URL }} EMAIL_SENDER=${{ secrets.EMAIL_SENDER }} PROJECT_NAME=${{ secrets.PROJECT_NAME }} MAILJET_SK=${{ secrets.MAILJET_SK }} MAILJET_PK=${{ secrets.MAILJET_PK }} SCRAPPING_API_KEY=${{ secrets.SCRAPPING_API_KEY }} MONGO_URL="${{ secrets.MONGO_URL }}" POSTGRES_USER=${{ secrets.POSTGRES_USER }} POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }} POSTGRES_DB=${{ secrets.POSTGRES_DB }} JWT_SECRET=${{ secrets.JWT_SECRET }} DATABASE_URL=postgres://${{ secrets.POSTGRES_USER }}:${{ secrets.POSTGRES_PASSWORD }}@database:5432/${{ secrets.POSTGRES_DB }} docker compose -f docker-compose.prod.yml build --no-cache
-            FRONT_URL=${{ secrets.FRONT_URL }} EMAIL_SENDER=${{ secrets.EMAIL_SENDER }} PROJECT_NAME=${{ secrets.PROJECT_NAME }} MAILJET_SK=${{ secrets.MAILJET_SK }} MAILJET_PK=${{ secrets.MAILJET_PK }} SCRAPPING_API_KEY=${{ secrets.SCRAPPING_API_KEY }} MONGO_URL="${{ secrets.MONGO_URL }}" POSTGRES_USER=${{ secrets.POSTGRES_USER }} POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }} POSTGRES_DB=${{ secrets.POSTGRES_DB }} JWT_SECRET=${{ secrets.JWT_SECRET }} DATABASE_URL=postgres://${{ secrets.POSTGRES_USER }}:${{ secrets.POSTGRES_PASSWORD }}@database:5432/${{ secrets.POSTGRES_DB }} docker compose -f docker-compose.prod.yml up -d
+            cd server
+            npm install
+            cd ../marquesplace-server
+            npm install
+            cd ../
+            POSTGRES_USER_FRONT=${{ secrets.POSTGRES_USER_FRONT }} POSTGRES_PASSWORD_FRONT=${{ secrets.POSTGRES_PASSWORD_FRONT }} POSTGRES_DB_FRONT=${{ secrets.POSTGRES_DB_FRONT }} API_URL=${{ secrets.API_URL }} ECOMMERCE_URL=${{ secrets.ECOMMERCE_URL }} ECOMMERCE_API_URL=${{ secrets.ECOMMERCE_API_URL }} FRONT_URL=${{ secrets.FRONT_URL }} EMAIL_SENDER=${{ secrets.EMAIL_SENDER }} PROJECT_NAME=${{ secrets.PROJECT_NAME }} MAILJET_SK=${{ secrets.MAILJET_SK }} MAILJET_PK=${{ secrets.MAILJET_PK }} SCRAPPING_API_KEY=${{ secrets.SCRAPPING_API_KEY }} MONGO_URL="${{ secrets.MONGO_URL }}" POSTGRES_USER=${{ secrets.POSTGRES_USER }} POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }} POSTGRES_DB=${{ secrets.POSTGRES_DB }} JWT_SECRET=${{ secrets.JWT_SECRET }} DATABASE_URL=postgres://${{ secrets.POSTGRES_USER }}:${{ secrets.POSTGRES_PASSWORD }}@database:5432/${{ secrets.POSTGRES_DB }} DATABASE_URL_FRONT=postgres://${{ secrets.POSTGRES_USER_FRONT }}:${{ secrets.POSTGRES_PASSWORD_FRONT }}@database_marquesplace:5433/${{ secrets.POSTGRES_DB_FRONT }} docker compose -f docker-compose.prod.yml build --no-cache
+            POSTGRES_USER_FRONT=${{ secrets.POSTGRES_USER_FRONT }} POSTGRES_PASSWORD_FRONT=${{ secrets.POSTGRES_PASSWORD_FRONT }} POSTGRES_DB_FRONT=${{ secrets.POSTGRES_DB_FRONT }} API_URL=${{ secrets.API_URL }} ECOMMERCE_URL=${{ secrets.ECOMMERCE_URL }} ECOMMERCE_API_URL=${{ secrets.ECOMMERCE_API_URL }} FRONT_URL=${{ secrets.FRONT_URL }} EMAIL_SENDER=${{ secrets.EMAIL_SENDER }} PROJECT_NAME=${{ secrets.PROJECT_NAME }} MAILJET_SK=${{ secrets.MAILJET_SK }} MAILJET_PK=${{ secrets.MAILJET_PK }} SCRAPPING_API_KEY=${{ secrets.SCRAPPING_API_KEY }} MONGO_URL="${{ secrets.MONGO_URL }}" POSTGRES_USER=${{ secrets.POSTGRES_USER }} POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }} POSTGRES_DB=${{ secrets.POSTGRES_DB }} JWT_SECRET=${{ secrets.JWT_SECRET }} DATABASE_URL=postgres://${{ secrets.POSTGRES_USER }}:${{ secrets.POSTGRES_PASSWORD }}@database:5432/${{ secrets.POSTGRES_DB }} DATABASE_URL_FRONT=postgres://${{ secrets.POSTGRES_USER_FRONT }}:${{ secrets.POSTGRES_PASSWORD_FRONT }}@database_marquesplace:5433/${{ secrets.POSTGRES_DB_FRONT }} docker compose -f docker-compose.prod.yml up -d
