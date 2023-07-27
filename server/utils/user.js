@@ -21,8 +21,7 @@ const getUserFromJWTToken = (token) => {
     }
 };
 
-const generateToken = () => {
-    const tokenLength = 64;
+const generateToken = (tokenLength = 64) => {
     const characters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
     let token = '';
     for (let i = 0; i < tokenLength; i++) {
