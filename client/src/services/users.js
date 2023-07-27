@@ -67,6 +67,7 @@ export async function isConnectedByImpersonation() {
     try {
         const response = await httpClient.get('/users/admin/impersonate');
         if (response.status === 200) {
+            console.log(response.data)
             return response.data.status
         }
         return false

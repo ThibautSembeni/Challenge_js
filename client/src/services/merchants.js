@@ -27,9 +27,8 @@ export async function declineMerchant(id) {
     }
 }
 
-export async function updateDemandMerchantService(payload) {
-    console.log("updateDemandMerchantService",payload)
-    const response = await httpClient.post(`/merchant/demand/update`, payload);
+export async function updateDemandMerchantService(token, payload) {
+    const response = await httpClient.post(`/merchant/demand/update/${token}`, payload);
     console.log("resp", response.data)
     return response.data
 }

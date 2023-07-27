@@ -27,8 +27,6 @@ module.exports = function SecurityController(UserService) {
                 const { body } = req;
                 const user = await UserService.create(body);
                 const token = await generateVerificationToken(user)
-                const confirmationLink = `${process.env.ECOMMERCE_API_URL}/verify/${token}`
-                await EmailSender.accountValidationEmail(user, confirmationLink)
                 return res.status(201).json(user);
             } catch (error) {
                 if (error.constructor.name === 'ValidationError') {
@@ -44,13 +42,14 @@ module.exports = function SecurityController(UserService) {
         verify: async (req, res, next) => {
             try {
                 const { token } = req.params;
-                const encodedUser = getUserFromJWTToken(token);
+                const decodedToken = Buffer.from(token, 'base64url').toString();
+                const encodedUser = getUserFromJWTToken(decodedToken);
                 const id = parseInt(encodedUser.id, 10);
-                const updatedUser = await UserService.update({ id }, { status: 'approved' });
+                const updatedUser = await UserService.update({ id }, { isActive: true });
                 if (updatedUser.length === 0) {
                     return res.sendStatus(404);
                 }
-                return res.redirect(process.env.ECOMMERCE_URL)
+                return res.sendStatus(200)
             } catch (error) {
                 if (error.name === 'ValidationError') {
                     res.status(422).json(error.errors);

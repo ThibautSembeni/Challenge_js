@@ -29,6 +29,7 @@ if (process.env.NODE_ENV !== "test") {
     cors({
       origin: async (origin, callback) => {
         const origins = await UserService().getOrigins();
+        console.log(origins)
         if (origin === process.env.FRONT_URL || origins.includes(origin)) {
           return callback(null, true);
         } else {

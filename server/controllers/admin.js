@@ -1,4 +1,4 @@
-const { Credential } = require("../db/models/postgres");
+const { Credential, Impersonation } = require("../db/models/postgres");
 const ImpersonationService = require("../services/impersonation");
 const EmailSender = require("../services/emailSender");
 
@@ -93,23 +93,27 @@ module.exports = function adminController(UserService) {
 
         isImpersonating: async (req, res, next) => {
             try {
+                // const adminId = req.user.role !== 'admin' && req.user.id !== req.user.id ? req.userId : req.user.id;
+                // const result = await Impersonation.findOne({ where: { adminId: req.user.id } });
+                // res.status(200).json({ status: !result ? false : true });
+
                 const impersonationService = new ImpersonationService()
-                // const adminId = req.user.role !== 'admin' && req.userId !== req.user.id ? req.userId : req.user.id;
-                let adminId;
-                switch (req.user.role) {
-                    case 'admin':
-                        adminId = req.user.id;
-                        break;
-                    case 'merchant':
-                        adminId = req.user.id;
-                        break;
-                    default:
-                        adminId = req.user.id;
-                        break;
-                }
-                console.log(adminId, req.user, req.userId)
-                const impersonation = await impersonationService.findOne({ adminId });
-                res.status(200).json({ status: !!impersonation });
+                // // const adminId = req.user.role !== 'admin' && req.userId !== req.user.id ? req.userId : req.user.id;
+                // let adminId;
+                // switch (req.user.role) {
+                //     case 'admin':
+                //         adminId = req.user.id;
+                //         break;
+                //     case 'merchant':
+                //         adminId = req.user.id;
+                //         break;
+                //     default:
+                //         adminId = req.user.id;
+                //         break;
+                // }
+                // console.log(adminId, req.user, req.userId)
+                const impersonation = await impersonationService.findOne({ adminId: req.user.id });
+                res.status(200).json({ status: !impersonation ? false : true });
             } catch (error) {
                 console.error(error);
                 res.status(500).json({ error: "Internal server error" });

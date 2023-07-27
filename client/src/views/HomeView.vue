@@ -8,9 +8,6 @@ import { onMounted, ref } from 'vue'
 const user = ref({})
 onMounted(() => {
   user.value = getCurrentUser()
-  if (user.value?.role === 'merchant') {
-    router.push({ path: '/merchant', replace: true })
-  }
 })
 </script>
 
