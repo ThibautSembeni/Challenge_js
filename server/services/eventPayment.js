@@ -197,6 +197,13 @@ module.exports = function EventPaymentService() {
         createOperation: async (data) => {
             data.status = 'created';
 
+            const transaction = this.getTransaction(data.transaction_reference);
+            if (!transaction) {
+                throw new ValidationError('No transaction found');
+            }
+
+            data.amount = transaction.currentState.amount
+
             const operation = await Operation.create(data);
 
             await Event.create({
