@@ -18,8 +18,7 @@ const currentUser = getCurrentUser()
 
 let tabs = [
   {title: 'My details', name: 'details'},
-  {title: 'Security', name: 'security'},
-  {title: 'My orders', name: 'orders'}
+  {title: 'Security', name: 'security'}
 ]
 if (currentUser?.role === 'merchant' && currentUser?.status === 'created') {
   tabs = [
@@ -214,8 +213,6 @@ const confirmRegenerate = async () => {
           </template>
           <template v-else> is Loading ...</template>
         </template>
-
-        <template #orders> orders</template>
 
         <template #security>
           <EditPasswordSection @passwordEvent="sendRequest"/>
