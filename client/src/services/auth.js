@@ -6,17 +6,24 @@ import { isConnectedByImpersonation } from "@/services/users"
 export async function login(userCredentials) {
     const response = await httpClient.post('/login', userCredentials)
     if (response.status === 200) {
-        const { token } = response.data
+        const {token} = response.data
         localStorage.setItem('access_token', token)
         store.commit('setLoggedIn', true)
         return token
-    }
-    else if (response.status === 401) {
-        throw new Error("Le mot de passe ou l'adresse email ne sont pas corrects")
+    } else if (response.status === 401) {
+        throw new Error("Compte non validé ou le mot de passe ou l'adresse email ne sont pas corrects")
     } else {
         throw new Error("Error server")
     }
+}
 
+export async function verifyAccount(token) {
+    try {
+
+        return await httpClient.get(`/verify/${token}`)
+    } catch (e) {
+        throw new Error(`Error ${e}`)
+    }
 }
 
 export async function logout() {
@@ -29,11 +36,6 @@ export async function check() {
 }
 
 export async function registerUser(userCredentials) {
-    for (let key in userCredentials) {
-        if (userCredentials[key] === null || userCredentials[key] === '') {
-            delete userCredentials[key];
-        }
-    }
     const response = await httpClient.post('/register', userCredentials)
     if (response.status === 422) {
         const errorData = response.data;
@@ -91,7 +93,7 @@ export async function forgotPassword(payload) {
 export async function getSSEToken() {
     const response = await httpClient.get('/get-sse-token');
     if (response.status === 201) {
-        const { token } = response.data
+        const {token} = response.data
         return token
     }
     return

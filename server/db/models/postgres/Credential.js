@@ -1,3 +1,4 @@
+const {generateToken} = require("../../../utils/user");
 module.exports = (connection) => {
     const { DataTypes, Model } = require('sequelize');
     const bcrypt = require('bcryptjs');
@@ -24,10 +25,6 @@ module.exports = (connection) => {
         },
     }, { sequelize: connection, tableName: 'credentials' });
 
-    function generateToken() {
-        const salt = bcrypt.genSaltSync(10);
-        return bcrypt.hashSync(Date.now().toString(), salt);
-    }
 
     Credential.addHook('beforeCreate', async (credential) => {
         credential.client_token = generateToken();
