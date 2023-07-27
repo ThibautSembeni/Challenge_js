@@ -56,6 +56,10 @@ module.exports = (connection) => {
                 },
             }
         },
+        isActive: {
+            type: DataTypes.BOOLEAN,
+            defaultValue: false,
+        },
         phone_number: {
             type: DataTypes.STRING,
             allowNull: true,
@@ -125,20 +129,20 @@ module.exports = (connection) => {
         },
         role: {
             type: DataTypes.ENUM,
-            values: ['admin', 'merchant', 'customer'],
-            defaultValue: 'customer',
+            values: ['admin', 'merchant'],
+            defaultValue: 'merchant',
             allowNull: false,
             validate: {
                 isIn: {
-                    args: [['admin', 'merchant', 'customer']],
+                    args: [['admin', 'merchant']],
                     msg: "Le rôle doit être admin, merchant ou customer"
                 }
             }
         },
         status: {
             type: DataTypes.ENUM,
-            values: ['pending', 'approved', 'declined'],
-            defaultValue: 'pending',
+            values: ['created', 'pending', 'approved', 'declined'],
+            defaultValue: 'created',
             allowNull: false,
         },
     }, { sequelize: connection, tableName: 'users' });
