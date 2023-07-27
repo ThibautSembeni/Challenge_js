@@ -30,10 +30,9 @@ async function loginUser(_user) {
         router.push({ path: '/admin', replace: true })
         break
       case 'merchant':
-        router.push({ path: '/merchant', replace: true })
+        router.push({path: '/', replace: true})
         break
       default:
-        router.push({ path: '/', replace: true })
         break
     }
   } catch (error) {

@@ -16,14 +16,13 @@ import DashboardView from '@/views/admin/DashboardView.vue'
 import UsersView from '@/views/admin/UsersView.vue'
 import PendingMerchants from '@/views/admin/PendingMerchants.vue'
 import LogoutView from '@/views/auth/LogoutView.vue'
-import DashboardMerchant from '@/views/merchant/DashboardMerchant.vue'
-import SetupMerchant from '@/views/merchant/SetupMerchant.vue'
 import ProfileView from '@/views/auth/ProfileView.vue'
 import PaymentCreateView from '@/views/transactions/PaymentCreateView.vue'
 import ForgotPassword from '@/views/auth/ForgotPassword.vue'
 import ResetPassword from '@/views/auth/ResetPassword.vue'
 import PaymentCapture from "@/views/customer/PaymentCapture.vue";
 import VerifyAccount from "@/views/auth/VerifyAccount.vue";
+import PendingVerificationView from "@/views/errors/PendingVerificationView.vue";
 
 const authRoutes = [
   {
@@ -112,19 +111,7 @@ const adminRoutes = [
 ]
 
 const merchantRoutes = [
-  {
-    path: '/merchant',
-    name: 'merchant',
-    component: DashboardMerchant,
-    meta: { requiresAuth: true, requiresMerchantAccess: true }
-  },
-  {
-    path: '/merchant/setup',
-    name: 'setupMerchant',
-    component: SetupMerchant,
-    meta: { requiresAuth: true, requiresMerchantAccess: true }
-  },
-  {
+    {
     path: '/paiements',
     name: 'payments',
     component: PaymentView,
@@ -185,6 +172,11 @@ const errorRoutes = [
     path: '/404',
     name: '404',
     component: ForbiddenView
+  },
+  {
+    path: '/pending-verification',
+    name: 'PendingVerification',
+    component: PendingVerificationView
   },
   {
     path: '/:catchAll(.*)',

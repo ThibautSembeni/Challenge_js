@@ -107,7 +107,10 @@ module.exports = function SecurityController(UserService) {
             }
         },
         updateDemandMerchant: async (req, res, next) => {
-            const {id} = req.user;
+            const {token} = req.params;
+            const decodedToken = Buffer.from(token, 'base64url').toString();
+            const encodedUser = getUserFromJWTToken(decodedToken);
+            const {id} = encodedUser
             const user = await UserService.findOne({id})
             if (!user) {
                 return res.sendStatus(404)
