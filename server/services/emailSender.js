@@ -20,7 +20,7 @@ class EmailSender {
         if (!EmailSender.validateEmail(email)) throw new Error("Erreur : format d'e-mail invalide");
 
         const data = {
-            template_id: 4910924,
+            template_id: 4965682,
             username: `${lastname} ${firstname}`,
             email: email,
             confirmation_link: confirmationLink
@@ -59,7 +59,7 @@ class EmailSender {
         if (!EmailSender.validateEmail(email)) throw new Error("Erreur : format d'e-mail invalide");
 
         const data = {
-            template_id: 4965682,
+            template_id: 4910924,
             username: `${lastname} ${firstname}`,
             email: email,
             confirmation_link: confirmationLink
