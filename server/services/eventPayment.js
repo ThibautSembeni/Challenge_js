@@ -1,6 +1,7 @@
-const { Operation, Event } = require("../db/models/postgres");
+const { Event } = require("../db/models/postgres");
 const Impersonation = require("./impersonation")
 const Transaction = require("./transactions")
+const Operation = require("./operation")
 
 const ValidationError = require("../errors/ValidationError");
 const {where} = require("sequelize");
@@ -70,6 +71,7 @@ module.exports = function EventPaymentService() {
             let _ = require('lodash');
 
             const transactionsService = new Transaction();
+            const operationsService = new Operation();
             const transaction = await transactionsService.findOne( { reference: reference } );
 
             if (!transaction) {
@@ -107,7 +109,7 @@ module.exports = function EventPaymentService() {
                 payload: event.payload
             }));
 
-            const operations = await Operation.findAll({ where: { transaction_reference: reference } });
+            const operations = await operationsService.findAll( { transaction_reference: reference });
 
             for (const operation of operations) {
                 const operationEvents = await Event.findAll({
@@ -204,6 +206,11 @@ module.exports = function EventPaymentService() {
 
             data.amount = transaction.currentState.amount
 
+            const operationsService = new Operation();
+            const isOperationExist = await operationsService.findOne( { transaction_reference: data.transaction_reference } );
+            if (isOperationExist) data.type = 'refund';
+            else data.type = 'capture';
+
             const operation = await Operation.create(data);
 
             await Event.create({
@@ -217,7 +224,9 @@ module.exports = function EventPaymentService() {
         },
 
         updateOperation: async (id, data) => {
-            const operation = await Operation.findByPk(id);
+            const operationsService = new Operation();
+
+            const operation = await operationsService.findOne({'id': id});
 
             if (!operation) {
                 throw new ValidationError('No operation found');
@@ -257,7 +266,8 @@ module.exports = function EventPaymentService() {
         },
 
         getOperation: async (id) => {
-            const operation = await Operation.findByPk(id);
+            const operationsService = new Operation();
+            const operation = await operationsService.findOne({'id': id});
 
             if (!operation) {
                 throw new ValidationError('No operation found');
@@ -292,7 +302,8 @@ module.exports = function EventPaymentService() {
         },
 
         getAllOperations: async () => {
-            const operations = await Operation.findAll();
+            const operationsService = new Operation();
+            const operations = await operationsService.findAll();
 
             const updatedOperations = [];
             for (const operation of operations) {
