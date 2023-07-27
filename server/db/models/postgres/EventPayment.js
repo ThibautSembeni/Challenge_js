@@ -1,8 +1,7 @@
 module.exports = (connection) => {
     const { DataTypes, Model } = require("sequelize");
 
-    class Event extends Model {
-    }
+    class Event extends Model {}
 
     Event.init(
         {
