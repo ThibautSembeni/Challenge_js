@@ -15,18 +15,6 @@ const utilisateurSchema = new mongoose.Schema({
         maxlength: [50, "Le prénom doit contenir entre 2 et 50 caractères"],
         default: null,
     },
-    company: {
-        type: String,
-        minlength: [
-            2,
-            "Le nom de la société doit contenir entre 2 et 50 caractères",
-        ],
-        maxlength: [
-            50,
-            "Le nom de la société doit contenir entre 2 et 50 caractères",
-        ],
-        default: null,
-    },
     phone_number: {
         type: String,
         minlength: [10, "Le numéro de téléphone doit contenir 10 chiffres"],
@@ -47,33 +35,6 @@ const utilisateurSchema = new mongoose.Schema({
     password: {
         type: String,
         required: [true, "Le mot de passe est obligatoire"],
-        default: null,
-    },
-    confirmation_url: {
-        type: String,
-        default: null,
-    },
-    cancellation_url: {
-        type: String,
-        default: null,
-    },
-    payout_currency: {
-        type: String,
-        default: 'EUR',
-    },
-    role: {
-        type: String,
-        required: [true, "Le rôle est obligatoire"],
-        default: "customer",
-        enum: ["customer", "merchant", "admin"],
-    },
-    kbis: {
-        type: String,
-        minlength: [2, "Le nom du fichier doit contenir entre 2 et 100 caractères"],
-        maxlength: [
-            100,
-            "Le nom du fichier doit contenir entre 2 et 100 caractères",
-        ],
         default: null,
     },
 }, { timestamps: true });

@@ -28,11 +28,7 @@ module.exports = function SecurityController(UserService) {
                 const user = await UserService.create(body);
                 const token = await generateVerificationToken(user)
                 const confirmationLink = `${process.env.API_URL}/verify/${token}`
-                if (user.role === 'customer') {
-                    await EmailSender.accountValidationEmail(user, confirmationLink)
-                } else if (user.role === 'merchant') {
-                    await EmailSender.sendPendingValidationEmail(user)
-                }
+                await EmailSender.accountValidationEmail(user, confirmationLink)
                 return res.status(201).json(user);
             } catch (error) {
                 if (error.constructor.name === 'ValidationError') {

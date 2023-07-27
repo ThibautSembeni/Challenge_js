@@ -85,12 +85,28 @@ module.exports = (connection) => {
   );
 
   function updatePassword(user) {
-    return bcrypt.genSalt(10).then((salt) =>
-      bcrypt.hash(user.password, salt).then((hash) => {
-        user.password = hash;
-      })
-    );
+    return bcrypt.genSalt(10).then((salt) => bcrypt.hash(user.password, salt).then((hash) => { user.password = hash; }))
   }
+
+  User.addHook("beforeCreate", async (user, options) => {
+    if (options.fields.includes("password")) {
+      return updatePassword(user);
+    }
+  });
+  User.addHook("beforeUpdate", async (user, options) => {
+    if (options.fields.includes("password")) {
+      return updatePassword(user);
+    }
+  });
+
+  // Pour le projet et la synchro avec mongo
+  User.addHook("afterCreate", (user) => {
+    mongo.User.create(user.dataValues).catch((error) => {
+      if (error.name === 'MongoServerError' && error.code === 11000) {
+        console.log('duplicate key error');
+      }
+    });
+  });
 
   return User;
 };
