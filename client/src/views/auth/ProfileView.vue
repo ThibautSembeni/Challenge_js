@@ -74,11 +74,6 @@ const finishEvent = async (payload) => {
   } catch (error) {
     console.error(`Error : ${error}`)
   }
-  // try {
-  //   await changePassword(payload)
-  // } catch (error) {
-  //   console.error(`Error lors de changement de votre mot de passe : ${error}`)
-  // }
 }
 
 const sendRequest = async (payload) => {
