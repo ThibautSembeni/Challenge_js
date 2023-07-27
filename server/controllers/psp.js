@@ -1,36 +1,55 @@
-const operationService = require("../services/operation")
-const OperationService = new operationService()
+const { Transaction } = require("sequelize");
+const operationEvent = require("../services/eventPayment");
+const OperationService = new operationEvent();
+const { validateCardNumber } = require("../utils/cardValidation");
+
 module.exports = function pspController(CredentialService) {
-    const _validatePaymentInfo = (cardInfo, price, currency) => {
-        return Math.random() >= 0.5
-    }
     return {
         confirm: (req, res, next) => {
-            res.status(202).json({message: 'Paiement en cours de traitemen'});
-            const {cardInfo, price, currency, operation_id} = req.body;
-            OperationService.update({id: operation_id}, {status: "processing"})
-                setTimeout(() => {
+            res.status(202).json({ message: "Paiement en cours de traitemen" });
+            const { cardInfo, price, currency, operation_id } = req.body;
+            let result = false;
+            OperationService.update(
+                { id: operation_id },
+                { status: "processing" }
+            );
+            setTimeout(() => {
                 try {
-                    const result = _validatePaymentInfo(cardInfo, price, currency)
-                    OperationService.update({id: operation_id}, {status: "done"}).then(() => {
+                    result = validateCardNumber(
+                        cardInfo.cardNumber,
+                        cardInfo.cardCVC,
+                        cardInfo.cardExpiration
+                    );
+                    OperationService.update(
+                        { id: operation_id },
+                        { status: "done" }
+                    ).then(() => {
                         const payload = {
-                            result,
-                            operation_id
-                        }
-                        fetch(`${process.env.API_URL}/operations/psp-confirmation`, {
-                            method:'POST',
-                            headers: {
-                                'Content-Type': 'application/json'
-                            },
-                            body: JSON.stringify(payload)
-                        })
-                    })
+                            aggregate_id: operation_id,
+                            aggregate_type: "Operation",
+                            type: "OperationUpdated",
+                            status: "done",
+                            currency: currency,
+                            price: price,
+                        };
+                        fetch(
+                            `${process.env.API_URL}/eventPayment/psp-confirmation`,
+                            {
+                                method: "POST",
+                                headers: {
+                                    "Content-Type": "application/json",
+                                },
+                                body: JSON.stringify(payload),
+                            }
+                        );
+                    });
                 } catch (e) {
-                    throw new Error(`Error From PSP : ${e}`)
+                    throw new Error(`Error From PSP : ${e}`);
                 }
             }, 10000);
+            if (result === true) {
+                return;
+            }
         },
-
-
     };
 };
