@@ -69,17 +69,15 @@ const adminRoutes = [
     name: 'Paiements',
     to: 'payments',
     icon: 'fa-solid fa-dollar-sign'
-  },
+  }
 ]
 
-const mergedPages = ref([...defaultValue])
+const mergedPages = ref([])
 
 onMounted(async () => {
   const currentUser = await getCurrentUser()
   const impersonatedMerchant = await isImperonating()
-  console.log(currentUser, impersonatedMerchant)
   if (currentUser.hasOwnProperty('role') && currentUser.role === 'admin') {
-    console.log(impersonatedMerchant)
     if (impersonatedMerchant) {
       mergedPages.value = [...defaultValue]
     } else {

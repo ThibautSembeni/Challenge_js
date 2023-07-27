@@ -4,13 +4,13 @@ import router from '@/router'
 import { onMounted } from 'vue'
 
 const logout = () => {
-    store.commit('setUser', null)
-    store.commit('setLoggedIn', false)
+  store.commit('setUser', null)
+  store.commit('setLoggedIn', false)
 
-    router.push({ name: 'login' })
+  router.push({ name: 'login' })
 }
 
 onMounted(() => {
-    logout()
+  logout()
 })
 </script>

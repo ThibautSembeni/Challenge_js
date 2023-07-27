@@ -35,10 +35,12 @@
           id="user-dropdown"
         >
           <div class="px-4 py-3">
-            <span class="block text-sm text-gray-900 dark:text-white capitalize">{{ currentUser.firstname }} {{ currentUser.lastname }}</span>
-            <span class="block text-sm text-gray-500 truncate dark:text-gray-400"
-              >{{ currentUser.email }}</span
+            <span class="block text-sm text-gray-900 dark:text-white capitalize"
+              >{{ currentUser?.lastname }} {{ currentUser?.firstname }}</span
             >
+            <span class="block text-sm text-gray-500 truncate dark:text-gray-400">{{
+              currentUser?.email
+            }}</span>
           </div>
           <ul class="py-2" aria-labelledby="user-menu-button">
             <li>
@@ -109,9 +111,9 @@ const switchToAdminProfile = async () => {
 
 onMounted(async () => {
   initFlowbite()
-
   currentUser.value = await getCurrentUser()
-  impersonatedMerchant.value = await isImperonating()
-  role.value = currentUser.value.role
+  if (currentUser?.role === 'admin') {
+    impersonatedMerchant.value = await isImperonating()
+  }
 })
 </script>

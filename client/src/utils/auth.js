@@ -6,6 +6,10 @@ export async function canUserAccess(route) {
     const requiresMerchantAccess = route.meta.requiresMerchantAccess
     const user = await getCurrentUser()
 
+    if ((requiresAuth || requiresAdminAccess || requiresMerchantAccess) && (user && user.role === 'merchant' && user.status === 'pending')) {
+        return '/pending-verification'
+    }
+
     if (requiresAdminAccess) {
         return user && user.role === 'admin' ? true : '/404'
     }
