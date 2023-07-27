@@ -51,7 +51,7 @@ describe('Test register', () => {
 
 
         expect(response.status).toBe(201);
-        expect(response.body.role).toBe('customer');
+        expect(response.body.role).toBe('merchant');
     });
 
     test('Register User with merchant role', async () => {
