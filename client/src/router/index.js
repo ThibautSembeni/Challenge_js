@@ -56,7 +56,7 @@ const authRoutes = [
     meta: { requiresAuth: false }
   },
   {
-    path: '/auth/verify/:token',
+    path: '/auth/complete-register/:token',
     name: 'verifyAccount',
     component: VerifyAccount,
     meta: { requiresAuth: false }
@@ -111,7 +111,7 @@ const adminRoutes = [
 ]
 
 const merchantRoutes = [
-    {
+  {
     path: '/paiements',
     name: 'payments',
     component: PaymentView,
