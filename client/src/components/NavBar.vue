@@ -35,10 +35,12 @@
           id="user-dropdown"
         >
           <div class="px-4 py-3">
-            <span class="block text-sm text-gray-900 dark:text-white capitalize">{{currentUser?.lastname}} {{currentUser?.firstname}}</span>
-            <span class="block text-sm text-gray-500 truncate dark:text-gray-400"
-              >{{currentUser?.email}}</span
+            <span class="block text-sm text-gray-900 dark:text-white capitalize"
+              >{{ currentUser?.lastname }} {{ currentUser?.firstname }}</span
             >
+            <span class="block text-sm text-gray-500 truncate dark:text-gray-400">{{
+              currentUser?.email
+            }}</span>
           </div>
           <ul class="py-2" aria-labelledby="user-menu-button">
             <li>
@@ -92,7 +94,7 @@ import { initFlowbite } from 'flowbite'
 import { stopImpersonatingUser } from '@/services/users'
 import { getCurrentUser, isImperonating } from '@/services/auth'
 
-const currentUser = getCurrentUser()
+const currentUser = ref({})
 const role = ref('')
 
 const impersonatedMerchant = ref(false)
@@ -108,10 +110,10 @@ const switchToAdminProfile = async () => {
 }
 
 onMounted(async () => {
-    initFlowbite()
-    currentUser.value = await getCurrentUser()
-    if (currentUser?.role === 'admin') {
-      impersonatedMerchant.value = await isImperonating()
-    }
+  initFlowbite()
+  currentUser.value = await getCurrentUser()
+  if (currentUser?.role === 'admin') {
+    impersonatedMerchant.value = await isImperonating()
+  }
 })
 </script>

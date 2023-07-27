@@ -3,9 +3,7 @@ import NavBar from '@/components/NavBar.vue'
 import { getCurrentUser } from '@/services/auth'
 import router from '@/router'
 const user = getCurrentUser()
-// if (user?.role === 'merchant') {
-//   router.push({ path: '/merchant', replace: true })
-// }
+router.push({ name: 'products', replace: true })
 </script>
 
 <template>
