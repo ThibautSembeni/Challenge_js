@@ -5,8 +5,8 @@ const httpClient = axios.create({
     baseURL: import.meta.env.VITE_API_URL,
     timeout: 5000,
     headers: {
-        'X-Public-Key': import.meta.env.VITE_API_KAMALPAY_PK,
-        'X-Secret-Key': import.meta.env.VITE_API_KAMALPAY_SK
+        'X-Public-Key': 'vwPy5GKoH04HFa3OcUiJrQlw4NdVgitt731gSJ0z5odoTOnSZiymMVUPlRKERTYg',
+        'X-Secret-Key': '0b3MLLtsoMKMI26jGzQzMzWlHsewjWJmiJRpmVSuySuP8pMf7iLZ6Vav0fsjyOSK'
     }
 
 });
