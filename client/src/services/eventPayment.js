@@ -23,7 +23,7 @@ export default {
         return response.data;
     },
     async getAllTransactionsEvent() {
-        const response = await httpClient.get(`/eventPayment/transaction`);
+        const response = await httpClient.get(`/eventPayment/transactions`);
         if (response.status !== 200) {
             throw new Error(`Error: ${response.status} - An error occurred when getting all transactions`);
         }
@@ -54,7 +54,7 @@ export default {
         return response.data;
     },
     async getAllOperationsEvent() {
-        const response = await httpClient.get(`/eventPayment/operation`);
+        const response = await httpClient.get(`/eventPayment/operations`);
         if (response.status !== 200) {
             throw new Error(`Error: ${response.status} - An error occurred when getting all operations`);
         }

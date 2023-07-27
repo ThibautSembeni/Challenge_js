@@ -3,6 +3,7 @@ import {ref, onMounted} from 'vue'
 import {getCurrentUser} from '@/services/auth'
 import NavBar from '@/components/NavBar.vue'
 import {createCharge, getCartItemsService, removeItemService} from "@/services/cart";
+import {createOrder} from "@/services/order";
 
 const customerAddress = ref('')
 const customerCity = ref('')
@@ -37,7 +38,9 @@ const removeItem = async (cartItem) => {
 const handleSubmit = async () => {
     try {
         const response = await createCharge(customerAddress, customerCity, customerPostalCode, customerCountry, currentUser, cart);
+        // const order = await createOrder(userId, price.value)
         console.log("charge response", response);
+        // console.log("order", order);
     } catch (error) {
         console.error("Error creating charge:", error);
     }

@@ -1,10 +1,15 @@
-const { Transaction, Operation, Event } = require("../db/models/postgres");
+const { Operation, Event } = require("../db/models/postgres");
+const Impersonation = require("./impersonation")
+const Transaction = require("./transactions")
+
 const ValidationError = require("../errors/ValidationError");
+const {where} = require("sequelize");
 
 module.exports = function EventPaymentService() {
     return {
         createTransaction: async (data) => {
-            const transaction = await Transaction.create(data);
+            const transactionsService = new Transaction();
+            const transaction = await transactionsService.create(data);
 
             data.status = 'created';
 
@@ -21,7 +26,8 @@ module.exports = function EventPaymentService() {
         updateTransaction: async (reference, data) => {
             let _ = require('lodash');
 
-            const transaction = await Transaction.findOne( {where :{ reference: reference }});
+            const transactionsService = new Transaction();
+            const transaction = await transactionsService.findOne( { reference: reference } );
 
             if (!transaction) {
                 throw new ValidationError('No transaction found');
@@ -63,7 +69,8 @@ module.exports = function EventPaymentService() {
         getTransaction: async (reference) => {
             let _ = require('lodash');
 
-            const transaction = await Transaction.findOne( {where :{ reference: reference }});
+            const transactionsService = new Transaction();
+            const transaction = await transactionsService.findOne( { reference: reference } );
 
             if (!transaction) {
                 throw new ValidationError('No transaction found');
@@ -127,42 +134,62 @@ module.exports = function EventPaymentService() {
             return { currentState, timeline };
         },
 
-        getAllTransactions: async () => {
+        getAllTransactions: async (user) => {
             let _ = require('lodash');
 
-            const transactions = await Transaction.findAll();
+            try {
+                const impersonationService = new Impersonation()
+                const transactionsService = new Transaction();
+                const impersonation = await impersonationService.findOne( { adminId: user.id });
 
-            const updatedTransactions = [];
-            for (const transaction of transactions) {
-                const events = await Event.findAll({
-                    where: {
-                        aggregate_id: transaction.id,
-                        aggregate_type: 'Transaction'
-                    },
-                    order: [
-                        ['createdAt', 'ASC']
-                    ]
-                });
+                let transactions = [];
 
-                if (!events.length) {
-                    throw new ValidationError('No events found for this transaction');
+                if (user.role === 'admin' && !impersonation) {
+                    transactions = await transactionsService.findAll();
+                } else {
+                    transactions = await transactionsService.findAll({
+                            merchant_id: user.id,
+                    });
                 }
 
-                let currentState = events[0].payload;
+                if (!transactions.length) {
+                    throw new ValidationError('No transactions found');
+                }
 
-                for (let i = 1; i < events.length; i++) {
-                    const event = events[i];
-                    if(event.type === 'TransactionUpdated'){
-                        currentState = { ...currentState, ...event.payload };
+                const updatedTransactions = [];
+                for (const transaction of transactions) {
+                    const events = await Event.findAll({
+                        where: {
+                            aggregate_id: transaction.id,
+                            aggregate_type: 'Transaction'
+                        },
+                        order: [
+                            ['createdAt', 'ASC']
+                        ]
+                    });
+
+                    if (!events.length) {
+                        throw new ValidationError('No events found for this transaction');
                     }
+
+                    let currentState = events[0].payload;
+
+                    for (let i = 1; i < events.length; i++) {
+                        const event = events[i];
+                        if(event.type === 'TransactionUpdated'){
+                            currentState = { ...currentState, ...event.payload };
+                        }
+                    }
+
+                    currentState.reference = transaction.reference;
+
+                    updatedTransactions.push(currentState);
                 }
 
-                currentState.reference = transaction.reference;
-
-                updatedTransactions.push(currentState);
+                return updatedTransactions;
+            } catch (error) {
+                console.log(error);
             }
-
-            return updatedTransactions;
         },
 
 

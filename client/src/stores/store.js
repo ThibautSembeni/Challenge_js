@@ -1,4 +1,4 @@
-import {createStore} from 'vuex';
+import { createStore } from 'vuex';
 import createPersistedState from 'vuex-persistedstate';
 
 const store = createStore({
@@ -7,7 +7,8 @@ const store = createStore({
         isLoading: false,
         isLoggedIn: false,
         user: null,
-        credentials:null
+        credentials: null,
+        isImpersonating: false
     },
     mutations: {
         setIsLoading(state, value) {
@@ -21,6 +22,9 @@ const store = createStore({
         },
         setCredentials(state, credentials) {
             state.credentials = credentials;
+        },
+        setImpersonating(state, isImpersonating) {
+            state.isImpersonating = isImpersonating;
         }
     },
     actions: {
@@ -29,6 +33,9 @@ const store = createStore({
         },
         getLoggedIn(state) {
             return state.isLoggedIn;
+        },
+        isInperonating(state) {
+            return state.isImpersonating;
         }
     }
 });

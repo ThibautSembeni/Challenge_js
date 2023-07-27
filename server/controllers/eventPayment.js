@@ -32,7 +32,7 @@ module.exports = function TransactionController(Service) {
 
         getAllTransactions: async (req, res, next) => {
             try {
-                const transactions = await Service.getAllTransactions();
+                const transactions = await Service.getAllTransactions(req.user);
                 res.status(200).send(transactions);
             } catch (error) {
                 next(error);

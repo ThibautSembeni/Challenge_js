@@ -2,24 +2,15 @@
 import {reactive, ref, watch} from 'vue'
 import GenericButton from '@/components/GenericButton.vue'
 import IconLogo from '@/components/icons/iconLogo.vue'
-
 import Form from '@/components/form/Form.vue'
 import Input from '@/components/form/Input.vue'
 import {registerUser} from "@/services/auth";
-import TabPanel from "@/components/TabPanel.vue";
-
-const tabs = [
-  {title: "S'inscire en tant que client", name: 'register_client'},
-  {title: "S'inscire en tant que marchant", name: 'register_merchant'}
-]
 
 const defaultValue = {
   lastname: '',
   firstname: '',
   email: '',
   password: '',
-  kbis: '',
-  company: ''
 }
 
 const formData = reactive(
@@ -28,8 +19,6 @@ const formData = reactive(
       firstname: '',
       email: '',
       password: '',
-      kbis: null,
-      company: null
     }
 )
 
@@ -70,8 +59,6 @@ async function submitForm(_user) {
     <template>
       <IconLogo/>
     </template>
-    <TabPanel :tabs="tabs" :is-vertical="true">
-      <template #register_client>
         <Form
             :onSubmit="submitForm"
             :formData="formData"
@@ -144,106 +131,6 @@ async function submitForm(_user) {
             </p>
           </template>
         </Form>
-      </template>
-
-      <template #register_merchant>
-        <Form
-            :onSubmit="submitForm"
-            :formData="formData"
-            :errorMsg="requestError"
-            :infosMsg="infosMsg"
-        >
-          <template #title><h2 class="text-2xl font-extrabold mb-6">Créez-vous un compte</h2></template>
-          <template #inputs>
-            <Input
-                label="E-mail"
-                name="email"
-                :validator="validateEmail"
-                v-model="formData.email"
-                type="email"
-                placeholder="johndoe@user.com"
-                :required="true"
-            />
-            <div class="flex flex-row">
-              <div class="flex-1 mr-2">
-                <Input
-                    label="Prénom"
-                    name="firstname"
-                    v-model="formData.firstname"
-                    type="text"
-                    :required="true"
-                />
-              </div>
-              <div class="flex-1 ">
-                <Input
-                    label="Nom"
-                    name="lastname"
-                    v-model="formData.lastname"
-                    type="text"
-                    :required="true"
-                />
-              </div>
-            </div>
-
-            <Input
-                label="Password"
-                name="password"
-                :validator="validatePassword"
-                v-model="formData.password"
-                type="password"
-                :required="true"
-            />
-            <div class="flex flex-row">
-              <div class="flex-1 mr-2">
-                <Input
-                    label="Kbis"
-                    name="kbis"
-                    v-model="formData.kbis"
-                    type="kbis"
-                    :required="true"
-                />
-              </div>
-              <div class="flex-1 ">
-                <Input
-                    label="Company"
-                    name="company"
-                    v-model="formData.compagny"
-                    type="company"
-                    :required="true"
-                />
-              </div>
-            </div>
-          </template>
-          <template #submit>
-            <div class="column mt-4">
-              <GenericButton
-                  :active="
-              formData.username !== '' &&
-              formData.email !== '' &&
-              formData.country !== '' &&
-              formData.password !== ''
-            "
-                  color="primary"
-                  text="Créer un compte"
-              />
-            </div>
-          </template>
-          <template #footer>
-            <p class="flex justify-center items-center">
-              Vous avez déjà un compte ?
-              <router-link
-                  :to="{ name: 'login' }"
-                  class="inline-flex items-center text-lg text-blue-600 hover:underline"
-              >Connectez-vous
-              </router-link
-              >
-            </p>
-          </template>
-        </Form>
-
-      </template>
-    </TabPanel>
-
   </section>
 </template>
 

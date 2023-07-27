@@ -3,6 +3,7 @@ const cors = require("cors");
 
 const SecurityRouter = require("./routes/security");
 const CartRouter = require("./routes/cart");
+const OrdersRouter = require("./routes/orders");
 
 const checkFormat = require("./middlewares/check-format");
 const checkAuth = require("./middlewares/check-auth");
@@ -20,10 +21,12 @@ app.use(
 app.use(checkFormat);
 
 app.use(express.json());
-
+console.log(process.env)
 app.use(StrapeSDK.bind(app)({ client_token: process.env.KAMALPAY_PK, client_secret: process.env.KAMALPAY_SK }))
 
 app.use("/", SecurityRouter);
+
+app.use("/orders", OrdersRouter);
 
 // TODO : a modifiler l'emplacement
 
@@ -34,7 +37,8 @@ app.get('/transactions', async (req, res, next) => {
 
 app.post('/transactions', async (req, res, next) => {
   const [statusCode, data] = await app.createTransaction(req.body)
-  res.status(statusCode).json(data)
+  console.error(data)
+  res.sendStatus(statusCode)
 })
 
 app.use("/cart", checkAuth, CartRouter);
