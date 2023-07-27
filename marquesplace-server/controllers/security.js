@@ -26,36 +26,12 @@ module.exports = function SecurityController(UserService) {
             try {
                 const {body} = req;
                 const user = await UserService.create(body);
-                const token = await generateVerificationToken(user)
-                const encodedToken = Buffer.from(token).toString('base64url');
-                const confirmationLink = `${process.env.FRONT_CLIENT_URL}/auth/verify/${encodedToken}`
-                await EmailSender.accountValidationEmail(user, confirmationLink)
                 return res.status(201).json(user);
             } catch (error) {
                 if (error.constructor.name === 'ValidationError') {
                     res.status(422).json(error.errors);
                 } else if (error.constructor.name === 'UniqueConstraintError') {
                     res.status(409).json(error.errors);
-                } else {
-                    console.error(error);
-                    next(error);
-                }
-            }
-        },
-        verify: async (req, res, next) => {
-            try {
-                const {token} = req.params;
-                const decodedToken = Buffer.from(token, 'base64url').toString();
-                const encodedUser = getUserFromJWTToken(decodedToken);
-                const id = parseInt(encodedUser.id, 10);
-                const updatedUser = await UserService.update({id}, {isActive: true});
-                if (updatedUser.length === 0) {
-                    return res.sendStatus(404);
-                }
-                return res.sendStatus(200)
-            } catch (error) {
-                if (error.name === 'ValidationError') {
-                    res.status(422).json(error.errors);
                 } else {
                     console.error(error);
                     next(error);
