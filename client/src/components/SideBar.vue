@@ -68,7 +68,7 @@ const adminRoutes = [
     },
 ]
 
-const mergedPages = ref([...defaultValue])
+const mergedPages = ref([])
 
 onMounted(async () => {
     const currentUser = await getCurrentUser()

@@ -12,6 +12,7 @@ import CopyToClipboard from '@/components/CopyToClipboard.vue'
 import store from '@/stores/store'
 import FinishDemand from "@/components/profile/FinishDemand.vue";
 import {updateDemandMerchantService} from "@/services/merchants";
+import router from "@/router";
 
 const currentUser = getCurrentUser()
 
@@ -52,6 +53,17 @@ const editProfile = () => {
   editMode.value = !editMode.value
 }
 
+const cancelEdit = () => {
+  isDisabled.value = !isDisabled.value
+  editMode.value = !editMode.value
+}
+
+const validatePhone = (value) => {
+  const isValid = !isNaN(Number(value)) && value.length === 10
+  const message = isValid ? '' : 'Le numéro de téléphone doit contenir 10 chiffres'
+  return {isValid, message}
+}
+
 const validEdit = async () => {
   isDisabled.value = !isDisabled.value
   editMode.value = !editMode.value
@@ -64,13 +76,15 @@ const validEdit = async () => {
   } catch (e) {
     console.error(e)
   }
+  router.go(0)
 }
 
 const finishEvent = async (payload) => {
-  console.log("payload",payload)
   try {
-    const resp = await updateDemandMerchantService(payload)
-    console.log("res", resp)
+    const updatedUser = await updateDemandMerchantService(payload)
+    store.commit('setUser', updatedUser)
+    router.go(0)
+
   } catch (error) {
     console.error(`Error : ${error}`)
   }
@@ -120,8 +134,26 @@ const confirmRegenerate = async () => {
                     class="ml-4 px-3 py-2 text-xs font-medium inline-flex text-white bg-green-700 rounded-lg hover:bg-green-800"
                     @click="validEdit"
                     v-if="editMode"
+                    :class="userDetails.phone_number.length === 0 ? 'cursor-not-allowed' : ''"
+                    :disabled="userDetails.phone_number.length === 0 "
                 >
                   Valider
+                </button>
+
+                <button
+                    class="ml-4 px-3 py-2 text-xs font-medium inline-flex items-center rounded-lg bg-blue-500 text-white hover:bg-blue-600 transition-colors duration-300"
+                    @click="cancelEdit"
+                    v-if="editMode"
+                >
+                  <svg class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M6 18L18 6M6 6l12 12"
+                    />
+                  </svg>
+                  Cancel
                 </button>
               </div>
               <div class="flex flex-row mb-4">
@@ -150,6 +182,7 @@ const confirmRegenerate = async () => {
                       :value="userDetails.phone_number"
                       :disabled="isDisabled"
                       v-model="userDetails.phone_number"
+                      :validator="validatePhone"
                   />
                 </div>
               </div>
