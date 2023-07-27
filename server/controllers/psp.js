@@ -1,34 +1,62 @@
-const operationService = require("../services/operation")
-const OperationService = new operationService()
+const EventService = require("../services/eventPayment")
+const cardValidation = require("../utils/cardValidation")
+const eventService = new EventService()
 module.exports = function pspController(CredentialService) {
-    const _validatePaymentInfo = (cardInfo, price, currency) => {
-        return Math.random() >= 0.5
+    const _validatePaymentInfo = (cardInfo) => {
+        return cardValidation(cardInfo.cardNumberInput, cardInfo.cardCvvInput, `${cardInfo.cardMonthInput}/${cardInfo.cardYearInput}`)
     }
     return {
-        confirm: (req, res, next) => {
-            res.status(202).json({message: 'Paiement en cours de traitemen'});
-            const {cardInfo, price, currency, operation_id} = req.body;
-            OperationService.update({id: operation_id}, {status: "processing"})
-                setTimeout(() => {
+        confirm: async (req, res, next) => {
+            res.status(202).json({ message: 'Paiement en cours de traitemen' });
+            const data = req.body;
+            let result = false;
+
+            setTimeout(async () => {
                 try {
-                    const result = _validatePaymentInfo(cardInfo, price, currency)
-                    OperationService.update({id: operation_id}, {status: "done"}).then(() => {
-                        const payload = {
-                            result,
-                            operation_id
+                    await eventService.updateOperation(data.operation_id, {status: "processing"})
+
+                    if (data.type === 'capture') result = _validatePaymentInfo(data)
+                    else {
+                        const currentTransaction = await eventService.getTransaction(data.transaction_reference)
+
+                        const operations = await eventService.getAllOperations(data.transaction_reference, 'refund')
+
+                        console.log("operations", operations)
+
+                        if (!operations.length) result = data.amount < currentTransaction.currentState.amount;
+                        else {
+                            let totalRefund = 0
+                            operations.forEach(operation => {
+                                totalRefund += operation.amount
+                            })
+
+                            console.log("totalRefund", totalRefund)
+
+                            result = totalRefund < currentTransaction.currentState.amount;
                         }
-                        fetch(`${process.env.API_URL}/operations/psp-confirmation`, {
-                            method:'POST',
+                    }
+
+
+                    const payload = {
+                        operation_id: data.operation_id,
+                        result: result
+                    }
+                    await eventService.updateOperation(data.operation_id, { status: "done" }).then(async () => {
+                        console.log("success update operation with done")
+                        await fetch(`${process.env.API_URL}/operation/psp-confirmation`, {
+                            method: 'POST',
                             headers: {
-                                'Content-Type': 'application/json'
+                                'Content-Type': 'application/json',
+                                'Origin': process.env.FRONT_URL,
                             },
                             body: JSON.stringify(payload)
                         })
                     })
+
                 } catch (e) {
                     throw new Error(`Error From PSP : ${e}`)
                 }
-            }, 10000);
+            }, 30000);
         },
 
 

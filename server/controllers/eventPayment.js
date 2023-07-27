@@ -6,7 +6,7 @@ module.exports = function TransactionController(Service) {
                 req.body.status = "created"
 
                 const response = await Service.createTransaction(req.body);
-                res.status(201).send(response);
+                res.status(201).json(response);
             } catch (error) {
                 next(error);
             }
@@ -32,7 +32,7 @@ module.exports = function TransactionController(Service) {
 
         getAllTransactions: async (req, res, next) => {
             try {
-                const transactions = await Service.getAllTransactions();
+                const transactions = await Service.getAllTransactions(req.user);
                 res.status(200).send(transactions);
             } catch (error) {
                 next(error);

@@ -23,7 +23,7 @@ export default {
         return response.data;
     },
     async getAllTransactionsEvent() {
-        const response = await httpClient.get(`/eventPayment/transaction`);
+        const response = await httpClient.get(`/eventPayment/transactions`);
         if (response.status !== 200) {
             throw new Error(`Error: ${response.status} - An error occurred when getting all transactions`);
         }
@@ -36,27 +36,6 @@ export default {
         const response = await httpClient.post('/eventPayment/operation', operation);
         if (response.status !== 201) {
             throw new Error(`Error: ${response.status} - An error occurred when creating the operation`);
-        }
-        return response.data;
-    },
-    async updateOperationEvent(id, operation) {
-        const response = await httpClient.put(`/eventPayment/operation/${id}`, operation);
-        if (response.status !== 200) {
-            throw new Error(`Error: ${response.status} - An error occurred when updating the operation`);
-        }
-        return response.data;
-    },
-    async getOperationEvent(id) {
-        const response = await httpClient.get(`/eventPayment/operation/${id}`);
-        if (response.status !== 200) {
-            throw new Error(`Error: ${response.status} - An error occurred when getting the operation`);
-        }
-        return response.data;
-    },
-    async getAllOperationsEvent() {
-        const response = await httpClient.get(`/eventPayment/operation`);
-        if (response.status !== 200) {
-            throw new Error(`Error: ${response.status} - An error occurred when getting all operations`);
         }
         return response.data;
     },

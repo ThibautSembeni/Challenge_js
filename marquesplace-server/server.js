@@ -3,6 +3,7 @@ const cors = require("cors");
 
 const SecurityRouter = require("./routes/security");
 const CartRouter = require("./routes/cart");
+const OrdersRouter = require("./routes/orders");
 
 const checkFormat = require("./middlewares/check-format");
 const checkAuth = require("./middlewares/check-auth");
@@ -12,7 +13,7 @@ const app = express();
 
 app.use(
   cors({
-    origin: 'http://localhost:5175'
+    origin: process.env.ECOMMERCE_URL
   })
 );
 
@@ -25,16 +26,19 @@ app.use(StrapeSDK.bind(app)({ client_token: process.env.KAMALPAY_PK, client_secr
 
 app.use("/", SecurityRouter);
 
+app.use("/orders", OrdersRouter);
+
 // TODO : a modifiler l'emplacement
 
-app.get('/transactions', async (req, res, next) => {
-  const [statusCode, data] = await app.getAllTransaction()
-  res.sendStatus(statusCode)
+app.get('/transactions', checkAuth, async (req, res, next) => {
+  const request = await app.getAllTransaction()
+  res.status(200).json(data)
 })
 
-app.post('/transactions', async (req, res, next) => {
-  const [statusCode, data] = await app.createTransaction(req.body)
-  res.status(statusCode).json(data)
+app.post('/transactions', checkAuth, async (req, res, next) => {
+  const result = await app.createTransaction(req.body)
+  console.log("data", result)
+  res.status(200).json(result)
 })
 
 app.use("/cart", checkAuth, CartRouter);

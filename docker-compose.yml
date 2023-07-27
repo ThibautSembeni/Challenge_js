@@ -78,7 +78,7 @@ services:
       - 127.0.0.1:4000:4000
     command: npm run watch
     env_file:
-      - web-variables.env
+      - ./marquesplace-server/.env
 
   database_marquesplace:
     container_name: postgres_marquesplace
@@ -95,7 +95,7 @@ services:
       POSTGRES_PASSWORD: password
       POSTGRES_DB: app
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -h localhost -p 5432 -U root"]
+      test: ["CMD-SHELL", "pg_isready -h localhost -p 5433 -U root"]
       interval: 10s
       timeout: 5s
       retries: 3

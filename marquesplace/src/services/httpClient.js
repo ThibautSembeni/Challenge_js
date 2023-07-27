@@ -5,11 +5,12 @@ const httpClient = axios.create({
     baseURL: import.meta.env.VITE_API_URL,
     timeout: 5000,
     headers: {
-        'X-Public-Key': import.meta.env.VITE_API_KAMALPAY_PK,
-        'X-Secret-Key': import.meta.env.VITE_API_KAMALPAY_SK
+        'X-Public-Key': import.meta.env.VITE_KAMALPAY_PK,
+        'X-Secret-Key': import.meta.env.VITE_KAMALPAY_SK
     }
-
 });
+
+console.log(import.meta.env.VITE_KAMALPAY_PK)
 
 httpClient.interceptors.request.use(
     (config) => {

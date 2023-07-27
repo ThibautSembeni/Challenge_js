@@ -41,13 +41,47 @@ services:
     environment:
       - JWT_SECRET=${JWT_SECRET:-secret}
       - DATABASE_URL=${DATABASE_URL:-postgres://root:password@database:5432/app}
-      - MONGO_URL=${MONGO_URL}
-      - SCRAPPING_API_KEY=${SCRAPPING_API_KEY}
       - PROJECT_NAME=${PROJECT_NAME}
       - EMAIL_SENDER=${EMAIL_SENDER}
       - MAILJET_PK=${MAILJET_PK}
       - MAILJET_SK=${MAILJET_SK}
       - FRONT_URL=${FRONT_URL}
+      - API_URL=${API_URL}
+      - MONGO_URL=${MONGO_URL}
+  database_marquesplace:
+    container_name: database_marquesplace
+    image: postgres
+    volumes:
+      - postgre-data-front:/var/lib/postgresql/data/
+    ports:
+      - 5433:5432 #port on host:port in container
+    restart: always
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER_FRONT:-root}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD_FRONT:-password}
+      POSTGRES_DB: ${POSTGRES_DB_FRONT:-app}
+  server_marquesplace:
+    container_name: server_marquesplace
+    build:
+      context: ./marquesplace-server
+      target: build-stage
+    ports:
+      - 4000:4000
+    volumes:
+      - ./marquesplace-server:/app
+      - /marquesplace-server/node_modules
+    depends_on:
+      - database_marquesplace
+    restart: always
+    environment:
+      - JWT_SECRET=${JWT_SECRET:-secret}
+      - DATABASE_URL_FRONT=${DATABASE_URL_FRONT:-postgres://root:password@database:5432/app}
+      - PROJECT_NAME=${PROJECT_NAME}
+      - EMAIL_SENDER=${EMAIL_SENDER}
+      - MAILJET_PK=${MAILJET_PK}
+      - MAILJET_SK=${MAILJET_SK}
+      - ECOMMERCE_URL=${ECOMMERCE_URL}
+      - ECOMMERCE_API_URL=${ECOMMERCE_API_URL}
   nginx:
     container_name: nginx
     image: nginx:alpine
@@ -62,7 +96,12 @@ services:
       - /etc/letsencrypt/live/kamalpay.thibautsbn.fr/privkey.pem:/etc/pki/tls/certs/privkey.pem
       - client:/var/www/client
       - marquesplace:/var/www/marquesplace
+    depends_on:
+      - server
+      - server_marquesplace
+
 volumes:
   postgre-data: {}
+  postgre-data-front: {}
   client: {}
   marquesplace: {}

@@ -9,7 +9,7 @@ if (process.env.NODE_ENV === 'test') {
     const retryConnection = () => {
         connection
             .authenticate()
-            .then(() => console.log('\u001b[' + 32 + 'm' + `connected to ${process.env.DATABASE_URL.split(":")[0]} database` + '\u001b[0m'))
+            .then(() => console.log('\u001b[' + 32 + 'm' + `connected to ${process.env.DATABASE_URL_FRONT.split(":")[0]} database` + '\u001b[0m'))
             .catch((err) => {
                 // console.log(err);
                 if (err.name === 'SequelizeConnectionRefusedError' || err.name === 'SequelizeHostNotFoundError' || err.name === 'SequelizeHostNotReachableError' || err.name === 'SequelizeInvalidConnectionError' || err.name === 'SequelizeConnectionTimedOutError') {

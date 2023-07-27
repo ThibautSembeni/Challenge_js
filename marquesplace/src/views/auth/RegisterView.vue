@@ -2,12 +2,9 @@
 import {reactive, ref, watch} from 'vue'
 import GenericButton from '@/components/GenericButton.vue'
 import IconLogo from '@/components/icons/iconLogo.vue'
-
 import Form from '@/components/form/Form.vue'
 import Input from '@/components/form/Input.vue'
 import {registerUser} from "@/services/auth";
-import TabPanel from "@/components/TabPanel.vue";
-
 
 const defaultValue = {
   lastname: '',
@@ -116,7 +113,7 @@ async function submitForm(_user) {
               formData.email !== '' &&
               formData.country !== '' &&
               formData.password !== ''
-            "
+              "
               color="primary"
               text="Créer un compte"
           />
