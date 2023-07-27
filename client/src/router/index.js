@@ -23,6 +23,7 @@ import PaymentCreateView from '@/views/transactions/PaymentCreateView.vue'
 import ForgotPassword from '@/views/auth/ForgotPassword.vue'
 import ResetPassword from '@/views/auth/ResetPassword.vue'
 import PaymentCapture from "@/views/customer/PaymentCapture.vue";
+import VerifyAccount from "@/views/auth/VerifyAccount.vue";
 
 const authRoutes = [
   {
@@ -53,6 +54,12 @@ const authRoutes = [
     path: '/auth/reset-password/:token',
     name: 'resetPassword',
     component: ResetPassword,
+    meta: { requiresAuth: false }
+  },
+  {
+    path: '/auth/verify/:token',
+    name: 'verifyAccount',
+    component: VerifyAccount,
     meta: { requiresAuth: false }
   }
 ]
