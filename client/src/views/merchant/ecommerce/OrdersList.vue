@@ -1,7 +1,7 @@
 <script setup>
 import { computed, onMounted, reactive } from 'vue'
 import '../../../assets/index.css'
-import SideBar from '@/components/SideBar.vue'
+import SideBarEcommerce from '@/components/SideBarEcommerce.vue'
 import NavBar from '@/components/NavBar.vue'
 import moment from 'moment'
 import FormatEuro from '@/components/Payment/FormatEuro.vue'
@@ -75,7 +75,7 @@ const filteredPaymentsAll = computed(() => {
 </script>
 
 <template>
-  <SideBar/>
+  <SideBarEcommerce/>
 
   <div class="sm:ml-64">
     <NavBar />
