@@ -4,6 +4,7 @@ import { getCurrentUser } from '@/services/auth'
 import NavBar from '@/components/NavBar.vue'
 import { createCharge, getCartItemsService, removeItemService } from '@/services/cart'
 import { createOrder } from '@/services/order'
+import router from '../../router'
 
 const customerAddress = ref('')
 const customerCity = ref('')
@@ -41,10 +42,18 @@ const handleSubmit = async () => {
       customerPostalCode,
       customerCountry,
       currentUser,
-      cart
+      cart,
+      cart.value.cart_items.reduce((acc, item) => acc + item.price * item.quantity, 0)
     )
     // const order = await createOrder(userId, price.value)
     console.log('charge response', response)
+    router.push({
+      name: 'paymentCapture',
+      params: { reference: response }
+      // props: { reference: response },
+      // state: { reference: response },
+      // query: { reference: response }
+    })
     // console.log("order", order);
   } catch (error) {
     console.error('Error creating charge:', error)

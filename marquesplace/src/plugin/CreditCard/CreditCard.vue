@@ -1,5 +1,6 @@
 <script>
 export default {
+  props: ['reference'],
   data() {
     return {
       cardHolderInput: this.$creditCardForm.cardHolder,
@@ -10,75 +11,106 @@ export default {
       currentCardBackground: this.$creditCardForm.currentCardBackground,
       isCardFlipped: this.$creditCardForm.isCardFlipped,
       cardMasked: this.$creditCardForm.cardMasked,
-      currentYear: new Date().getFullYear()
-    };
+      currentYear: new Date().getFullYear(),
+      SK: this.$creditCardForm.SK,
+      PK: this.$creditCardForm.PK,
+      ref: this.reference
+    }
   },
   methods: {
+    valitedateForm() {
+      return true
+    },
     flipCard(shouldFlip) {
       return this.$creditCardForm.flipCard(shouldFlip)
     },
-  },
-  watch: {
-    $data: {
-      handler(newData) {
+    async submit() {
+      const isValidated = this.valitedateForm()
+      if (isValidated) {
         const cardData = {
-          cardNumberInput: newData.cardNumberInput,
-          cardHolderInput: newData.cardHolderInput,
-          cardMonthInput: newData.cardMonthInput,
-          cardYearInput: newData.cardYearInput,
-          cardCvvInput: newData.cardCvvInput,
-        };
-        this.$emit('test', cardData);
-      },
-      deep: true,
-    },
+          cardNumberInput: this.cardNumberInput,
+          cardHolderInput: this.cardHolderInput,
+          cardMonthInput: this.cardMonthInput,
+          cardYearInput: this.cardYearInput,
+          cardCvvInput: this.cardCvvInput,
+          transaction_reference: this.reference,
+          currency: 'EUR'
+        }
+        const response = await fetch(`http://localhost:3000/eventPayment/operation`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-Public-Key': this.PK,
+            'X-Secret-Key': this.SK,
+            Origin: window.location.origin
+          },
+          body: JSON.stringify(cardData)
+        })
+        if (!response.ok) {
+          console.error(response)
+        }
+        const data = await response.json()
+        console.log(data)
+      } else {
+        console.log('non pas validé')
+      }
+    }
   }
-};
+}
 </script>
 <template>
   <div class="h-screen flex justify-center items-center">
     <div class="">
       <div class="card-form">
         <div class="card-list">
-          <div class="card-item" :class="{ '-active' : isCardFlipped }">
+          <div class="card-item" :class="{ '-active': isCardFlipped }">
             <div class="card-item__side -front">
               <div class="card-item__focus"></div>
               <div class="card-item__cover">
                 <img
-                    :src="'https://raw.githubusercontent.com/muhammederdem/credit-card-form/master/src/assets/images/' + currentCardBackground + '.jpeg'"
-                    class="card-item__bg">
+                  :src="
+                    'https://raw.githubusercontent.com/muhammederdem/credit-card-form/master/src/assets/images/' +
+                    currentCardBackground +
+                    '.jpeg'
+                  "
+                  class="card-item__bg"
+                />
               </div>
               <div class="card-item__wrapper">
                 <div class="card-item__top">
                   <img
-                      src="https://raw.githubusercontent.com/muhammederdem/credit-card-form/master/src/assets/images/chip.png"
-                      class="card-item__chip">
+                    src="https://raw.githubusercontent.com/muhammederdem/credit-card-form/master/src/assets/images/chip.png"
+                    class="card-item__chip"
+                  />
                   <div class="card-item__type">
                     <transition name="slide-fade-up">
                       <img
-                          :src="'https://raw.githubusercontent.com/muhammederdem/credit-card-form/master/src/assets/images/'+ $creditCardForm.cardType+'.png'"
-                          alt="" class="card-item__typeImg">
+                        :src="
+                          'https://raw.githubusercontent.com/muhammederdem/credit-card-form/master/src/assets/images/' +
+                          $creditCardForm.cardType +
+                          '.png'
+                        "
+                        alt=""
+                        class="card-item__typeImg"
+                      />
                     </transition>
                   </div>
                 </div>
                 <label for="cardNumber" class="card-item__number">
-                <span>
-                  <div class="card-item__numberItem"></div>
-                </span>
+                  <span>
+                    <div class="card-item__numberItem"></div>
+                  </span>
 
                   <span v-for="(n, index) in cardMasked" :key="index">
                     <transition name="slide-fade-up">
-
                       <div class="card-item__numberItem">
                         <span>
-                        {{ n }}
+                          {{ n }}
                         </span>
                       </div>
                     </transition>
                   </span>
-
                 </label>
-
 
                 <div class="card-item__content">
                   <label for="cardName" class="card-item__info">
@@ -86,8 +118,12 @@ export default {
                     <transition name="slide-fade-up">
                       <div class="card-item__name" v-if="cardHolderInput.length" :key="1">
                         <transition-group name="slide-fade-right">
-                        <span class="card-item__nameItem" v-for="(n, $index) in cardHolderInput.replace(/\s\s+/g, ' ')"
-                              :key="$index + 1">{{ n }}</span>
+                          <span
+                            class="card-item__nameItem"
+                            v-for="(n, $index) in cardHolderInput.replace(/\s\s+/g, ' ')"
+                            :key="$index + 1"
+                            >{{ n }}</span
+                          >
                         </transition-group>
                       </div>
                       <div class="card-item__name" v-else :key="2">Full Name</div>
@@ -97,7 +133,9 @@ export default {
                     <label for="cardMonth" class="card-item__dateTitle">Expires</label>
                     <label for="cardMonth" class="card-item__dateItem">
                       <transition name="slide-fade-up">
-                        <span v-if="cardMonthInput" :key="cardMonthInput">{{ cardMonthInput }}</span>
+                        <span v-if="cardMonthInput" :key="cardMonthInput">{{
+                          cardMonthInput
+                        }}</span>
                         <span v-else :key="2">MM</span>
                       </transition>
                     </label>
@@ -113,11 +151,15 @@ export default {
               </div>
             </div>
             <div class="card-item__side -back">
-
               <div class="card-item__cover">
                 <img
-                    :src="'https://raw.githubusercontent.com/muhammederdem/credit-card-form/master/src/assets/images/' + currentCardBackground + '.jpeg'"
-                    class="card-item__bg">
+                  :src="
+                    'https://raw.githubusercontent.com/muhammederdem/credit-card-form/master/src/assets/images/' +
+                    currentCardBackground +
+                    '.jpeg'
+                  "
+                  class="card-item__bg"
+                />
               </div>
               <div class="card-item__band"></div>
               <div class="card-item__cvv">
@@ -125,8 +167,14 @@ export default {
                 <div class="card-item__cvvBand">{{ cardCvvInput }}</div>
                 <div class="card-item__type">
                   <img
-                      :src="'https://raw.githubusercontent.com/muhammederdem/credit-card-form/master/src/assets/images/' +  $creditCardForm.cardType + '.png'"
-                      alt="" class="card-item__typeImg">
+                    :src="
+                      'https://raw.githubusercontent.com/muhammederdem/credit-card-form/master/src/assets/images/' +
+                      $creditCardForm.cardType +
+                      '.png'
+                    "
+                    alt=""
+                    class="card-item__typeImg"
+                  />
                 </div>
               </div>
             </div>
@@ -135,31 +183,58 @@ export default {
         <div class="card-form__inner">
           <div class="card-input">
             <label for="cardNumber" class="card-input__label">Card Number</label>
-            <input type="text" id="cardNumber" class="card-input__input" v-model="cardNumberInput"
-                   @focus="$creditCardForm.focusInput" data-ref="cardNumber" autocomplete="off">
+            <input
+              type="text"
+              id="cardNumber"
+              class="card-input__input"
+              v-model="cardNumberInput"
+              @focus="$creditCardForm.focusInput"
+              data-ref="cardNumber"
+              autocomplete="off"
+            />
           </div>
           <div class="card-input">
             <label for="cardName" class="card-input__label">Card Holders</label>
-            <input type="text" id="cardName" class="card-input__input" v-model="cardHolderInput"
-                   @focus="$creditCardForm.focusInput"
-                   @blur="$creditCardForm.blurInput" data-ref="cardName" autocomplete="off">
+            <input
+              type="text"
+              id="cardName"
+              class="card-input__input"
+              v-model="cardHolderInput"
+              @focus="$creditCardForm.focusInput"
+              @blur="$creditCardForm.blurInput"
+              data-ref="cardName"
+              autocomplete="off"
+            />
           </div>
           <div class="card-form__row">
             <div class="card-form__col">
               <div class="card-form__group">
                 <label for="cardMonth" class="card-input__label">Expiration Date</label>
-                <select class="card-input__input -select" id="cardMonth" v-model="cardMonthInput"
-                        @focus="$creditCardForm.focusInput"
-                        @blur="$creditCardForm.blurInput" data-ref="cardDate">
+                <select
+                  class="card-input__input -select"
+                  id="cardMonth"
+                  v-model="cardMonthInput"
+                  @focus="$creditCardForm.focusInput"
+                  @blur="$creditCardForm.blurInput"
+                  data-ref="cardDate"
+                >
                   <option value="" disabled selected>Month</option>
-                  <option :value="n < 10 ? '0' + n : n" v-for="n in 12" :disabled="n < $creditCardForm.minCardMonth"
-                          :key="n">
+                  <option
+                    :value="n < 10 ? '0' + n : n"
+                    v-for="n in 12"
+                    :disabled="n < $creditCardForm.minCardMonth"
+                    :key="n"
+                  >
                     {{ n < 10 ? '0' + n : n }}
                   </option>
                 </select>
-                <select class="card-input__input -select" id="cardYear" v-model="cardYearInput"
-                        @focus="$creditCardForm.focusInput"
-                        data-ref="cardDate">
+                <select
+                  class="card-input__input -select"
+                  id="cardYear"
+                  v-model="cardYearInput"
+                  @focus="$creditCardForm.focusInput"
+                  data-ref="cardDate"
+                >
                   <option value="" disabled selected>Year</option>
                   <option :value="String(currentYear + n).slice(2, 4)" v-for="n in 20" :key="n">
                     {{ String(currentYear + n).slice(2, 4) }}
@@ -170,19 +245,25 @@ export default {
             <div class="card-form__col -cvv">
               <div class="card-input">
                 <label for="cardCvv" class="card-input__label">CVV</label>
-                <input type="text" class="card-input__input" id="cardCvv" v-model="cardCvvInput"
-                       @focus="flipCard(true)" @blur="flipCard(false)" data-ref="cardCvv" autocomplete="off">
+                <input
+                  type="text"
+                  class="card-input__input"
+                  id="cardCvv"
+                  v-model="cardCvvInput"
+                  @focus="flipCard(true)"
+                  @blur="flipCard(false)"
+                  data-ref="cardCvv"
+                  autocomplete="off"
+                />
               </div>
             </div>
           </div>
-          <button class="card-form__button" @click="validateForm">Submit</button>
+          <button class="card-form__button" @click="submit">Submit</button>
         </div>
-
       </div>
     </div>
   </div>
 </template>
-
 
 <style scoped>
 .wrapper {
@@ -190,7 +271,6 @@ export default {
   display: flex;
   padding: 50px 15px;
 }
-
 
 .card-form {
   max-width: 570px;
@@ -246,13 +326,12 @@ export default {
   border-radius: 5px;
   font-size: 22px;
   font-weight: 500;
-  font-family: "Source Sans Pro", sans-serif;
+  font-family: 'Source Sans Pro', sans-serif;
   box-shadow: 3px 10px 20px 0px rgba(35, 100, 210, 0.3);
   color: #fff;
   margin-top: 20px;
   cursor: pointer;
 }
-
 
 .card-item {
   max-width: 430px;
@@ -288,7 +367,7 @@ export default {
 }
 
 .card-item__focus:after {
-  content: "";
+  content: '';
   position: absolute;
   top: 0;
   left: 0;
@@ -353,7 +432,7 @@ export default {
 }
 
 .card-item__cover:after {
-  content: "";
+  content: '';
   position: absolute;
   left: 0;
   top: 0;
@@ -408,7 +487,7 @@ export default {
 }
 
 .card-item__wrapper {
-  font-family: "Source Code Pro", monospace;
+  font-family: 'Source Code Pro', monospace;
   padding: 25px 15px;
   position: relative;
   z-index: 4;
@@ -444,7 +523,6 @@ export default {
   cursor: pointer;
 }
 
-
 .card-item__numberItem {
   width: 16px;
   display: inline-block;
@@ -472,7 +550,6 @@ export default {
   cursor: pointer;
 }
 
-
 .card-item__dateItem {
   position: relative;
 }
@@ -489,7 +566,6 @@ export default {
   width: 100%;
 }
 
-
 .card-item__band {
   background: rgba(0, 0, 19, 0.8);
   width: 100%;
@@ -498,7 +574,6 @@ export default {
   position: relative;
   z-index: 2;
 }
-
 
 .card-item__cvv {
   text-align: right;
@@ -540,7 +615,6 @@ export default {
   box-shadow: 0px 10px 20px -7px rgba(32, 56, 117, 0.35);
 }
 
-
 .card-input {
   margin-bottom: 20px;
 }
@@ -566,10 +640,11 @@ export default {
   padding: 5px 15px;
   background: none;
   color: #1a3b5d;
-  font-family: "Source Sans Pro", sans-serif;
+  font-family: 'Source Sans Pro', sans-serif;
 }
 
-.card-input__input:hover, .card-input__input:focus {
+.card-input__input:hover,
+.card-input__input:focus {
   border-color: #3d9cff;
 }
 
@@ -579,11 +654,10 @@ export default {
 
 .card-input__input.-select {
   -webkit-appearance: none;
-  background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAeCAYAAABuUU38AAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAUxJREFUeNrM1sEJwkAQBdCsngXPHsQO9O5FS7AAMVYgdqAd2IGCDWgFnryLFQiCZ8EGnJUNimiyM/tnk4HNEAg/8y6ZmMRVqz9eUJvRaSbvutCZ347bXVJy/ZnvTmdJ862Me+hAbZCTs6GHpyUi1tTSvPnqTpoWZPUa7W7ncT3vK4h4zVejy8QzM3WhVUO8ykI6jOxoGA4ig3BLHcNFSCGqGAkig2yqgpEiMsjSfY9LxYQg7L6r0X6wS29YJiYQYecemY+wHrXD1+bklGhpAhBDeu/JfIVGxaAQ9sb8CI+CQSJ+QmJg0Ii/EE2MBiIXooHRQhRCkBhNhBcEhLkwf05ZCG8ICCOpk0MULmvDSY2M8UawIRExLIQIEgHDRoghihgRIgiigBEjgiFATBACAgFgghEwSAAGgoBCBBgYAg5hYKAIFYgHBo6w9RRgAFfy160QuV8NAAAAAElFTkSuQmCC");
+  background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAeCAYAAABuUU38AAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAUxJREFUeNrM1sEJwkAQBdCsngXPHsQO9O5FS7AAMVYgdqAd2IGCDWgFnryLFQiCZ8EGnJUNimiyM/tnk4HNEAg/8y6ZmMRVqz9eUJvRaSbvutCZ347bXVJy/ZnvTmdJ862Me+hAbZCTs6GHpyUi1tTSvPnqTpoWZPUa7W7ncT3vK4h4zVejy8QzM3WhVUO8ykI6jOxoGA4ig3BLHcNFSCGqGAkig2yqgpEiMsjSfY9LxYQg7L6r0X6wS29YJiYQYecemY+wHrXD1+bklGhpAhBDeu/JfIVGxaAQ9sb8CI+CQSJ+QmJg0Ii/EE2MBiIXooHRQhRCkBhNhBcEhLkwf05ZCG8ICCOpk0MULmvDSY2M8UawIRExLIQIEgHDRoghihgRIgiigBEjgiFATBACAgFgghEwSAAGgoBCBBgYAg5hYKAIFYgHBo6w9RRgAFfy160QuV8NAAAAAElFTkSuQmCC');
   background-size: 12px;
   background-position: 90% center;
   background-repeat: no-repeat;
   padding-right: 30px;
 }
-
 </style>

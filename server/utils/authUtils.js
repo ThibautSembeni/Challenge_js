@@ -8,7 +8,6 @@ const checkCredentialsValidity = async (req, res, next) => {
     const { publicKey, privateKey } = req.credentials;
     const credentialService = new CredentialService();
     const validKeys = await credentialService.findOne({ client_token: publicKey, client_secret: privateKey })
-
     if (validKeys && publicKey === validKeys.client_token && privateKey === validKeys.client_secret) {
         const currentUser = await getCustomerData(validKeys.user_id);
         if (!currentUser) {
@@ -25,7 +24,7 @@ const checkTokenValidity = async (req, res, next) => {
     const token = req.token;
     try {
         const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
-    console.log(decodedToken)
+        console.log(decodedToken)
         if (decodedToken.role === "admin") {
             const isImpersonna = await isImpersonnation(decodedToken.id);
             if (isImpersonna) {

@@ -4,11 +4,11 @@ const Transaction = require("./transactions")
 const Operation = require("./operation")
 
 const ValidationError = require("../errors/ValidationError");
-const {where} = require("sequelize");
+const { where } = require("sequelize");
 
 module.exports = function EventPaymentService() {
     return {
-        createTransaction: async (data) => {
+        createTransaction: async function (data) {
             data.status = 'created';
 
             const transactionsService = new Transaction();
@@ -24,11 +24,11 @@ module.exports = function EventPaymentService() {
             return transaction.reference;
         },
 
-        updateTransaction: async (reference, data) => {
+        updateTransaction: async function (reference, data) {
             let _ = require('lodash');
 
             const transactionsService = new Transaction();
-            const transaction = await transactionsService.findOne( { reference: reference } );
+            const transaction = await transactionsService.findOne({ reference: reference });
 
             if (!transaction) {
                 throw new ValidationError('No transaction found');
@@ -67,82 +67,87 @@ module.exports = function EventPaymentService() {
             return transaction.reference;
         },
 
-        getTransaction: async (reference) => {
-            let _ = require('lodash');
+        getTransaction: async function (reference) {
+            try {
+                let _ = require('lodash');
 
-            const transactionsService = new Transaction();
-            const operationsService = new Operation();
-            const transaction = await transactionsService.findOne( { reference: reference } );
+                const transactionsService = new Transaction();
+                const operationsService = new Operation();
+                const transaction = await transactionsService.findOne({ reference: reference });
 
-            if (!transaction) {
-                throw new ValidationError('No transaction found');
-            }
-
-            const transactionEvents = await Event.findAll({
-                where: {
-                    aggregate_id: transaction.id,
-                    aggregate_type: 'Transaction'
-                },
-                order: [
-                    ['createdAt', 'ASC']
-                ]
-            });
-
-            if (!transactionEvents.length) {
-                throw new ValidationError('No events found for this transaction');
-            }
-
-            let currentState = transactionEvents[0].payload;
-
-            for (let i = 1; i < transactionEvents.length; i++) {
-                const event = transactionEvents[i];
-                if(event.type === 'TransactionUpdated'){
-                    currentState = _.merge({}, currentState, event.payload);
+                if (!transaction) {
+                    throw new ValidationError('No transaction found');
                 }
-            }
 
-            currentState.reference = transaction.reference;
-
-            let timeline = transactionEvents.map(event => ({
-                timestamp: event.createdAt,
-                type: event.type,
-                payload: event.payload
-            }));
-
-            const operations = await operationsService.findAll( { transaction_reference: reference });
-
-            for (const operation of operations) {
-                const operationEvents = await Event.findAll({
+                const transactionEvents = await Event.findAll({
                     where: {
-                        aggregate_id: operation.id,
-                        aggregate_type: 'Operation'
+                        aggregate_id: transaction.id,
+                        aggregate_type: 'Transaction'
                     },
                     order: [
                         ['createdAt', 'ASC']
                     ]
                 });
 
-                timeline = timeline.concat(
-                    operationEvents.map(event => ({
-                        timestamp: event.createdAt,
-                        type: event.type,
-                        payload: event.payload
-                    }))
-                );
+                if (!transactionEvents.length) {
+                    throw new ValidationError('No events found for this transaction');
+                }
+
+                let currentState = transactionEvents[0].payload;
+
+                for (let i = 1; i < transactionEvents.length; i++) {
+                    const event = transactionEvents[i];
+                    if (event.type === 'TransactionUpdated') {
+                        currentState = _.merge({}, currentState, event.payload);
+                    }
+                }
+
+                currentState.reference = transaction.reference;
+
+                let timeline = transactionEvents.map(event => ({
+                    timestamp: event.createdAt,
+                    type: event.type,
+                    payload: event.payload
+                }));
+
+                const operations = await operationsService.findAll({ transaction_reference: reference });
+
+                for (const operation of operations) {
+                    const operationEvents = await Event.findAll({
+                        where: {
+                            aggregate_id: operation.id,
+                            aggregate_type: 'Operation'
+                        },
+                        order: [
+                            ['createdAt', 'ASC']
+                        ]
+                    });
+
+                    timeline = timeline.concat(
+                        operationEvents.map(event => ({
+                            timestamp: event.createdAt,
+                            type: event.type,
+                            payload: event.payload
+                        }))
+                    );
+                }
+
+                timeline.sort((a, b) => a.timestamp - b.timestamp);
+
+                return { currentState, timeline };
+            } catch (error) {
+                console.error(error);
             }
 
-            timeline.sort((a, b) => a.timestamp - b.timestamp);
-
-            return { currentState, timeline };
         },
 
-        getAllTransactions: async (user) => {
+        getAllTransactions: async function (user) {
             let _ = require('lodash');
 
             try {
                 const impersonationService = new Impersonation()
                 const transactionsService = new Transaction();
-                const impersonation = await impersonationService.findOne( { adminId: user.id });
+                const impersonation = await impersonationService.findOne({ adminId: user.id });
 
                 let transactions = [];
 
@@ -150,7 +155,7 @@ module.exports = function EventPaymentService() {
                     transactions = await transactionsService.findAll();
                 } else {
                     transactions = await transactionsService.findAll({
-                            merchant_id: user.id,
+                        merchant_id: user.id,
                     });
                 }
 
@@ -178,7 +183,7 @@ module.exports = function EventPaymentService() {
 
                     for (let i = 1; i < events.length; i++) {
                         const event = events[i];
-                        if(event.type === 'TransactionUpdated'){
+                        if (event.type === 'TransactionUpdated') {
                             currentState = { ...currentState, ...event.payload };
                         }
                     }
@@ -196,37 +201,42 @@ module.exports = function EventPaymentService() {
 
 
 
-        createOperation: async (data) => {
-            data.status = 'created';
+        createOperation: async function (data) {
+            try {
+                data.status = 'created';
 
-            const transaction = this.getTransaction(data.transaction_reference);
-            if (!transaction) {
-                throw new ValidationError('No transaction found');
+                const transaction = await this.getTransaction(data.transaction_reference);
+                if (!transaction) {
+                    throw new ValidationError('No transaction found');
+                }
+
+                data.amount = transaction.currentState.amount
+
+                const operationsService = new Operation();
+                const isOperationExist = await operationsService.findOne({ transaction_reference: data.transaction_reference });
+                if (isOperationExist) data.type = 'refund';
+                else data.type = 'capture';
+
+                const operation = await operationsService.create(data);
+                console.log(operation);
+                await Event.create({
+                    aggregate_id: operation.id,
+                    aggregate_type: 'Operation',
+                    type: 'OperationCreated',
+                    payload: data
+                });
+
+                return operation;
+            } catch (error) {
+                console.log(error);
             }
 
-            data.amount = transaction.currentState.amount
-
-            const operationsService = new Operation();
-            const isOperationExist = await operationsService.findOne( { transaction_reference: data.transaction_reference } );
-            if (isOperationExist) data.type = 'refund';
-            else data.type = 'capture';
-
-            const operation = await Operation.create(data);
-
-            await Event.create({
-                aggregate_id: operation.id,
-                aggregate_type: 'Operation',
-                type: 'OperationCreated',
-                payload: data
-            });
-
-            return operation;
         },
 
-        updateOperation: async (id, data) => {
+        updateOperation: async function (id, data) {
             const operationsService = new Operation();
 
-            const operation = await operationsService.findOne({'id': id});
+            const operation = await operationsService.findOne({ 'id': id });
 
             if (!operation) {
                 throw new ValidationError('No operation found');
@@ -265,9 +275,9 @@ module.exports = function EventPaymentService() {
             return operation;
         },
 
-        getOperation: async (id) => {
+        getOperation: async function (id) {
             const operationsService = new Operation();
-            const operation = await operationsService.findOne({'id': id});
+            const operation = await operationsService.findOne({ 'id': id });
 
             if (!operation) {
                 throw new ValidationError('No operation found');
@@ -291,7 +301,7 @@ module.exports = function EventPaymentService() {
 
             for (let i = 1; i < events.length; i++) {
                 const event = events[i];
-                if(event.type === 'OperationUpdated'){
+                if (event.type === 'OperationUpdated') {
                     currentState = _.merge({}, currentState, event.payload);
                 }
             }
@@ -301,7 +311,7 @@ module.exports = function EventPaymentService() {
             return currentState;
         },
 
-        getAllOperations: async () => {
+        getAllOperations: async function () {
             const operationsService = new Operation();
             const operations = await operationsService.findAll();
 
@@ -325,7 +335,7 @@ module.exports = function EventPaymentService() {
 
                 for (let i = 1; i < events.length; i++) {
                     const event = events[i];
-                    if(event.type === 'OperationUpdated'){
+                    if (event.type === 'OperationUpdated') {
                         currentState = _.merge({}, currentState, event.payload);
                     }
                 }

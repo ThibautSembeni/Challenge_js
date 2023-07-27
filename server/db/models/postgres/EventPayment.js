@@ -2,10 +2,6 @@ module.exports = (connection) => {
     const { DataTypes, Model } = require("sequelize");
 
     class Event extends Model {
-        static associate(models) {
-            Event.belongsTo(models.Transaction, { foreignKey: 'aggregate_id', as: 'transaction' });
-            Event.belongsTo(models.Operation, { foreignKey: 'aggregate_id', as: 'operation' });
-        }
     }
 
     Event.init(

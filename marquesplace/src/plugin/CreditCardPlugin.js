@@ -1,4 +1,4 @@
-import {ref, watch} from "vue";
+import { ref, watch } from "vue";
 import CreditCard from "@/plugin/CreditCard/CreditCard.vue";
 
 const creditCard = {
@@ -134,7 +134,9 @@ const creditCard = {
             validateForm,
             blurInput,
             focusInput,
-            cardType: getCardType()
+            cardType: getCardType(),
+            SK: options.SK,
+            PK: options.PK
         };
 
         app.component('CreditCard', CreditCard);

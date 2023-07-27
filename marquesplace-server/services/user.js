@@ -4,7 +4,6 @@ const ValidationError = require("../errors/ValidationError");
 const UnauthorizedError = require("../errors/UnauthorizedError");
 const UniqueConstraintError = require("../errors/UniqueConstraintError");
 const { generateVerificationToken } = require("../utils/user");
-const UserMongoService = require('./mongo/user')
 const { Transaction } = require("../db/models/postgres");
 
 
