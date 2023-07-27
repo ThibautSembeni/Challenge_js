@@ -226,35 +226,7 @@ module.exports = function EventPaymentService() {
                     type: "OperationCreated",
                     payload: data,
                 });
-                // const test = {
-                //   billing_info: {
-                //     address: "20 Rue des Chaumonts",
-                //     city: "Saulchery",
-                //     postal_code: "02310",
-                //     country: "France",
-                //   },
-                //   shipping_info: {
-                //     address: "20 Rue des Chaumonts",
-                //     city: "Saulchery",
-                //     postal_code: "02310",
-                //     country: "France",
-                //   },
-                //   client_info: {
-                //     name: "qses sqe",
-                //     email: "merchant@user.fr",
-                //     phone_number: null,
-                //   },
-                //   cart: {
-                //     products: [
-                //       { product_id: 1, quantity: 6 },
-                //       { product_id: 2, quantity: 1 },
-                //     ],
-                //   },
-                //   amount: 41,
-                //   currency: "EUR",
-                //   merchant_id: 1,
-                //   status: "created",
-                // };
+
                 data["operation_id"] = operation.id;
                 try {
 

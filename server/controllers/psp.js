@@ -9,11 +9,33 @@ module.exports = function pspController(CredentialService) {
         confirm: async (req, res, next) => {
             res.status(202).json({ message: 'Paiement en cours de traitemen' });
             const data = req.body;
-            console.log("before first update psp")
-            await eventService.updateOperation(data.operation_id, { status: "processing" })
+            let result = false;
+
             setTimeout(async () => {
                 try {
-                    const result = _validatePaymentInfo(data)
+                    await eventService.updateOperation(data.operation_id, {status: "processing"})
+
+                    if (data.type === 'capture') result = _validatePaymentInfo(data)
+                    else {
+                        const currentTransaction = await eventService.getTransaction(data.transaction_reference)
+
+                        const operations = await eventService.getAllOperations({
+                            'transaction_reference': currentTransaction.currentState.transaction_reference,
+                            'type': 'refund',
+                        })
+
+                        if (!operations.length) result = data.amount < currentTransaction.currentState.amount;
+                        else {
+                            let totalRefund = 0
+                            operations.forEach(operation => {
+                                totalRefund += operation.amount
+                            })
+
+                            result = totalRefund < currentTransaction.currentState.amount;
+                        }
+                    }
+
+
                     const payload = {
                         operation_id: data.operation_id,
                         result: result

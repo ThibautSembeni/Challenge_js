@@ -186,7 +186,7 @@ const submitForm = async () => {
                                         { value: 'cancelled', label: 'Annulé' },
                                         { value: 'waiting_refund', label: 'En attente de remboursement' },
                                         { value: 'partially_refunded', label: 'Remboursée partiellement' },
-                                        { value: 'refunded', label: 'Refusée' },
+                                        { value: 'refunded', label: 'Remboursée' },
                                         { value: 'failed', label: 'Échouée' }
                                       ]"
                                     v-model="status"
