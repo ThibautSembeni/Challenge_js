@@ -22,6 +22,7 @@ import ProfileView from '@/views/auth/ProfileView.vue'
 import PaymentCreateView from '@/views/transactions/PaymentCreateView.vue'
 import ForgotPassword from '@/views/auth/ForgotPassword.vue'
 import ResetPassword from '@/views/auth/ResetPassword.vue'
+import PaymentCapture from "@/views/customer/PaymentCapture.vue";
 
 const authRoutes = [
   {
@@ -68,6 +69,12 @@ const customerRoutes = [
     name: 'profile',
     component: ProfileView,
     meta: { requiresAuth: true }
+  },
+  {
+    path: '/payment/capture/:reference',
+    name: 'capturePayment',
+    component: PaymentCapture,
+    meta: { requiresAuth: false }
   },
   {
     path: '/about',

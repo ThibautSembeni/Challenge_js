@@ -1,5 +1,5 @@
 import {ref, watch} from "vue";
-import CreditCardForm from "@/components/CreditCardForm.vue";
+import CreditCard from "@/plugin/CreditCard/CreditCard.vue";
 
 const creditCard = {
     install(app, options) {
@@ -85,9 +85,6 @@ const creditCard = {
                 const filteredCardName = newCardName.replace(/[^a-zA-Z ]/g, '');
                 cardHolder.value = filteredCardName.slice(0, 20);
             }
-            this.$emit("test",{
-                ossama:'dahbi'
-            })
         });
 
 
@@ -137,13 +134,10 @@ const creditCard = {
             validateForm,
             blurInput,
             focusInput,
-            cardType: getCardType(),
-            emitCardInfo(cardInfo) {
-                app.config.globalProperties.$emit('card', cardInfo);
-            },
+            cardType: getCardType()
         };
 
-        app.component('credit-card-form', CreditCardForm);
+        app.component('CreditCard', CreditCard);
 
     }
 
