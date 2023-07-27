@@ -1,6 +1,8 @@
 import store from '@/stores/store'
 import httpClient from '@/services/httpClient'
 import router from '@/router'
+import { isConnectedByImpersonation } from "@/services/users"
+
 export async function login(userCredentials) {
     const response = await httpClient.post('/login', userCredentials)
     if (response.status === 200) {
@@ -49,6 +51,16 @@ export function getCurrentUser() {
     return store.state.user
 }
 
+export function isImperonating() {
+    return store.state.isImpersonating
+}
+
+export async function getImperonating() {
+    const isImperonating = await isConnectedByImpersonation();
+    store.commit('setImpersonating', isImperonating)
+    return store.state.isImpersonating
+}
+
 export function isLoggedIn() {
     return store.state.isLoggedIn
 }
@@ -57,6 +69,11 @@ export async function fetchUser() {
     const userData = await httpClient.get('/me')
     store.commit('setUser', userData.data)
     return userData.data
+}
+
+export async function setImpersonating(value) {
+    store.commit('setImpersonating', value)
+    return value
 }
 
 export async function changePassword(payload) {

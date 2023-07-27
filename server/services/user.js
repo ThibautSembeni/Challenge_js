@@ -112,6 +112,7 @@ module.exports = function UserService() {
                 const origins = await User.findAll({ where: { role: "merchant" } });
                 return origins.map((origin) => origin.merchant_url);
             } catch (error) {
+                console.error(error);
                 throw new Error('Erreur lors du comptage des utilisateurs en attente.');
             }
         }

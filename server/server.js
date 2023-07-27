@@ -63,7 +63,7 @@ app.use("/products", checkAuth, ProductRouter);
 
 app.use("/credentials", checkAuth, CredentialRouter);
 
-app.use("/operation", checkAuth, OperationRouter);
+app.use("/operation", OperationRouter);
 
 app.use("/psp", PspRouter);
 

@@ -1,7 +1,6 @@
 module.exports = (connection) => {
   const { DataTypes, Model } = require("sequelize");
   const bcrypt = require("bcryptjs");
-  const mongo = require("../mongo");
   class User extends Model {
     static associate(models) {
       User.hasMany(models.Cart, { foreignKey: 'user_id', as: 'carts' });
@@ -85,12 +84,20 @@ module.exports = (connection) => {
   );
 
   function updatePassword(user) {
-    return bcrypt.genSalt(10).then((salt) =>
-      bcrypt.hash(user.password, salt).then((hash) => {
-        user.password = hash;
-      })
-    );
+    return bcrypt.genSalt(10).then((salt) => bcrypt.hash(user.password, salt).then((hash) => { user.password = hash; }))
   }
+
+  User.addHook("beforeCreate", async (user, options) => {
+    if (options.fields.includes("password")) {
+      return updatePassword(user);
+    }
+  });
+  User.addHook("beforeUpdate", async (user, options) => {
+    if (options.fields.includes("password")) {
+      return updatePassword(user);
+    }
+  });
+
 
   return User;
 };

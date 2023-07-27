@@ -12,6 +12,11 @@ import ForgotPassword from '@/views/auth/ForgotPassword.vue'
 import ResetPassword from '@/views/auth/ResetPassword.vue'
 import ShoppingCartView from '@/views/customer/ShoppingCartView.vue'
 import ProductsView from "@/views/customer/ProductsView.vue";
+import TransactionsView from "@/views/merchant/TransactionsView.vue";
+import ConfirmationView from "@/views/customer/ConfirmationView.vue";
+import EchecView from "@/views/customer/EchecView.vue";
+import OrdersView from "@/views/merchant/OrdersView.vue";
+import PayementView from "@/views/customer/PayementView.vue";
 
 const authRoutes = [
   {
@@ -63,13 +68,44 @@ const customerRoutes = [
     path: '/panier',
     name: 'panier',
     component: ShoppingCartView,
-    meta: { requiresAuth: false }
+    meta: { requiresAuth: true }
   },
   {
     path: '/products',
     name: 'products',
     component: ProductsView,
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/transactions',
+    name: 'transactions',
+    component: TransactionsView,
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/commandes',
+    name: 'orders',
+    component: OrdersView,
     meta: { requiresAuth: false }
+  },
+  {
+    path: '/achat-reussi',
+    name: 'successPurchase',
+    component: ConfirmationView,
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/achat-refuse',
+    name: 'failedPurchase',
+    component: EchecView,
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/payement/capture/:reference',
+    name: 'paymentCapture',
+    component: PayementView,
+    meta: { requiresAuth: true },
+    // props: true,
   }
 ]
 

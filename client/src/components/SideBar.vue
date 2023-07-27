@@ -28,61 +28,65 @@
 </template>
 
 <script setup>
-import { onMounted, ref } from 'vue'
-import { getCurrentUser } from '@/services/auth'
-import { isConnectedByImpersonation } from '@/services/users'
+import { onMounted, ref, watch } from 'vue'
+import { getCurrentUser, isImperonating } from '@/services/auth'
 
 const defaultValue = [
-    {
-        name: 'Dashboard',
-        to: 'home',
-        icon: 'fa-solid fa-house'
-    },
-    {
-        name: 'Paiements',
-        to: 'payments',
-        icon: 'fa-solid fa-dollar-sign'
-    },
-    {
-        name: 'Clients',
-        to: 'customers',
-        icon: 'fa-solid fa-users'
-    },
-    {
-        name: 'Produits',
-        to: 'products',
-        icon: 'fa-solid fa-boxes-stacked'
-    }
+  {
+    name: 'Dashboard',
+    to: 'home',
+    icon: 'fa-solid fa-house'
+  },
+  {
+    name: 'Paiements',
+    to: 'payments',
+    icon: 'fa-solid fa-dollar-sign'
+  },
+  {
+    name: 'Clients',
+    to: 'customers',
+    icon: 'fa-solid fa-users'
+  },
+  {
+    name: 'Produits',
+    to: 'products',
+    icon: 'fa-solid fa-boxes-stacked'
+  }
 ]
 
 const adminRoutes = [
-    {
-        name: 'Utilisateurs',
-        to: 'UsersView',
-        icon: 'fa-solid fa-user'
-    },
-    {
-        name: 'Dashboard',
-        to: 'home',
-        icon: 'fa-solid fa-house'
-    },
+  {
+    name: 'Utilisateurs',
+    to: 'UsersView',
+    icon: 'fa-solid fa-user'
+  },
+  {
+    name: 'Dashboard',
+    to: 'home',
+    icon: 'fa-solid fa-house'
+  },
+  {
+    name: 'Paiements',
+    to: 'payments',
+    icon: 'fa-solid fa-dollar-sign'
+  },
 ]
 
 const mergedPages = ref([...defaultValue])
 
 onMounted(async () => {
-    const currentUser = await getCurrentUser()
-
-    if (currentUser.hasOwnProperty('role') && currentUser.role === 'admin') {
-        const impersonatedMerchant = await isConnectedByImpersonation()
-
-        if (impersonatedMerchant) {
-            mergedPages.value = [...defaultValue]
-        } else {
-            mergedPages.value = [...adminRoutes]
-        }
+  const currentUser = await getCurrentUser()
+  const impersonatedMerchant = await isImperonating()
+  console.log(currentUser, impersonatedMerchant)
+  if (currentUser.hasOwnProperty('role') && currentUser.role === 'admin') {
+    console.log(impersonatedMerchant)
+    if (impersonatedMerchant) {
+      mergedPages.value = [...defaultValue]
     } else {
-        mergedPages.value = [...defaultValue]
+      mergedPages.value = [...adminRoutes]
     }
+  } else {
+    mergedPages.value = [...defaultValue]
+  }
 })
 </script>

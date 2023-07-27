@@ -12,12 +12,12 @@ module.exports = new genericRouter(
             { handler: 'createTransaction', method: 'post', path: '/transaction', middleware: [] },
             { handler: 'updateTransaction', method: 'put', path: '/transaction/:reference', middleware: [] },
             { handler: 'getTransaction', method: 'get', path: '/transaction/:reference', middleware: [] },
-            { handler: 'getAllTransactions', method: 'get', path: '/transaction', middleware: [] },
+            { handler: 'getAllTransactions', method: 'get', path: '/transactions', middleware: [] },
 
             { handler: 'createOperation', method: 'post', path: '/operation', middleware: [] },
             { handler: 'updateOperation', method: 'put', path: '/operation/:id', middleware: [] },
             { handler: 'getOperation', method: 'get', path: '/operation/:id', middleware: [] },
-            { handler: 'getAllOperations', method: 'get', path: '/operation', middleware: [] },
+            { handler: 'getAllOperations', method: 'get', path: '/operations', middleware: [] },
         ],
         defaultRoutes: false,
     }

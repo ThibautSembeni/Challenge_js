@@ -13,7 +13,7 @@ export async function removeItemService(cartId, cartItemId) {
     const response = await httpClient.delete(`/cart/remove/${cartId}/${cartItemId}`)
     return response.data
 }
-export async function createCharge(customerAddress, customerCity, customerPostalCode, customerCountry, currentUser, cart) {
+export async function createCharge(customerAddress, customerCity, customerPostalCode, customerCountry, currentUser, cart, price) {
     const charge = {
         "billing_info": {
             "address": customerAddress.value,
@@ -40,7 +40,7 @@ export async function createCharge(customerAddress, customerCity, customerPostal
                 }
             })
         },
-        "amount": cart.value.total_price,
+        "amount": price,
         "currency": "EUR",
     }
 

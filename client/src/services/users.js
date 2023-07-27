@@ -1,5 +1,5 @@
 import httpClient from '@/services/httpClient'
-import {fetchUser} from "@/services/auth";
+import { fetchUser, setImpersonating } from "@/services/auth";
 import router from "@/router";
 
 export async function getAllUsers() {
@@ -46,6 +46,7 @@ export function deleteUser(id) {
 export async function impersonateUser(merchantId) {
     const response = await httpClient.post('/users/admin/impersonate', { merchantId });
     if (response.status === 200) {
+        await setImpersonating(true);
         return response.data;
     } else {
         throw new Error(`Error: ${response.status} - Une erreur s'est produite lors de l'usurpation de l'utilisateur`);
@@ -53,8 +54,9 @@ export async function impersonateUser(merchantId) {
 }
 
 export async function stopImpersonatingUser() {
-    const response = await httpClient.get('/users/admin/stopImpersonating');
-    if (response.status === 200) {
+    const response = await httpClient.delete('/users/admin/stopImpersonating');
+    if (response.status === 204) {
+        await setImpersonating(false);
         return router.push({ name: 'adminDashboard' })
     } else {
         throw new Error(`Error: ${response.status} - Une erreur s'est produite lors de l'arrêt de l'usurpation d'utilisateur`);
@@ -64,7 +66,10 @@ export async function stopImpersonatingUser() {
 export async function isConnectedByImpersonation() {
     try {
         const response = await httpClient.get('/users/admin/impersonate');
-        return response && response.status === 200 && response.data.status;
+        if (response.status === 200) {
+            return response.data.status
+        }
+        return false
     } catch (error) {
         return false;
     }
