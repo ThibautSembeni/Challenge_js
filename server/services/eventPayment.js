@@ -8,10 +8,10 @@ const {where} = require("sequelize");
 module.exports = function EventPaymentService() {
     return {
         createTransaction: async (data) => {
+            data.status = 'created';
+
             const transactionsService = new Transaction();
             const transaction = await transactionsService.create(data);
-
-            data.status = 'created';
 
             await Event.create({
                 aggregate_id: transaction.id,
@@ -195,6 +195,8 @@ module.exports = function EventPaymentService() {
 
 
         createOperation: async (data) => {
+            data.status = 'created';
+
             const operation = await Operation.create(data);
 
             await Event.create({
