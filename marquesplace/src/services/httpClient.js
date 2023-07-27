@@ -5,8 +5,8 @@ const httpClient = axios.create({
     baseURL: import.meta.env.VITE_API_URL,
     timeout: 5000,
     headers: {
-        'X-Public-Key': 'vwPy5GKoH04HFa3OcUiJrQlw4NdVgitt731gSJ0z5odoTOnSZiymMVUPlRKERTYg',
-        'X-Secret-Key': '0b3MLLtsoMKMI26jGzQzMzWlHsewjWJmiJRpmVSuySuP8pMf7iLZ6Vav0fsjyOSK'
+        'X-Public-Key': import.meta.env.VITE_API_KAMALPAY_PK,
+        'X-Secret-Key': import.meta.env.VITE_API_KAMALPAY_SK
     }
 
 });
@@ -84,7 +84,7 @@ httpClient.get = async function (url, config) {
 };
 
 httpClient.post = async function (url, data, config) {
-    const headers = { 'Content-Type': 'application/json', ...config?.headers };
+    const headers = {'Content-Type': 'application/json', ...config?.headers};
     config = {
         ...config,
         headers
@@ -93,7 +93,7 @@ httpClient.post = async function (url, data, config) {
 };
 
 httpClient.put = async function (url, data, config) {
-    const headers = { 'Content-Type': 'application/json', ...config?.headers };
+    const headers = {'Content-Type': 'application/json', ...config?.headers};
     config = {
         ...config,
         headers
@@ -102,7 +102,7 @@ httpClient.put = async function (url, data, config) {
 };
 
 httpClient.patch = async function (url, data, config) {
-    const headers = { 'Content-Type': 'application/json', ...config?.headers };
+    const headers = {'Content-Type': 'application/json', ...config?.headers};
     config = {
         ...config,
         headers
