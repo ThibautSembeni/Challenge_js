@@ -64,7 +64,7 @@ module.exports = function ImpersonationService() {
             }
         },
         delete: async (filters) => {
-            return User.destroy({ where: filters });
+            return Impersonation.destroy({ where: filters });
         },
     };
 };

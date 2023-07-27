@@ -10,9 +10,12 @@ const checkCredentialsValidity = async (req, res, next) => {
     const validKeys = await credentialService.findOne({ client_token: publicKey, client_secret: privateKey })
 
     if (validKeys && publicKey === validKeys.client_token && privateKey === validKeys.client_secret) {
-        req.user = { id: validKeys.user_id };
-        await getCustomerData(req, res, next);
-        next();
+        const currentUser = await getCustomerData(validKeys.user_id);
+        if (!currentUser) {
+            return next(new UnauthorizedError());
+        }
+        req.user = currentUser;
+        return next();
     } else {
         return next(new UnauthorizedError());
     }
@@ -20,26 +23,44 @@ const checkCredentialsValidity = async (req, res, next) => {
 
 const checkTokenValidity = async (req, res, next) => {
     const token = req.token;
-
     try {
         const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
-        if (decodedToken.role === "admin" && decodedToken.merchantId) {
-            req.user = decodedToken;
-            await getImpersonationData(req, res, next);
-            next();
-        } else if (decodedToken.role === "admin") {
-            req.user = decodedToken;
-            await getAdminData(req, res, next);
-            next();
+
+        if (decodedToken.role === "admin") {
+            const isImpersonna = await isImpersonnation(decodedToken.id);
+            if (isImpersonna) {
+                req.merchantId = isImpersonna
+                req.userId = decodedToken.id
+                const currentUser = await getMerchantData(isImpersonna);
+                if (!currentUser) {
+                    throw new Error(`Merchant data not found when is impersonation`);
+                }
+                req.user = currentUser
+                return next();
+            } else {
+                const currentUser = await getAdminData(decodedToken.id);
+                if (!currentUser) {
+                    throw new Error(`cannot find admin data`);
+                }
+                req.user = currentUser;
+                return next();
+            }
         } else if (decodedToken.role === "merchant") {
-            req.user = decodedToken;
-            await getMerchantData(req, res, next);
-            next();
+            const currentUser = await getMerchantData(decodedToken);
+            if (!currentUser) {
+                throw new Error(`cannot find merchant data`);
+            }
+            req.user = currentUser
+            return next();
         } else if (decodedToken.role === "customer") {
-            req.user = decodedToken;
-            next();
+            const currentUser = await getCustomerData(decodedToken.id);
+            if (!currentUser) {
+                throw new Error(`cannot find user`);
+            }
+            req.user = currentUser;
+            return next();
         } else {
-            return next(new UnauthorizedError());
+            throw new Error(`Invalid user`);
         }
     } catch (error) {
         console.error(error);
@@ -47,51 +68,52 @@ const checkTokenValidity = async (req, res, next) => {
     }
 };
 
-const getImpersonationData = async (req, res, next) => {
+const isImpersonnation = async (id) => {
     const impersonationService = new ImpersonationService();
-    const impersonationRecord = await impersonationService.findOne({ adminId: req.user.id });
+    const impersonationRecord = await impersonationService.findOne({ adminId: id });
     if (impersonationRecord) {
-        req.merchantId = impersonationRecord.merchantId;
-        await getMerchantData(req, res, next);
+        return impersonationRecord.merchantId;
     } else {
-        return next(new UnauthorizedError());
+        return null;
     }
 }
-const getAdminData = async (req, res, next) => {
+
+const getAdminData = async (id) => {
     const userService = new UserService()
     const currentUser = await userService.findOne({
-        id: req.user.id,
+        id: id,
         role: 'admin'
     });
     if (currentUser) {
-        req.user = currentUser;
+        return currentUser;
     } else {
-        return next(new UnauthorizedError());
+        return null
     }
 
 }
-const getMerchantData = async (req, res, next) => {
+
+const getMerchantData = async (id) => {
     const userService = new UserService()
     const currentUser = await userService.findOne({
-        id: req.user.id,
+        id: id,
         role: 'merchant'
     });
     if (currentUser) {
-        req.user = currentUser;
+        return currentUser;
     } else {
-        return next(new UnauthorizedError());
+        return null;
     }
 }
-const getCustomerData = async (req, res, next) => {
+const getCustomerData = async (id) => {
     const userService = new UserService()
     const currentUser = await userService.findOne({
-        id: req.user.id,
+        id: id,
     });
 
     if (currentUser) {
-        req.user = currentUser;
+        return currentUser;
     } else {
-        return next(new UnauthorizedError());
+        return null
     }
 }
 
