@@ -1,7 +1,7 @@
 module.exports = function (credentials) {
     this.createTransaction = async (payload) => {
         try {
-            const response = await fetch(`http://node:3000/eventPayment/transaction`, {
+            const response = await fetch(`${process.env.KAMALPAY_API_URL}/eventPayment/transaction`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -19,7 +19,7 @@ module.exports = function (credentials) {
 
     }
     this.getAllTransaction = async (payload) => {
-        const response = await fetch(`${process.env.API_URL}/transactions`, {
+        const response = await fetch(`${process.env.KAMALPAY_API_URL}/transactions`, {
             method: 'GET',
             headers: {
                 'X-Public-Key': credentials.client_token,
