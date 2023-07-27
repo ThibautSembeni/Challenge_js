@@ -38,9 +38,9 @@ const removeItem = async (cartItem) => {
 const handleSubmit = async () => {
     try {
         const response = await createCharge(customerAddress, customerCity, customerPostalCode, customerCountry, currentUser, cart);
-        const order = await createOrder(userId, price.value)
+        // const order = await createOrder(userId, price.value)
         console.log("charge response", response);
-        console.log("order", order);
+        // console.log("order", order);
     } catch (error) {
         console.error("Error creating charge:", error);
     }
