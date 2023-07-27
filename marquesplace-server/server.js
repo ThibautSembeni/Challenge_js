@@ -21,7 +21,7 @@ app.use(
 app.use(checkFormat);
 
 app.use(express.json());
-console.log(process.env)
+
 app.use(StrapeSDK.bind(app)({ client_token: process.env.KAMALPAY_PK, client_secret: process.env.KAMALPAY_SK }))
 
 app.use("/", SecurityRouter);
@@ -31,14 +31,14 @@ app.use("/orders", OrdersRouter);
 // TODO : a modifiler l'emplacement
 
 app.get('/transactions', async (req, res, next) => {
-  const [statusCode, data] = await app.getAllTransaction()
-  res.sendStatus(statusCode)
+  const request = await app.getAllTransaction()
+  res.status(200).json(data)
 })
 
 app.post('/transactions', async (req, res, next) => {
-  const [statusCode, data] = await app.createTransaction(req.body)
-  console.error(data)
-  res.sendStatus(statusCode)
+  const result = await app.createTransaction(req.body)
+  console.log("data", result)
+  res.status(200).json(result)
 })
 
 app.use("/cart", checkAuth, CartRouter);

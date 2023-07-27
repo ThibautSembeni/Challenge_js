@@ -6,7 +6,7 @@ module.exports = function TransactionController(Service) {
                 req.body.status = "created"
 
                 const response = await Service.createTransaction(req.body);
-                res.status(201).send(response);
+                res.status(201).json(response);
             } catch (error) {
                 next(error);
             }

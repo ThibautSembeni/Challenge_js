@@ -1,7 +1,7 @@
 module.exports = function (credentials) {
     this.createTransaction = async (payload) => {
-            console.log(credentials)
-            const response = await fetch(`http://node:3000/transactions`, {
+        try {
+            const response = await fetch(`http://node:3000/eventPayment/transaction`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -10,16 +10,12 @@ module.exports = function (credentials) {
                     'Origin': process.env.FRONT_URL,
                 },
                 body: JSON.stringify(payload)
-            }).then((response) => {
-                if (response.status === 401) {
-                    return [401, { error: "Unauthorized" }]
-                }
-                return [response.status, response]
-            }).catch((error) => {
-                return [500, { error: error.message }]
             })
-
-        return response
+            const data = await response.json()
+            return data
+        } catch (error) {
+            throw new Error(`Strape error: ${error}`);
+        }
 
     }
     this.getAllTransaction = async (payload) => {
