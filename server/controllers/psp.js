@@ -19,10 +19,9 @@ module.exports = function pspController(CredentialService) {
                     else {
                         const currentTransaction = await eventService.getTransaction(data.transaction_reference)
 
-                        const operations = await eventService.getAllOperations({
-                            'transaction_reference': currentTransaction.currentState.transaction_reference,
-                            'type': 'refund',
-                        })
+                        const operations = await eventService.getAllOperations(data.transaction_reference, 'refund')
+
+                        console.log("operations", operations)
 
                         if (!operations.length) result = data.amount < currentTransaction.currentState.amount;
                         else {
@@ -30,6 +29,8 @@ module.exports = function pspController(CredentialService) {
                             operations.forEach(operation => {
                                 totalRefund += operation.amount
                             })
+
+                            console.log("totalRefund", totalRefund)
 
                             result = totalRefund < currentTransaction.currentState.amount;
                         }
@@ -55,7 +56,7 @@ module.exports = function pspController(CredentialService) {
                 } catch (e) {
                     throw new Error(`Error From PSP : ${e}`)
                 }
-            }, 1000);
+            }, 30000);
         },
 
 

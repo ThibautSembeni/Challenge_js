@@ -10,9 +10,6 @@ module.exports = function OperationController(OperationService, options = {}) {
         resultFromPsp: async (req, res, next) => {
             try {
                 const { result, operation_id } = req.body
-
-                //const status = result === true ? 'captured' : 'failed'
-
                 let status = 'failed'
 
                 const currentOperation = await eventPayementService.getOperation(operation_id)
@@ -23,10 +20,7 @@ module.exports = function OperationController(OperationService, options = {}) {
                 } else if (currentTransaction.currentState.status === 'created' && result === false) {
                     status = 'failed'
                 } else if (currentTransaction.currentState.status === 'captured' && result === true) {
-                    const operations = await eventPayementService.getAllOperations({
-                        'transaction_reference' : currentTransaction.currentState.transaction_reference,
-                        'type' : 'refund',
-                    })
+                    const operations = await eventPayementService.getAllOperations(currentTransaction.currentState.transaction_reference, 'refund')
 
                     if (!operations.length) {
                         if (currentOperation.amount < currentTransaction.currentState.amount) status = 'partially_refunded'

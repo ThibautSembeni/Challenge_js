@@ -11,7 +11,7 @@ function handleSubmit() {
 
 <template>
   <div
-    class="bg-gray-500 bg-opacity-50 fixed top-0 left-0 w-full h-full flex items-center justify-center"
+    class="bg-gray-500 bg-opacity-50 fixed z-50 top-0 left-0 w-full h-full flex items-center justify-center"
   >
     <div class="bg-white rounded-lg p-8 w-96">
       <h2 class="text-2xl font-bold mb-4">Remboursement</h2>

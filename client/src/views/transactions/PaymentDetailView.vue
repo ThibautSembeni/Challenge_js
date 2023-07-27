@@ -27,6 +27,7 @@ function openRefundModal() {
 async function closeModal(amount) {
   await createOperation(payment.reference, amount)
   isRefundModalOpen.value = false
+  await getTransactionByReference()
 }
 
 onMounted(async () => {
