@@ -1,7 +1,7 @@
 import httpClient from '@/services/httpClient'
 
 export async function getProducts() {
-    const response = await httpClient.get(`http://localhost:3000/products`)
+    const response = await httpClient.get(`/products`)
     if (response.status === 200) {
         return response.data;
     } else {
