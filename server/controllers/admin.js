@@ -1,4 +1,5 @@
-const { Credential, Impersonation } = require("../db/models/postgres");
+const { Credential } = require("../db/models/postgres");
+const ImpersonationService = require("../services/impersonation");
 const EmailSender = require("../services/emailSender");
 
 module.exports = function adminController(UserService) {
@@ -79,8 +80,9 @@ module.exports = function adminController(UserService) {
             try {
                 const adminId = req.user.id;
                 const merchantId = req.body.merchantId;
+                const impersonationService = new ImpersonationService()
 
-                await Impersonation.create({ adminId, merchantId });
+                await impersonationService.create({ adminId, merchantId });
 
                 res.status(200).json({ message: 'Usurpation start.' });
             } catch (error) {
@@ -91,22 +93,35 @@ module.exports = function adminController(UserService) {
 
         isImpersonating: async (req, res, next) => {
             try {
-                const adminId = req.user.id;
-                const impersonation = await Impersonation.findOne({ where: { adminId } });
+                const impersonationService = new ImpersonationService()
+                // const adminId = req.user.role !== 'admin' && req.userId !== req.user.id ? req.userId : req.user.id;
+                let adminId;
+                switch (req.user.role) {
+                    case 'admin':
+                        adminId = req.user.id;
+                        break;
+                    case 'merchant':
+                        adminId = req.user.id;
+                        break;
+                    default:
+                        adminId = req.user.id;
+                        break;
+                }
+                console.log(adminId, req.user, req.userId)
+                const impersonation = await impersonationService.findOne({ adminId });
                 res.status(200).json({ status: !!impersonation });
             } catch (error) {
+                console.error(error);
                 res.status(500).json({ error: "Internal server error" });
             }
         },
 
-
         stopImpersonating: async (req, res, next) => {
             try {
-                const adminId = req.user.id;
-
-                await Impersonation.destroy({ where: { adminId } });
-
-                res.status(200).json({ message: 'Usurpation stop.' });
+                const impersonationService = new ImpersonationService()
+                const nbDeleted = await impersonationService.delete({ adminId: parseInt(req.userId, 10) });
+                if (nbDeleted) res.sendStatus(204);
+                else res.sendStatus(404);
             } catch (error) {
                 console.error(error);
                 res.status(500).json({ error: "Internal server error" });

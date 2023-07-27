@@ -1,4 +1,4 @@
-const {generateVerificationToken} = require("../../utils/user");
+const { generateVerificationToken } = require("../../utils/user");
 const request = require("supertest");
 const app = require("../../server");
 const postgres = require("../../db/models/postgres");
@@ -9,7 +9,7 @@ const EmailSender = require("../../services/emailSender");
 describe('Test register verify account', () => {
     EmailSender.mailjet = {
         post: jest.fn().mockReturnThis(),
-        request: jest.fn().mockResolvedValue({response: {request: {socket: {destroy: jest.fn()}}}})
+        request: jest.fn().mockResolvedValue({ response: { request: { socket: { destroy: jest.fn() } } } })
     };
 
     const registerUrl = `/register`
@@ -25,9 +25,10 @@ describe('Test register verify account', () => {
         const registerResponse = await request(app).post(registerUrl).send(registrationData);
 
         const jwtToken = await generateVerificationToken(registerResponse.body);
-        const verificationResponse = await request(app).get(`${verificationUrl}/${jwtToken}`);
+        const encodedToken = Buffer.from(jwtToken).toString('base64url');
+        const verificationResponse = await request(app).get(`${verificationUrl}/${encodedToken}`);
 
-        expect(verificationResponse.status).toBe(302);
+        expect(verificationResponse.status).toBe(200);
     });
 
     test('Verify status user before verification process', async () => {
@@ -40,10 +41,10 @@ describe('Test register verify account', () => {
         const registerResponse = await request(app).post(registerUrl).send(registrationData);
 
         const jwtToken = await generateVerificationToken(registerResponse.body);
+        const encodedToken = Buffer.from(jwtToken).toString('base64url');
+        const verificationResponse = await request(app).get(`${verificationUrl}/${encodedToken}`);
 
-        const verificationResponse = await request(app).get(`${verificationUrl}/${jwtToken}`);
-
-        expect(verificationResponse.status).toBe(302);
+        expect(verificationResponse.status).toBe(200);
     });
 
     afterAll(async () => {

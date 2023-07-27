@@ -1,5 +1,5 @@
 <script setup>
-import {defineEmits, reactive, toRefs, watch} from 'vue';
+import {reactive, toRefs, watch} from 'vue';
 import TextInput from '@/components/form/TextInput.vue';
 
 const props = defineProps({

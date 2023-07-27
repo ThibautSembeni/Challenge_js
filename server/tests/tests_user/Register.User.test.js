@@ -8,11 +8,11 @@ const EmailSender = require("../../services/emailSender");
 describe('Test register', () => {
     EmailSender.mailjet = {
         post: jest.fn().mockReturnThis(),
-        request: jest.fn().mockResolvedValue({response: {request: {socket: {destroy: jest.fn()}}}})
+        request: jest.fn().mockResolvedValue({ response: { request: { socket: { destroy: jest.fn() } } } })
     };
 
     const target = '/register';
-    
+
     test('Register User', async () => {
         const registrationData = {
             firstname: 'John',
@@ -51,7 +51,7 @@ describe('Test register', () => {
 
 
         expect(response.status).toBe(201);
-        expect(response.body.role).toBe('customer');
+        expect(response.body.role).toBe('merchant');
     });
 
     test('Register User with merchant role', async () => {
@@ -111,24 +111,6 @@ describe('Test register', () => {
         expect(response.body).toBeDefined();
         expect(response.body.password).toContain("Validation len on password failed");
         expect(response.body.firstname).toContain("Le prénom doit contenir entre 2 et 50 caractères");
-    });
-
-    test('Request to check if you are authorized to make requests', async () => {
-        const response = await request(app).get("/check");
-
-        const login = await request(app).post("/login").send({
-            email: 'test@test.com',
-            password: 'password'
-        });
-
-        const token = login.body.token;
-
-        const authorizedRequest = await request(app).get("/check").set('Authorization', `Bearer ${token}`);
-
-        expect(response.status).toBe(401);
-        expect(login.status).toBe(200);
-        expect(login.body.token).toBeDefined();
-        expect(authorizedRequest.status).toBe(200);
     });
 
     afterAll(async () => {

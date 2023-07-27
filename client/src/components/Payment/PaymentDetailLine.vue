@@ -12,7 +12,7 @@ defineProps({
     required: true
   },
   content: {
-    type: String,
+    type: [String, Number],
     required: true
   }
 })

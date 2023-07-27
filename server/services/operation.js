@@ -5,6 +5,21 @@ const UnauthorizedError = require("../errors/UnauthorizedError");
 
 module.exports = function OperationService() {
   return {
+    findAll: async function (filters, options = {}) {
+      let dbOptions = {
+        where: filters,
+      };
+
+      // Check if options.order exists before trying to access it
+      if (options.order) {
+        dbOptions.order = Object.entries(options.order);
+      }
+      if (options.limit) {
+        dbOptions.limit = options.limit;
+        dbOptions.offset = options.offset;
+      }
+      return Operation.findAll(dbOptions);
+    },
     findOne: async function (filters) {
       return Operation.findOne({ where: filters });
     },
@@ -26,8 +41,7 @@ module.exports = function OperationService() {
     },
     create: async (data) => {
       try {
-        const operation = await Operation.create(data);
-        return operation;
+        return await Operation.create(data);
       } catch (e) {
         if (e instanceof Sequelize.ValidationError) {
           throw ValidationError.fromSequelizeValidationError(e);

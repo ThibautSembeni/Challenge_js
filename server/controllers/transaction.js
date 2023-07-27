@@ -1,5 +1,8 @@
+const EmailSender = require("../services/emailSender");
+const userService = require("../services/user")
+const UserService = new userService()
 module.exports = function transactionController(TransactionService, options = {}) {
-    const { notifyUser, notify } = require("../utils/notify.sse");
+    const {notifyUser, notify} = require("../utils/notify.sse");
     const db = require('../db/models/mongo')
     const eventsSent = [];
     const subscribers = {};
@@ -10,9 +13,9 @@ module.exports = function transactionController(TransactionService, options = {}
         const amountByDay = await getTransactionsVolumeByDays();
         const numberByDays = await getTransactionsNumberByDays();
         const numberByYear = await getTransactionsNumberByYear();
-        notify({ id: Math.random(), name: "amountByDay", data: amountByDay }, false, mongoSubscribers, eventsSent);
-        notify({ id: Math.random(), name: "numberByDays", data: numberByDays }, false, mongoSubscribers, eventsSent);
-        notify({ id: Math.random(), name: "numberByYear", data: numberByYear }, false, mongoSubscribers, eventsSent);
+        notify({id: Math.random(), name: "amountByDay", data: amountByDay}, false, mongoSubscribers, eventsSent);
+        notify({id: Math.random(), name: "numberByDays", data: numberByDays}, false, mongoSubscribers, eventsSent);
+        notify({id: Math.random(), name: "numberByYear", data: numberByYear}, false, mongoSubscribers, eventsSent);
     });
 
     async function getTransactionsVolumeByDays(req = null) {
@@ -23,7 +26,7 @@ module.exports = function transactionController(TransactionService, options = {}
 
         const data = {};
         if (req !== null && req.query.hasOwnProperty("date")) {
-            const { date } = req.query;
+            const {date} = req.query;
             const dateParts = date.split("-");
             data.start_date = new Date(dateParts[0], dateParts[1] - 1, dateParts[2]);
             data.end_date = new Date(dateParts[0], dateParts[1] - 1, dateParts[2], 23, 59, 59, 999);
@@ -34,6 +37,7 @@ module.exports = function transactionController(TransactionService, options = {}
 
         return await TransactionService.getTransactionsVolumeByDays(data);
     }
+
     async function getTransactionsNumberByDays(req = null) {
         let data = {};
         if (req === null) {
@@ -47,6 +51,7 @@ module.exports = function transactionController(TransactionService, options = {}
         }
         return await TransactionService.getTransactionsNumberByDays(data);
     }
+
     async function getTransactionsNumberByYear(req = null) {
         let year = new Date().getFullYear()
         if (req !== null) {
@@ -58,27 +63,46 @@ module.exports = function transactionController(TransactionService, options = {}
     let result = {
         getOne: async function (req, res, next) {
             try {
-                const reference = req.params.reference
-                const transaction = await TransactionService.findOne({ merchant_id: req.user.id, reference: reference })
-                if (transaction) {
-                    res.json(transaction)
+                const reference = req.params.reference;
+                const transactions = await TransactionService.findAll(
+                    { merchant_id: req.user.id, reference: reference },
+                    { order: { createdAt: 'DESC' }}
+                );
+
+                if (transactions && transactions.length > 0) {
+                    const transaction = transactions[0];
+                    res.json(transaction);
                 } else {
-                    res.status(404).json({ error: "Transaction not found" })
+                    res.status(404).json({ error: "Transaction not found" });
                 }
             } catch (e) {
-                next(e)
+                next(e);
             }
         },
         getAll: async function (req, res, next) {
             try {
-                const transactions = await TransactionService.findAll({ merchant_id: req.user.id })
-                if (transactions) {
-                    res.json(transactions)
+                const transactions = await TransactionService.findAll(
+                    { merchant_id: req.user.id },
+                    { order: { reference: 'ASC', createdAt: 'DESC' }}
+                );
+
+                if (transactions && transactions.length > 0) {
+                    let lastTransactions = [];
+                    let lastReference = null;
+
+                    for (let transaction of transactions) {
+                        if (transaction.reference !== lastReference) {
+                            lastTransactions.push(transaction);
+                            lastReference = transaction.reference;
+                        }
+                    }
+
+                    res.json(lastTransactions);
                 } else {
-                    res.status(404).json({ error: "Transaction not found" })
+                    res.status(404).json({ error: "No transactions found" });
                 }
             } catch (e) {
-                next(e)
+                next(e);
             }
         },
         getTransactionsByUserId: async (req, res, next) => {
@@ -88,15 +112,15 @@ module.exports = function transactionController(TransactionService, options = {}
                 if (results) {
                     res.json(results)
                 } else {
-                    res.status(404).json({ error: "Transaction not found" })
+                    res.status(404).json({error: "Transaction not found"})
                 }
             } catch (e) {
                 next(e)
             }
         },
         subscribe: async (req, res, next) => {
-            const username = req.query.username;
-            subscribers[username] = res;
+            const { id } = req.query;
+            subscribers[id] = res;
             const headers = {
                 'Content-Type': 'text/event-stream',
                 'Connection': 'keep-alive',
@@ -116,8 +140,23 @@ module.exports = function transactionController(TransactionService, options = {}
                 transaction.merchant_id = req.user.id;
                 const results = await TransactionService.create(transaction);
                 messages.push(results);
-                notify({ id: results.id, name: "transaction", data: results }, false, subscribers, eventsSent);
+                notify({id: results.id, name: "transaction", data: results}, false, subscribers, eventsSent);
+                // const userId = results.user_id
+                // const user = await UserService.findOne({id: userId})
+                // const operationLink = `${process.env.FRONT_URL}/payment/capture/${results.reference}`
+                // await EmailSender.sendEmailForPendingOperation(user, operationLink)
                 res.status(201).json(results);
+            } catch (error) {
+                console.error(error);
+                next(error);
+            }
+        },
+        cancelTransaction: async (req, res, next) => {
+            try {
+                const {reference} = req.params;
+                const status = "canceled"
+                const transaction = await TransactionService.update({reference}, {status});
+                res.json(transaction);
             } catch (error) {
                 console.error(error);
                 next(error);
@@ -155,6 +194,16 @@ module.exports = function transactionController(TransactionService, options = {}
             try {
                 const results = await getTransactionsNumberByYear(req);
                 res.json(results);
+            } catch (error) {
+                console.error(error);
+                next(error);
+            }
+        },
+        getTransactionTimeline: async (req, res, next) => {
+            try {
+                const reference = req.params.reference;
+                const transactionTimeline = await TransactionService.getTransactionTimeline(reference);
+                res.json(transactionTimeline);
             } catch (error) {
                 console.error(error);
                 next(error);

@@ -25,5 +25,11 @@ export async function declineMerchant(id) {
     } else {
         throw new Error(`Error: ${response.status} - Une erreur s'est produite lors de l'approbation du marchand`);
     }
+}
 
+export async function updateDemandMerchantService(payload) {
+    console.log("updateDemandMerchantService",payload)
+    const response = await httpClient.post(`/merchant/demand/update`, payload);
+    console.log("resp", response.data)
+    return response.data
 }

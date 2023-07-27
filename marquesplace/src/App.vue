@@ -1,36 +1,36 @@
 <script setup>
-import HelloWorld from "./components/HelloWorld.vue";
-import TheWelcome from "./components/TheWelcome.vue";
+import { RouterView } from 'vue-router'
+import {computed, onMounted} from 'vue'
+import store from '@/stores/store'
+import Spinner from '@/components/Spinner.vue'
+import {initFlowbite} from "flowbite";
 
-fetch(`${import.meta.env.VITE_API_URL}/`)
-  .then((res) => res.json())
-  .then((data) => console.log(data))
-  .catch((err) => console.log(err));
+
+const isLoading = computed(() => store.state.isLoading)
 </script>
 
 <template>
-  <header>
-    <img
-      alt="Vue logo"
-      class="logo"
-      src="./assets/logo.svg"
-      width="125"
-      height="125"
-    />
+  <!--  <header>
+  <img alt="Vue logo" class="logo" src="@/assets/logo.svg" width="125" height="125" />
 
-    <div class="wrapper">
-      <HelloWorld msg="Welcome to Marques Place!" />
-    </div>
-  </header>
+  <div class="wrapper">
+    <HelloWorld msg="You did it!" />
 
-  <main>
-    <TheWelcome />
-  </main>
+    <nav>
+      <RouterLink to="/">Home</RouterLink>
+      <RouterLink to="/about">About</RouterLink>
+    </nav>
+  </div>
+</header>-->
+  <Spinner v-if="isLoading" />
+
+  <RouterView />
 </template>
 
-<style scoped>
+<!--<style scoped>
 header {
   line-height: 1.5;
+  max-height: 100vh;
 }
 
 .logo {
@@ -38,11 +38,36 @@ header {
   margin: 0 auto 2rem;
 }
 
+nav {
+  width: 100%;
+  font-size: 12px;
+  text-align: center;
+  margin-top: 2rem;
+}
+
+nav a.router-link-exact-active {
+  color: var(&#45;&#45;color-text);
+}
+
+nav a.router-link-exact-active:hover {
+  background-color: transparent;
+}
+
+nav a {
+  display: inline-block;
+  padding: 0 1rem;
+  border-left: 1px solid var(&#45;&#45;color-border);
+}
+
+nav a:first-of-type {
+  border: 0;
+}
+
 @media (min-width: 1024px) {
   header {
     display: flex;
     place-items: center;
-    padding-right: calc(var(--section-gap) / 2);
+    padding-right: calc(var(&#45;&#45;section-gap) / 2);
   }
 
   .logo {
@@ -54,5 +79,14 @@ header {
     place-items: flex-start;
     flex-wrap: wrap;
   }
+
+  nav {
+    text-align: left;
+    margin-left: -1rem;
+    font-size: 1rem;
+
+    padding: 1rem 0;
+    margin-top: 1rem;
+  }
 }
-</style>
+</style>-->

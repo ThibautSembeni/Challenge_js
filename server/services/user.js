@@ -3,8 +3,6 @@ const Sequelize = require("sequelize");
 const ValidationError = require("../errors/ValidationError");
 const UnauthorizedError = require("../errors/UnauthorizedError");
 const UniqueConstraintError = require("../errors/UniqueConstraintError");
-const { generateVerificationToken } = require("../utils/user");
-const UserMongoService = require('./mongo/user')
 const { Transaction } = require("../db/models/postgres");
 
 
@@ -14,9 +12,7 @@ module.exports = function UserService() {
             let dbOptions = {
                 where: filters,
             };
-            // options.order = {name: "ASC", dob: "DESC"}
             if (options.order) {
-                // => [["name", "ASC"], ["dob", "DESC"]]
                 dbOptions.order = Object.entries(options.order);
             }
             if (options.limit) {
@@ -111,25 +107,12 @@ module.exports = function UserService() {
                 group: ['User.id']
             });
         },
-        getMerchantById: async function (merchantId) {
-            const merchant = await User.findOne({
-                where: {
-                    id: merchantId,
-                    role: 'merchant'
-                }
-            });
-
-            if (!merchant) {
-                throw new Error(`Merchant with id ${merchantId} not found`);
-            }
-
-            return merchant;
-        },
         getOrigins: async () => {
             try {
                 const origins = await User.findAll({ where: { role: "merchant" } });
                 return origins.map((origin) => origin.merchant_url);
             } catch (error) {
+                console.error(error);
                 throw new Error('Erreur lors du comptage des utilisateurs en attente.');
             }
         }

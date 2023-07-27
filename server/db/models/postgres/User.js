@@ -5,8 +5,6 @@ module.exports = (connection) => {
     class User extends Model {
         static associate(models) {
             User.hasMany(models.Credential, { foreignKey: 'user_id', as: 'credentials' });
-            User.hasMany(models.Transaction, { foreignKey: 'user_id', as: 'userTransactions' }); // changed 'transactions' to 'userTransactions'
-            User.hasMany(models.Cart, { foreignKey: 'user_id', as: 'carts' });
             User.hasMany(models.ResetPassword, { foreignKey: 'user_id', as: 'reset_password' });
             User.hasMany(models.Transaction, { foreignKey: 'merchant_id', as: 'merchantTransactions' }); // changed user_id to merchant_id and 'transactions' to 'merchantTransactions'
         }
@@ -57,6 +55,10 @@ module.exports = (connection) => {
                     msg: "Le nom de la société doit contenir entre 2 et 50 caractères"
                 },
             }
+        },
+        isActive: {
+            type: DataTypes.BOOLEAN,
+            defaultValue: false,
         },
         phone_number: {
             type: DataTypes.STRING,
@@ -127,20 +129,20 @@ module.exports = (connection) => {
         },
         role: {
             type: DataTypes.ENUM,
-            values: ['admin', 'merchant', 'customer'],
-            defaultValue: 'customer',
+            values: ['admin', 'merchant'],
+            defaultValue: 'merchant',
             allowNull: false,
             validate: {
                 isIn: {
-                    args: [['admin', 'merchant', 'customer']],
+                    args: [['admin', 'merchant']],
                     msg: "Le rôle doit être admin, merchant ou customer"
                 }
             }
         },
         status: {
             type: DataTypes.ENUM,
-            values: ['pending', 'approved', 'declined'],
-            defaultValue: 'pending',
+            values: ['created', 'pending', 'approved', 'declined'],
+            defaultValue: 'created',
             allowNull: false,
         },
     }, { sequelize: connection, tableName: 'users' });

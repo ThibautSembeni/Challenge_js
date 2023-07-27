@@ -3,8 +3,6 @@ const genericController = require("../controllers/generic");
 const UserService = require("../services/user");
 const userController = require("../controllers/admin");
 const checkAuth = require("../middlewares/check-auth");
-const checkMerchant = require("../middlewares/check-merchant");
-const checkAdmin = require("../middlewares/check-admin-role");
 
 module.exports = new genericRouter(
     new genericController(
@@ -14,12 +12,11 @@ module.exports = new genericRouter(
         }
     ),
     {
-        // `customRoutes` is optional is for add others custom routes
         customRoutes: [
-            { method: 'get', path: '/user/customers', middleware: [checkAuth, checkMerchant], handler: 'getUsersByMerchantId'},
-            { method: 'get', path: '/admin/impersonate', middleware: [checkAuth, checkAdmin], handler: 'isImpersonating'},
-            { method: 'post', path: '/admin/impersonate', middleware: [checkAuth, checkAdmin], handler: 'impersonate'},
-            { method: 'get', path: '/admin/stopImpersonating', middleware: [checkAdmin], handler: 'stopImpersonating'},
+            { method: 'get', path: '/user/customers', middleware: [checkAuth,], handler: 'getUsersByMerchantId' },
+            { method: 'get', path: '/admin/impersonate', middleware: [checkAuth,], handler: 'isImpersonating' },
+            { method: 'post', path: '/admin/impersonate', middleware: [checkAuth,], handler: 'impersonate' },
+            { method: 'delete', path: '/admin/stopImpersonating', middleware: [checkAuth], handler: 'stopImpersonating' },
         ],
 
         defaultRoutes: {
@@ -30,7 +27,6 @@ module.exports = new genericRouter(
             update: { method: 'patch', path: '/:id', middleware: [], active: true },
             delete: { method: 'delete', path: '/:id', middleware: [], active: true },
         },
-        // `middlewares` is for set a middleware on all routes over
         middlewares: []
     }
 );

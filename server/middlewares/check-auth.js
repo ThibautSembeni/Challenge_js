@@ -1,18 +1,37 @@
+const credentialsStrategy = require("./credentialsStrategy");
 const UnauthorizedError = require("../errors/UnauthorizedError");
-const { getUserFromJWTToken } = require("../utils/user");
+const cookieStrategy = require("./cookieStrategy");
+const { checkCredentialsValidity, checkTokenValidity } = require("../utils/authUtils");
 
-module.exports = (req, res, next) => {
-    if (!req.headers.authorization) {
-        return next(new UnauthorizedError());
-    }
-    const [type, token] = req.headers.authorization.split(" ");
-    if (type !== "Bearer") {
-        return next(new UnauthorizedError());
-    }
-    try {
-        req.user = getUserFromJWTToken(token);
-    } catch (err) {
-        return next(new UnauthorizedError());
-    }
-    next();
+const authenticationVisitor = (req, res, next) => {
+    credentialsStrategy(req, res, () => {
+        if (req.authMethod === "credentials") {
+            return checkCredentialsValidity(req, res, next);
+        }
+
+        cookieStrategy(req, res, () => {
+            if (req.authMethod === "cookie") {
+                return checkTokenValidity(req, res, next);
+            }
+
+            return next(new UnauthorizedError());
+        });
+    });
 };
+
+function checkAuth(handlers) {
+
+    return (req, res, next) => {
+        try {
+            for (let handler of handlers) {
+                if (handler.supports(req)) {
+                    return handler.handle(req, res, next)
+                }
+            }
+            throw new UnauthorizedError();
+        } catch (error) {
+        }
+    }
+}
+
+module.exports = authenticationVisitor;

@@ -4,10 +4,14 @@ import NavBar from '@/components/NavBar.vue'
 import DashboardKPIS from '@/components/KPI/DashboardKpis.vue'
 import { getCurrentUser } from '@/services/auth'
 import router from '@/router'
-const user = getCurrentUser()
-if (user?.role === 'merchant') {
-  router.push({ path: '/merchant', replace: true })
-}
+import { onMounted, ref } from 'vue'
+const user = ref({})
+onMounted(() => {
+  user.value = getCurrentUser()
+  if (user.value?.role === 'merchant') {
+    router.push({ path: '/merchant', replace: true })
+  }
+})
 </script>
 
 <template>
