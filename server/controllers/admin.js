@@ -94,7 +94,19 @@ module.exports = function adminController(UserService) {
         isImpersonating: async (req, res, next) => {
             try {
                 const impersonationService = new ImpersonationService()
-                const adminId = req.user.role !== 'admin' && req.userId !== req.user.id ? req.userId : req.user.id;
+                // const adminId = req.user.role !== 'admin' && req.userId !== req.user.id ? req.userId : req.user.id;
+                let adminId;
+                switch (req.user.role) {
+                    case 'admin':
+                        adminId = req.user.id;
+                        break;
+                    case 'merchant':
+                        adminId = req.user.id;
+                        break;
+                    default:
+                        adminId = req.user.id;
+                        break;
+                }
                 console.log(adminId, req.user, req.userId)
                 const impersonation = await impersonationService.findOne({ adminId });
                 res.status(200).json({ status: !!impersonation });

@@ -8,8 +8,9 @@ const httpClient = axios.create({
         'X-Public-Key': import.meta.env.VITE_KAMALPAY_PK,
         'X-Secret-Key': import.meta.env.VITE_KAMALPAY_SK
     }
-
 });
+
+console.log(import.meta.env.VITE_KAMALPAY_PK)
 
 httpClient.interceptors.request.use(
     (config) => {

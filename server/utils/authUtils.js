@@ -25,7 +25,7 @@ const checkTokenValidity = async (req, res, next) => {
     const token = req.token;
     try {
         const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
-
+    console.log(decodedToken)
         if (decodedToken.role === "admin") {
             const isImpersonna = await isImpersonnation(decodedToken.id);
             if (isImpersonna) {
@@ -46,7 +46,7 @@ const checkTokenValidity = async (req, res, next) => {
                 return next();
             }
         } else if (decodedToken.role === "merchant") {
-            const currentUser = await getMerchantData(decodedToken);
+            const currentUser = await getMerchantData(decodedToken.id);
             if (!currentUser) {
                 throw new Error(`cannot find merchant data`);
             }
