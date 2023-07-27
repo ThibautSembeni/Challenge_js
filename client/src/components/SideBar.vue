@@ -64,7 +64,12 @@ const adminRoutes = [
     name: 'Dashboard',
     to: 'home',
     icon: 'fa-solid fa-house'
-  }
+  },
+  {
+    name: 'Paiements',
+    to: 'payments',
+    icon: 'fa-solid fa-dollar-sign'
+  },
 ]
 
 const mergedPages = ref([...defaultValue])

@@ -21,7 +21,7 @@ app.use(
 app.use(checkFormat);
 
 app.use(express.json());
-
+console.log(process.env)
 app.use(StrapeSDK.bind(app)({ client_token: process.env.KAMALPAY_PK, client_secret: process.env.KAMALPAY_SK }))
 
 app.use("/", SecurityRouter);
@@ -37,7 +37,8 @@ app.get('/transactions', async (req, res, next) => {
 
 app.post('/transactions', async (req, res, next) => {
   const [statusCode, data] = await app.createTransaction(req.body)
-  res.status(statusCode).json(data)
+  console.error(data)
+  res.sendStatus(statusCode)
 })
 
 app.use("/cart", checkAuth, CartRouter);
