@@ -14,19 +14,40 @@ export default {
       currentYear: new Date().getFullYear(),
       SK: this.$creditCardForm.SK,
       PK: this.$creditCardForm.PK,
-      ref: this.reference
+      ref: this.reference,
+      isValidPayload: false
     }
   },
   methods: {
     valitedateForm() {
-      return true
+      const { cardNumber, cardHolder, cardMonth, cardYear, cardCvv } = this.cardData
+      const validCardYer = Number(cardYear) > 0
+      const validCardMonth = Number(cardMonth) > 0
+      const validCardHolder = cardHolder.length > 0 && cardHolder.length < 50
+      const validCardNumber = cardNumber.length === 16
+      const validCardCvv = cardCvv?.length === 3
+      this.isValidPayload =
+        validCardYer && validCardMonth && validCardHolder && validCardNumber && validCardCvv
+      return this.isValidPayload
     },
     flipCard(shouldFlip) {
       return this.$creditCardForm.flipCard(shouldFlip)
     },
+    cancelPayment() {
+      console.log('cancel')
+    },
+    updateCardData() {
+      this.cardData = {
+        cardNumber: this.cardNumberInput,
+        cardHolder: this.cardHolderInput,
+        cardMonth: this.cardMonthInput,
+        cardYear: this.cardYearInput,
+        cardCvv: this.cardCvvInput
+      }
+      this.valitedateForm()
+    },
     async submit() {
-      const isValidated = this.valitedateForm()
-      if (isValidated) {
+      if (this.isValidPayload) {
         const cardData = {
           cardNumberInput: this.cardNumberInput,
           cardHolderInput: this.cardHolderInput,
@@ -51,8 +72,33 @@ export default {
         }
         const data = await response.json()
         console.log(data)
-      } else {
-        console.log('non pas validé')
+      }
+    }
+  },
+  watch: {
+    cardNumberInput: {
+      handler() {
+        this.updateCardData()
+      }
+    },
+    cardHolderInput: {
+      handler() {
+        this.updateCardData()
+      }
+    },
+    cardMonthInput: {
+      handler() {
+        this.updateCardData()
+      }
+    },
+    cardYearInput: {
+      handler() {
+        this.updateCardData()
+      }
+    },
+    cardCvvInput: {
+      handler() {
+        this.updateCardData()
       }
     }
   }
@@ -114,7 +160,7 @@ export default {
 
                 <div class="card-item__content">
                   <label for="cardName" class="card-item__info">
-                    <div class="card-item__holder">Card Holder</div>
+                    <div class="card-item__holder">Détenteur de la carte</div>
                     <transition name="slide-fade-up">
                       <div class="card-item__name" v-if="cardHolderInput.length" :key="1">
                         <transition-group name="slide-fade-right">
@@ -130,7 +176,7 @@ export default {
                     </transition>
                   </label>
                   <div class="card-item__date" ref="cardDate">
-                    <label for="cardMonth" class="card-item__dateTitle">Expires</label>
+                    <label for="cardMonth" class="card-item__dateTitle">Expire fin</label>
                     <label for="cardMonth" class="card-item__dateItem">
                       <transition name="slide-fade-up">
                         <span v-if="cardMonthInput" :key="cardMonthInput">{{
@@ -182,7 +228,7 @@ export default {
         </div>
         <div class="card-form__inner">
           <div class="card-input">
-            <label for="cardNumber" class="card-input__label">Card Number</label>
+            <label for="cardNumber" class="card-input__label">Numéro de carte</label>
             <input
               type="text"
               id="cardNumber"
@@ -194,7 +240,7 @@ export default {
             />
           </div>
           <div class="card-input">
-            <label for="cardName" class="card-input__label">Card Holders</label>
+            <label for="cardName" class="card-input__label">Détenteur de la carte</label>
             <input
               type="text"
               id="cardName"
@@ -209,7 +255,7 @@ export default {
           <div class="card-form__row">
             <div class="card-form__col">
               <div class="card-form__group">
-                <label for="cardMonth" class="card-input__label">Expiration Date</label>
+                <label for="cardMonth" class="card-input__label">Expire fin</label>
                 <select
                   class="card-input__input -select"
                   id="cardMonth"
@@ -258,7 +304,15 @@ export default {
               </div>
             </div>
           </div>
-          <button class="card-form__button" @click="submit">Submit</button>
+          <button
+            class="card-form__button"
+            :class="{ 'pointer-events-none opacity-70': !isValidPayload }"
+            :disabled="!isValidPayload"
+            @click.prevent="submit"
+          >
+            Payer
+          </button>
+          <button class="card-form__button_cancel" @click.prevent="cancelPayment">Annuler</button>
         </div>
       </div>
     </div>
@@ -322,6 +376,20 @@ export default {
   width: 100%;
   height: 55px;
   background: #2364d2;
+  border: none;
+  border-radius: 5px;
+  font-size: 22px;
+  font-weight: 500;
+  font-family: 'Source Sans Pro', sans-serif;
+  box-shadow: 3px 10px 20px 0px rgba(35, 100, 210, 0.3);
+  color: #fff;
+  margin-top: 20px;
+  cursor: pointer;
+}
+.card-form__button_cancel {
+  width: 100%;
+  height: 55px;
+  background: #d22323;
   border: none;
   border-radius: 5px;
   font-size: 22px;
@@ -484,6 +552,7 @@ export default {
   opacity: 0.7;
   font-size: 13px;
   margin-bottom: 6px;
+  text-transform: uppercase;
 }
 
 .card-item__wrapper {
@@ -564,6 +633,7 @@ export default {
   font-size: 13px;
   padding-bottom: 6px;
   width: 100%;
+  text-transform: uppercase;
 }
 
 .card-item__band {
