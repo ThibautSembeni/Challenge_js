@@ -37,9 +37,9 @@
           id="user-dropdown"
         >
           <div class="px-4 py-3">
-            <span class="block text-sm text-gray-900 dark:text-white">{{currentUser.lastname}} {{currentUser.firstname}}</span>
+            <span class="block text-sm text-gray-900 dark:text-white">{{currentUser?.lastname}} {{currentUser?.firstname}}</span>
             <span class="block text-sm text-gray-500 truncate dark:text-gray-400"
-              >{{currentUser.email}}</span
+              >{{currentUser?.email}}</span
             >
           </div>
           <ul class="py-2" aria-labelledby="user-menu-button">
@@ -85,7 +85,7 @@
         </button>
       </div>
       <div
-        v-if="role === 'customer'"
+        v-if="currentUser?.role === 'customer'"
         class="items-center justify-between hidden w-full md:flex md:w-auto md:order-1"
         id="navbar-user"
       >
@@ -119,7 +119,7 @@ import { initFlowbite } from 'flowbite'
 import { isConnectedByImpersonation, stopImpersonatingUser } from '@/services/users'
 import { getCurrentUser } from "@/services/auth";
 
-const currentUser = ref({})
+const currentUser = getCurrentUser()
 const role = ref('')
 
 const impersonatedMerchant = ref(false)
@@ -135,11 +135,7 @@ const switchToAdminProfile = async () => {
 
 onMounted(async () => {
     initFlowbite()
-
-    currentUser.value = await getCurrentUser()
-    role.value = currentUser.value.role
-
-    if (currentUser.value.hasOwnProperty('role') && currentUser.value.role === 'admin') {
+    if (currentUser?.role === 'admin') {
         try {
             impersonatedMerchant.value = await isConnectedByImpersonation()
         } catch (error) {

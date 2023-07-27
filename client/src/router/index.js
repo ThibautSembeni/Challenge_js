@@ -21,6 +21,7 @@ import PaymentCreateView from '@/views/transactions/PaymentCreateView.vue'
 import ForgotPassword from '@/views/auth/ForgotPassword.vue'
 import ResetPassword from '@/views/auth/ResetPassword.vue'
 import VerifyAccount from "@/views/auth/VerifyAccount.vue";
+import PendingVerificationView from "@/views/errors/PendingVerificationView.vue";
 
 const authRoutes = [
   {
@@ -164,6 +165,11 @@ const errorRoutes = [
     path: '/404',
     name: '404',
     component: ForbiddenView
+  },
+  {
+    path: '/pending-verification',
+    name: 'PendingVerification',
+    component: PendingVerificationView
   },
   {
     path: '/:catchAll(.*)',
