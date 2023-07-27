@@ -4,13 +4,14 @@ import NavBar from '@/components/NavBar.vue'
 import moment from 'moment'
 import FormatEuro from '@/components/Payment/FormatEuro.vue'
 import Table from '@/components/Table.vue'
-
-onMounted(async () => {
-    data.orders = await getOrders()
-})
+import { getOrders } from "@/services/order";
 
 const data = reactive({
     orders: {}
+})
+
+onMounted(async () => {
+    data.orders = await getOrders()
 })
 
 </script>
@@ -45,14 +46,6 @@ const data = reactive({
                             <td class="px-6 py-4">
                                 {{ moment(order.createdAt).format('LLLL') }}
                             </td>
-                        </tr>
-                        <tr class="bg-white border-b" v-if="data.orders.length">
-                            <th colspan="3"
-                                scope="row"
-                                class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap text-center"
-                            >
-                                Aucune commande
-                            </th>
                         </tr>
                     </template>
                 </Table>
