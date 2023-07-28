@@ -1,7 +1,7 @@
 <script setup>
 import {reactive, ref, watch} from "vue";
 import Input from "@/components/form/Input.vue";
-import router from "@/router";
+import {createDangerToast} from "@/utils/toasts";
 
 const isDisabled = ref(true)
 const editMode = ref(false)
@@ -51,13 +51,18 @@ const switchMode = () => {
 }
 
 watch(merchantValues, () => {
-  isValidPayload.value = merchantValues.kbis.length !== 0 && merchantValues.phone_number.length !== 0 && merchantValues.company.length !== 0
+  isValidPayload.value = merchantValues.kbis.length !== 0 && merchantValues.phone_number.length !== 0 && merchantValues.company.length !== 0 && merchantValues.confirmation_url.length !== 0 && merchantValues.cancellation_url.length !== 0 && merchantValues.merchant_url.length !== 0
 })
 
 const validDemand = async () => {
-  emit('finishEvent', merchantValues)
-  Object.assign(merchantValues, defaultValueMerchant)
-  switchMode()
+  if (!isValidPayload.value) {
+    createDangerToast('Tous les champs sont required, merci de les remplir')
+    return
+  } else {
+    emit('finishEvent', merchantValues)
+    Object.assign(merchantValues, defaultValueMerchant)
+    switchMode()
+  }
 }
 
 </script>
@@ -77,7 +82,6 @@ const validDemand = async () => {
         class="ml-4 px-3 py-2 text-xs font-medium inline-flex rounded-lg hover:bg-green-800 text-white bg-green-700 text-gray-400 bg-gray-300"
         :class="isValidPayload === false ? 'cursor-not-allowed' : ''"
         @click="validDemand"
-        :disabled="!isValidPayload"
     >
       Valider demande
     </button>

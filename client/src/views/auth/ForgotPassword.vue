@@ -5,6 +5,7 @@ import GenericButton from '@/components/GenericButton.vue'
 import Input from '@/components/form/Input.vue'
 import Form from '@/components/form/Form.vue'
 import {fetchUser, forgotPassword, login} from '@/services/auth'
+import {createSuccessToast} from "@/utils/toasts";
 
 const defaultValue = {
   email: ''
@@ -16,8 +17,8 @@ const infosMsg = ref('')
 
 async function submitForm(payload) {
   if (requestError.value) requestError.value = ''
-    const res = await forgotPassword(payload)
-    infosMsg.value = 'Vous allez recevoir votre mail de renitialisation '
+  await forgotPassword(payload)
+  createSuccessToast('Vous allez recevoir votre mail de renitialisation')
 }
 
 const validateEmail = (email) => {
@@ -29,7 +30,7 @@ const validateEmail = (email) => {
 </script>
 <template>
   <div id="container-login-form" class="flex justify-center content-center items-center">
-    <Form :formData="formData" :onSubmit="submitForm" :errorMsg="requestError"         :infosMsg="infosMsg"
+    <Form :formData="formData" :onSubmit="submitForm" :errorMsg="requestError" :infosMsg="infosMsg"
     >
       <template #title><h2 class="text-3xl font-extrabold mb-6">Demander votre password</h2></template>
       <template #inputs>
