@@ -32,10 +32,12 @@ export async function getUserById(id) {
 export async function updateUser(id, user) {
     const response = await httpClient.patch(`/users/${id}`, user)
     if (response.status === 200) {
-        await fetchUser()
         return response.data;
     } else {
-        throw new Error(`Error: ${response.status} - Une erreur s'est produite lors de l'approbation du marchand`);
+        const errorData = response.data
+        const errorArray = Object.keys(errorData).map(field => `${field}: ${errorData[field][0]}`);
+        const errorString = errorArray.join(' ; ');
+        throw new Error(`Error: ${response.status} - ${errorString}`);
     }
 }
 

@@ -2,7 +2,7 @@
 import SideBar from '@/components/SideBar.vue'
 import NavBar from '@/components/NavBar.vue'
 import TabPanel from '@/components/TabPanel.vue'
-import {changePassword, getCurrentUser} from '@/services/auth'
+import {changePassword, fetchUser, getCurrentUser} from '@/services/auth'
 import {reactive, ref} from 'vue'
 import Input from '@/components/form/Input.vue'
 import EditPasswordSection from '@/components/EditPasswordSection.vue'
@@ -10,7 +10,7 @@ import {updateUser} from '@/services/users'
 import {getCurrentCredentials, regenerateCredentials} from '@/services/credentials'
 import CopyToClipboard from '@/components/CopyToClipboard.vue'
 import store from '@/stores/store'
-import FinishDemand from "@/components/profile/FinishDemand.vue";
+import {createDangerToast} from "@/utils/toasts";
 import router from "@/router";
 
 const currentUser = getCurrentUser()
@@ -57,19 +57,21 @@ const validatePhone = (value) => {
   return {isValid, message}
 }
 
+
 const validEdit = async () => {
-  isDisabled.value = !isDisabled.value
-  editMode.value = !editMode.value
+
 
   if (!userDetails.phone_number || userDetails.phone_number.length === 0) {
     delete userDetails.phone_number
   }
   try {
     await updateUser(currentUser.id, userDetails)
+    await fetchUser()
+    router.go(0)
   } catch (e) {
+    createDangerToast(e.message)
     console.error(e)
   }
-  router.go(0)
 }
 
 
@@ -77,6 +79,7 @@ const sendRequest = async (payload) => {
   try {
     await changePassword(payload)
   } catch (error) {
+    createDangerToast(`Error lors de changement de votre mot de passe : ${error}`)
     console.error(`Error lors de changement de votre mot de passe : ${error}`)
   }
 }
@@ -112,8 +115,8 @@ const confirmRegenerate = async () => {
                     class="ml-4 px-3 py-2 text-xs font-medium inline-flex text-white bg-green-700 rounded-lg hover:bg-green-800"
                     @click="validEdit"
                     v-if="editMode"
-                    :class="userDetails.phone_number.length === 0 ? 'cursor-not-allowed' : ''"
-                    :disabled="userDetails.phone_number.length === 0 "
+                    :class="userDetails?.phone_number?.length === 0 ? 'cursor-not-allowed' : ''"
+                    :disabled="userDetails?.phone_number?.length === 0 "
                 >
                   Valider
                 </button>

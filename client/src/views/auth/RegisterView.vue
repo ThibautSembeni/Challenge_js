@@ -6,6 +6,7 @@ import IconLogo from '@/components/icons/iconLogo.vue'
 import Form from '@/components/form/Form.vue'
 import Input from '@/components/form/Input.vue'
 import {registerUser} from "@/services/auth";
+import {createDangerToast, createSuccessToast} from "@/utils/toasts";
 
 
 const defaultValue = {
@@ -49,10 +50,10 @@ async function submitForm(_user) {
   console.log('Go register', _user)
   try {
     const response = await registerUser(_user)
-    infosMsg.value = 'Un email de confirmation vous a été envoyé'
+    createSuccessToast('Merci de votre inscription, un email de confirmation vous a été envoyé')
   } catch (error) {
     console.log(error)
-    requestError.value = error.message
+    createDangerToast(error.message)
   }
 }
 </script>
