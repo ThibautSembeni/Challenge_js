@@ -1,33 +1,16 @@
 const mongoose = require("mongoose");
 
 const transactionSchema = new mongoose.Schema({
-    client_info: {
-        name: String,
-        address: String,
-    },
-    billing_info: {
-        zipcode: String,
-        country: String,
-        card_type: String,
-        card_bank: String,
-        card_number: String,
-        expiration_date: String,
-        cvc: String,
-        ip: String,
-        device: String,
-    },
-    shipping_info: {
-        amount: Number,
-        costs: Number,
-        net: Number,
-        currency: String,
-        payment_type: String,
-    },
-    cart: {
-        card_number: String,
-    },
-    amount: Number,
-    currency: String,
+    operations: [
+        { status: String, amount: Number, type: String }
+    ],
+    transaction_reference: { type: String, required: false },
+    transaction_id: { type: Number, required: false },
+    amount: { type: Number, required: false },
+    currency: { type: String, required: false },
+    status: { type: String, required: false },
+    client_info: { type: Object, required: false },
+    merchant: { type: Object, required: false },
 }, { timestamps: true });
 
 module.exports = mongoose.model("Transaction", transactionSchema);

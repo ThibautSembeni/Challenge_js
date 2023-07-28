@@ -14,6 +14,7 @@ module.exports = function (credentials) {
             const data = await response.json()
             return data
         } catch (error) {
+            console.error(error);
             throw new Error(`Strape error: ${error}`);
         }
 
