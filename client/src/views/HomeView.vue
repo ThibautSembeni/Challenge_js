@@ -3,7 +3,6 @@ import SideBar from '@/components/SideBar.vue'
 import NavBar from '@/components/NavBar.vue'
 import DashboardKPIS from '@/components/KPI/DashboardKpis.vue'
 import { getCurrentUser } from '@/services/auth'
-import router from '@/router'
 import { onMounted, ref } from 'vue'
 const user = ref({})
 onMounted(() => {
