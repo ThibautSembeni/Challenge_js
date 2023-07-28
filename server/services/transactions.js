@@ -181,5 +181,24 @@ module.exports = function TransactionService() {
         throw error;
       }
     },
+    getTransactionsStatus: async () => {
+      try {
+        const transactions = await mongoDB.Transaction.aggregate([
+          {
+            $group: {
+              "_id": {
+                "status": "$status"
+              },
+              "count": {
+                "$sum": 1
+              }
+            }
+          }
+        ]);
+        return transactions;
+      } catch (error) {
+        throw error;
+      }
+    },
   };
 };

@@ -4,6 +4,7 @@ import store from '@/stores/store'
 import AmountByDay from '@/components/KPI/AmountByDay.vue'
 import TransactionsNumberByDay from '@/components/KPI/TransactionsNumberByDay.vue'
 import TransactionsNumberByYear from '@/components/KPI/TransactionsNumberByYear.vue'
+import TransactionsStatus from '@/components/KPI/TransactionsStatus.vue'
 
 import { generateHourlyData, getFirstDayOfMonth, getLastDayOfMonth } from '@/utils/date'
 import { generateValue, generateLabelsData } from '@/utils/dashboardKpis'
@@ -13,7 +14,8 @@ const user = store.state.user
 const statsData = reactive({
   amountByDay: [],
   numberByYear: [],
-  numberByDays: { labels: [], datasets: [] }
+  numberByDays: { labels: [], datasets: [] },
+  status: { labels: [], datasets: [] }
 })
 
 onMounted(async () => {
@@ -60,6 +62,13 @@ function bindEventSource(eventSource) {
     )
     statsData.numberByDays = { labels, datasets }
   })
+  eventSource.addEventListener('transactionsStatus', (event) => {
+    const message = JSON.parse(event.data)
+    statsData.status = {
+      labels: message.map((document) => document._id.status),
+      datasets: message.map((document) => document.count)
+    }
+  })
 }
 </script>
 
@@ -69,5 +78,6 @@ function bindEventSource(eventSource) {
     <div class="flex w-full"></div>
     <TransactionsNumberByDay :height="50" :width="250" :statsData="statsData" />
     <TransactionsNumberByYear :height="50" :width="250" :statsData="statsData" />
+    <TransactionsStatus :height="200" :width="50" :statsData="statsData" />
   </section>
 </template>
