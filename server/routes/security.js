@@ -20,7 +20,7 @@ module.exports = new genericRouter(
             { handler: 'me', method: 'get', path: '/me', middleware: [checkAuth] },
             { handler: 'refreshToken', method: 'get', path: '/refresh-token', middleware: [] },
             { handler: 'changePassword', method: 'post', path: '/change-password', middleware: [checkAuth] },
-            { handler: 'updateDemandMerchant', method: 'post', path: '/merchant/demand/update', middleware: [checkAuth] },
+            { handler: 'updateDemandMerchant', method: 'post', path: '/merchant/demand/update/:token', middleware: [] },
             { handler: 'forgotPassword', method: 'post', path: '/forgot-password', middleware: [] },
             { handler: 'renderResetPasswordForm', method: 'get', path: '/reset-password/:token', middleware: [] },
             { handler: 'resetPassword', method: 'post', path: '/reset-password/:token', middleware: [] },

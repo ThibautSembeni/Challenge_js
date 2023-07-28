@@ -48,7 +48,7 @@ const authRoutes = [
     name: 'resetPassword',
     component: ResetPassword,
     meta: { requiresAuth: false }
-  }
+  },
 ]
 
 const customerRoutes = [

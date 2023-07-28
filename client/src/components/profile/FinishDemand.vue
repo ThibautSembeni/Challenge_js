@@ -1,6 +1,7 @@
 <script setup>
-import { reactive, ref, watch} from "vue";
+import {reactive, ref, watch} from "vue";
 import Input from "@/components/form/Input.vue";
+import router from "@/router";
 
 const isDisabled = ref(true)
 const editMode = ref(false)
@@ -17,43 +18,46 @@ const defaultValueMerchant = {
   payout_currency: 'EUR',
 }
 
-const merchantValues = reactive({ ...defaultValueMerchant })
+const merchantValues = reactive({...defaultValueMerchant})
 
 const handleCancelClick = () => {
-  isDisabled.value = !isDisabled.value
-  editMode.value = !editMode.value
+  switchMode()
 };
 
 const validateCompany = (value) => {
   const isValid = value.length >= 2 && value.length <= 50
   const message = isValid ? '' : 'Le nom de la société doit contenir entre 2 et 50 caractères'
-  return { isValid, message }
+  return {isValid, message}
 }
 const validateKbis = (value) => {
   const isValid = value.length >= 2 && value.length <= 100
   const message = isValid ? '' : 'Le nom du fichier doit contenir entre 2 et 100 caractères'
-  return { isValid, message }
+  return {isValid, message}
 }
 
 const validatePhone = (value) => {
   const isValid = !isNaN(Number(value)) && value.length === 10
   const message = isValid ? '' : 'Le numéro de téléphone doit contenir 10 chiffres'
-  return { isValid, message }
+  return {isValid, message}
 }
 
-const completeDemand = () => {
+const completeDemand = async () => {
+  switchMode()
+}
+
+const switchMode = () => {
   isDisabled.value = !isDisabled.value
   editMode.value = !editMode.value
 }
 
-watch(merchantValues,()=>{
+watch(merchantValues, () => {
   isValidPayload.value = merchantValues.kbis.length !== 0 && merchantValues.phone_number.length !== 0 && merchantValues.company.length !== 0
 })
 
-const validDemand = () => {
-  console.log("mer",merchantValues)
+const validDemand = async () => {
   emit('finishEvent', merchantValues)
   Object.assign(merchantValues, defaultValueMerchant)
+  switchMode()
 }
 
 </script>
