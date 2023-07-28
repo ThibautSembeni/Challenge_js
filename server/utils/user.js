@@ -31,8 +31,11 @@ const generateToken = (tokenLength = 64) => {
     return token
 };
 const validateDTORegister = (body) => {
-    return  {lastname, firstname, email, password} = body
+    return { lastname, firstname, email, password } = body
+};
+const validateDTORegisterUpdate = (body) => {
+    return { kbis, company, phone_number, confirmation_url, cancellation_url, merchant_url, payout_currency } = body
 };
 
 
-module.exports = { generateVerificationToken, getUserFromJWTToken, generateToken, validateDTORegister };
+module.exports = { generateVerificationToken, getUserFromJWTToken, generateToken, validateDTORegister, validateDTORegisterUpdate };
