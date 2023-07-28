@@ -5,7 +5,8 @@ import GenericButton from '@/components/GenericButton.vue'
 import Input from '@/components/form/Input.vue'
 import Form from '@/components/form/Form.vue'
 import {fetchUser, login, getImperonating} from '@/services/auth'
-import {createDangerToast} from "@/utils/toasts";
+import {createDangerToast, createWarningToast} from "@/utils/toasts";
+import store from "@/stores/store";
 
 const defaultValue = {
   email: '',
@@ -21,7 +22,8 @@ async function loginUser(_user) {
     await login(_user)
     const currentUser = await fetchUser()
     if (currentUser?.role === 'merchant' && currentUser?.status === 'created') {
-      await router.push({path: '/profile', replace: true})
+      createWarningToast("Votre compte n'est pas valide")
+      store.commit('setUser',null)
       return
     }
     await getImperonating()
