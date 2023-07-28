@@ -119,7 +119,7 @@ const filteredItems = computed(() => {
                       label: 'Prendre le contrôle',
                       onClick: async () => {
                         await impersonateUser(user.id)
-                        router.push({ name: 'merchant' })
+                        router.push({ name: 'payments' })
                       }
                     }
                   ]"

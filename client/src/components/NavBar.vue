@@ -112,8 +112,6 @@ const switchToAdminProfile = async () => {
 onMounted(async () => {
   initFlowbite()
   currentUser.value = await getCurrentUser()
-  if (currentUser?.role === 'admin') {
-    impersonatedMerchant.value = await isImperonating()
-  }
+  impersonatedMerchant.value = await isImperonating()
 })
 </script>
