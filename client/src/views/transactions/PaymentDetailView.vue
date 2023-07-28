@@ -164,7 +164,7 @@ const formatEuro = (value, currency) => {
           <div class="w-full md:w-1/2">
             <div class="flex flex-wrap">
               <PaymentDetailLine title="Rue" :content="payment.billing_info.address" />
-              <PaymentDetailLine title="Code postal" :content="payment.billing_info.postalCode" />
+              <PaymentDetailLine title="Code postal" :content="payment.billing_info.postal_code" />
               <PaymentDetailLine title="Ville" :content="payment.billing_info.city" />
               <PaymentDetailLine title="Pays" :content="payment.billing_info.country" />
             </div>
@@ -177,7 +177,7 @@ const formatEuro = (value, currency) => {
           <div class="w-full md:w-1/2">
             <div class="flex flex-wrap">
               <PaymentDetailLine title="Rue" :content="payment.shipping_info.address" />
-              <PaymentDetailLine title="Code postal" :content="payment.shipping_info.postalCode" />
+              <PaymentDetailLine title="Code postal" :content="payment.shipping_info.postal_code" />
               <PaymentDetailLine title="Ville" :content="payment.shipping_info.city" />
               <PaymentDetailLine title="Pays" :content="payment.shipping_info.country" />
             </div>
