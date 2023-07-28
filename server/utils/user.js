@@ -30,5 +30,9 @@ const generateToken = (tokenLength = 64) => {
     }
     return token
 };
+const validateDTORegister = (body) => {
+    return  {lastname, firstname, email, password} = body
+};
 
-module.exports = { generateVerificationToken, getUserFromJWTToken, generateToken };
+
+module.exports = { generateVerificationToken, getUserFromJWTToken, generateToken, validateDTORegister };
