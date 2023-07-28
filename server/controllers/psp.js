@@ -13,7 +13,7 @@ module.exports = function pspController(CredentialService) {
 
             setTimeout(async () => {
                 try {
-                    await eventService.updateOperation(data.operation_id, {status: "processing"})
+                    await eventService.updateOperation(data.operation_id, { status: "processing" })
 
                     if (data.type === 'capture') result = _validatePaymentInfo(data)
                     else {
@@ -54,7 +54,7 @@ module.exports = function pspController(CredentialService) {
                 } catch (e) {
                     throw new Error(`Error From PSP : ${e}`)
                 }
-            }, 3000);
+            }, 30000);
         },
 
 

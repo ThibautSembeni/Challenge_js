@@ -188,6 +188,8 @@ module.exports = function EventPaymentService() {
                     }
 
                     currentState.reference = transaction.reference;
+                    currentState.createdAt = transaction.createdAt;
+                    currentState.updatedAt = transaction.updatedAt;
 
                     updatedTransactions.push(currentState);
                 }
