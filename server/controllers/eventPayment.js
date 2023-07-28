@@ -8,6 +8,7 @@ module.exports = function TransactionController(Service) {
                 const response = await Service.createTransaction(req.body);
                 res.status(201).json(response);
             } catch (error) {
+                console.error(error);
                 next(error);
             }
         },
