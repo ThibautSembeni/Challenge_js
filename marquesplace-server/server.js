@@ -40,10 +40,6 @@ app.post('/transactions', checkAuth, async (req, res, next) => {
   res.status(200).json(result)
 })
 
-app.post('/webhook', async (req, res, next) => {
-
-})
-
 app.use("/cart", checkAuth, CartRouter);
 
 const errorHandler = (err, req, res, next) => {

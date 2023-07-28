@@ -60,24 +60,6 @@ module.exports = function OperationController(OperationService, options = {}) {
                     }
                 }
 
-                ///////////////////////////////////////////////
-                // TODO pour la prod :
-                ///////////////////////////////////////////////
-
-
-                // const response = await fetch(`${user.merchant_url}/webhook`, {
-                // const response = await fetch(`http://node_marquesplace:4000/webhook`, {
-                //     method: 'POST',
-                //     headers: {
-                //         'Content-Type': 'application/json'
-                //     },
-                //     body: JSON.stringify(responsePsp)
-                // });
-
-                // if (!response.ok) {
-                //     throw new Error('Failed to send notification');
-                // }
-
                 notify({ id: Math.random(), name: "paymentResult", data: responsePsp }, false, subscribers, eventsSent);
 
                 res.sendStatus(200);
