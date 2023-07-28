@@ -15,8 +15,14 @@ module.exports = new genericRouter(
                 middleware: [],
                 handler: "resultFromPsp",
             },
+            {
+                method: "get",
+                path: "/psp-subscribe",
+                middleware: [],
+                handler: "subscribeOperation",
+            }
         ],
         defaultRoutes: {},
     }
 )
-;
+    ;

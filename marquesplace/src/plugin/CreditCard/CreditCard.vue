@@ -15,7 +15,8 @@ export default {
       SK: this.$creditCardForm.SK,
       PK: this.$creditCardForm.PK,
       ref: this.reference,
-      isValidPayload: false
+      isValidPayload: false,
+      onListen: false
     }
   },
   methods: {
@@ -57,22 +58,37 @@ export default {
           transaction_reference: this.reference,
           currency: 'EUR'
         }
-        const response = await fetch(`http://localhost:3000/eventPayment/operation`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'X-Public-Key': this.PK,
-            'X-Secret-Key': this.SK,
-            Origin: window.location.origin
-          },
-          body: JSON.stringify(cardData)
-        })
+        const response = await fetch(
+          `${import.meta.env.VITE_KAMALPAY_URL}/eventPayment/operation`,
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'X-Public-Key': this.PK,
+              'X-Secret-Key': this.SK,
+              Origin: window.location.origin
+            },
+            body: JSON.stringify(cardData)
+          }
+        )
         if (!response.ok) {
           console.error(response)
         }
         const data = await response.json()
         console.log(data)
+        this.subscribe()
       }
+    },
+    async subscribe() {
+      const params = new URLSearchParams()
+      const sse = new EventSource(
+        `${import.meta.env.VITE_KAMALPAY_URL}/operation/psp-subscribe?${params}`
+      )
+      this.onListen = true
+      sse.addEventListener('paymentResult', (event) => {
+        const message = JSON.parse(event.data)
+        window.location = message.redirect_url
+      })
     }
   },
   watch: {
@@ -101,10 +117,14 @@ export default {
         this.updateCardData()
       }
     }
-  }
+  },
+  mounted() {}
 }
 </script>
 <template>
+  <div v-if="onListen" class="spinner-container">
+    <div class="spinner"></div>
+  </div>
   <div class="h-screen flex justify-center items-center">
     <div class="">
       <div class="card-form">
@@ -729,5 +749,35 @@ export default {
   background-position: 90% center;
   background-repeat: no-repeat;
   padding-right: 30px;
+}
+.spinner-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 9999;
+}
+
+.spinner {
+  width: 80px; /* Ajustez la taille souhaitée */
+  height: 80px; /* Ajustez la taille souhaitée */
+  border: 8px solid #f3f3f3;
+  border-top: 8px solid #3498db;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 </style>
