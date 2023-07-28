@@ -4,8 +4,12 @@ const EventPayement = require('../services/eventPayment')
 const eventPayementService = new EventPayement()
 const EmailSender = require("../services/emailSender");
 const userService = require("../services/user")
+const { notifyUser, notify } = require("../utils/notify.sse");
+const http = require("http");
 const UserService = new userService()
 module.exports = function OperationController(OperationService, options = {}) {
+    const subscribers = {};
+    const eventsSent = [];
     return {
         resultFromPsp: async (req, res, next) => {
             try {
@@ -40,11 +44,39 @@ module.exports = function OperationController(OperationService, options = {}) {
 
                 await eventPayementService.updateTransaction(currentOperation.transaction_reference, { status })
                 await EmailSender.sendEmailForOperation({ firstname: currentTransaction.currentState.client_info.name.split(' ')[0], lastname: currentTransaction.currentState.client_info.name.split(' ')[1], email: currentTransaction.currentState.client_info.email }, status)
+
+                const user = await UserService.findOne({ id: currentTransaction.currentState.merchant_id })
+
+                let responsePsp = {}
+                if (result === true) {
+                    responsePsp = {
+                        'response': 'success',
+                        'redirect_url': `${user.confirmation_url}`,
+                    }
+                } else {
+                    responsePsp = {
+                        'response': 'error',
+                        'redirect_url': `${user.cancellation_url}`,
+                    }
+                }
+
+                notify({ id: Math.random(), name: "paymentResult", data: responsePsp }, false, subscribers, eventsSent);
+
                 res.sendStatus(200);
             } catch (e) {
                 console.log(e);
                 next(e);
             }
+        },
+        subscribeOperation: async (req, res, next) => {
+            const { reference } = req.query;
+            subscribers[reference] = res;
+            const headers = {
+                'Content-Type': 'text/event-stream',
+                'Connection': 'keep-alive',
+                'Cache-Control': 'no-cache'
+            };
+            res.writeHead(200, headers);
         },
     };
 };
