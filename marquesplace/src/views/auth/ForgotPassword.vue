@@ -16,7 +16,7 @@ const infosMsg = ref('')
 
 async function submitForm(payload) {
   if (requestError.value) requestError.value = ''
-    const res = await forgotPassword(payload)
+    await forgotPassword(payload)
     infosMsg.value = 'Vous allez recevoir votre mail de renitialisation '
 }
 
