@@ -45,8 +45,9 @@ const handleSubmit = async () => {
       cart,
       cart.value.cart_items.reduce((acc, item) => acc + item.price * item.quantity, 0)
     )
-    // const order = await createOrder(userId, price.value)
-    console.log('charge response', response)
+
+    
+
     router.push({
       name: 'paymentCapture',
       params: { reference: response }

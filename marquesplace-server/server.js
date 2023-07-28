@@ -32,12 +32,11 @@ app.use("/orders", OrdersRouter);
 
 app.get('/transactions', checkAuth, async (req, res, next) => {
   const request = await app.getAllTransaction()
-  res.status(200).json(data)
+  res.status(200).json(request)
 })
 
 app.post('/transactions', checkAuth, async (req, res, next) => {
   const result = await app.createTransaction(req.body)
-  console.log("data", result)
   res.status(200).json(result)
 })
 

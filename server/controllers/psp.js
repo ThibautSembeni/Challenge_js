@@ -36,13 +36,11 @@ module.exports = function pspController(CredentialService) {
                         }
                     }
 
-
                     const payload = {
                         operation_id: data.operation_id,
                         result: result
                     }
                     await eventService.updateOperation(data.operation_id, { status: "done" }).then(async () => {
-                        console.log("success update operation with done")
                         await fetch(`${process.env.API_URL}/operation/psp-confirmation`, {
                             method: 'POST',
                             headers: {
@@ -56,7 +54,7 @@ module.exports = function pspController(CredentialService) {
                 } catch (e) {
                     throw new Error(`Error From PSP : ${e}`)
                 }
-            }, 30000);
+            }, 3000);
         },
 
 
