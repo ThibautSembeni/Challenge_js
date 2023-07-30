@@ -17,6 +17,7 @@ describe('Test register', () => {
     const target = '/register';
 
     test('Register User', async () => {
+        const accountValidationEmailSpy = jest.spyOn(EmailSender, 'accountValidationEmail');
         const registrationData = getUserBody()
         userExists = registrationData
         const response = await registerUser(registrationData)
@@ -25,6 +26,7 @@ describe('Test register', () => {
         expect(response.body.firstname).toBe(registrationData.firstname);
         expect(response.body.lastname).toBe(registrationData.lastname);
         expect(response.body.email).toBe(registrationData.email);
+        expect(accountValidationEmailSpy).toHaveBeenCalled()
     });
 
     test('User already exists', async () => {
@@ -86,15 +88,15 @@ describe('Test register', () => {
         expect(response.body.role).toBe('merchant')
         expect(response.body.isActive).toBe(false)
     });
-
-    afterAll(async () => {
-        await postgres.Credential.destroy({
-            where: {},
-        });
-        await postgres.User.destroy({
-            where: {},
-        });
-        await mongo.User.deleteMany({});
-        await mongoose.connection.close();
-    });
+    //
+    // afterAll(async () => {
+    //     await postgres.Credential.destroy({
+    //         where: {},
+    //     });
+    //     await postgres.User.destroy({
+    //         where: {},
+    //     });
+    //     await mongo.User.deleteMany({});
+    //     await mongoose.connection.close();
+    // });
 });

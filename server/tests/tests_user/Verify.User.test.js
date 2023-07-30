@@ -2,7 +2,7 @@ const {generateVerificationToken} = require("../../utils/user");
 const request = require("supertest");
 const app = require("../../server");
 const EmailSender = require("../../services/emailSender");
-const {getUserBody} = require("./users_utils");
+const {getUserBody, registerUser, createRandomUser} = require("./users_utils");
 
 describe('Test register verify account', () => {
     EmailSender.mailjet = {
@@ -10,13 +10,11 @@ describe('Test register verify account', () => {
         request: jest.fn().mockResolvedValue({response: {request: {socket: {destroy: jest.fn()}}}})
     };
 
-    const registerUrl = `/register`
     const verificationUrl = `/merchant/demand/update`
 
 
     test('Verify a merchant account', async () => {
-        const registrationData = getUserBody()
-        const registerResponse = await request(app).post(registerUrl).send(registrationData);
+        const registerResponse = await createRandomUser()
         const jwtToken = await generateVerificationToken(registerResponse.body);
         const encodedToken = Buffer.from(jwtToken).toString('base64url');
 
