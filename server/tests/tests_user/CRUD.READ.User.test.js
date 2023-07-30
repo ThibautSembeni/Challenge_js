@@ -14,12 +14,6 @@ describe('Tests CRUD READ', () => {
     let headers
 
     beforeAll(async () => {
-        await postgres.Credential.destroy({
-            where: {},
-        });
-        await postgres.User.destroy({
-            where: {},
-        });
         const adminAccount = await createAnAdminAccount()
         const token = await generateVerificationToken(adminAccount)
         headers = {
@@ -30,7 +24,7 @@ describe('Tests CRUD READ', () => {
     test('Read a user', async () => {
         const user = getUserBody()
         const response = await request(app).post('/register').send(user)
-        const responseForRegister = await request(app).get(`${process.env.API_URL}/users/${response.body.id}`).set(headers)
+        const responseForRegister = await request(app).get(`/users/${response.body.id}`).set(headers)
         expect(responseForRegister.body.id).toBe(response.body.id)
     });
 
