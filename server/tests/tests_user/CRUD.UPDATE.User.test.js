@@ -10,7 +10,7 @@ const {
 } = require("./users_utils");
 const { generateVerificationToken } = require("../../utils/user");
 
-describe('Tests Admin', () => {
+describe('Tests CRUD UPDATE', () => {
     let headers
 
     beforeAll(async () => {

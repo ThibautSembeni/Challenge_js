@@ -6,11 +6,11 @@ const mongoose = require("mongoose");
 const EmailSender = require("../../services/emailSender");
 const {
     createAnAdminAccount,
-    createRandomUser
+    createRandomUser, getUserBody
 } = require("./users_utils");
 const {generateVerificationToken} = require("../../utils/user");
 
-describe('Tests Admin', () => {
+describe('Tests CRUD READ ALL', () => {
     let headers
 
     beforeAll(async () => {
@@ -29,7 +29,8 @@ describe('Tests Admin', () => {
 
     test('Create 5 users', async () => {
         for (let i = 0; i < 5; i++) {
-            const user = await createRandomUser()
+            const userBody = getUserBody()
+            const registerResponse = await request(app).post(`/register`).send(userBody);
         }
         const response = await request(app).get('/users').set(headers)
         expect(response.body.length).toBe(6)

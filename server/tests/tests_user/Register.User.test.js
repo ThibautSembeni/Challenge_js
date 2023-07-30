@@ -87,15 +87,15 @@ describe('Test register', () => {
         expect(response.body.role).toBe('merchant')
         expect(response.body.isActive).toBe(false)
     });
-    //
-    // afterAll(async () => {
-    //     await postgres.Credential.destroy({
-    //         where: {},
-    //     });
-    //     await postgres.User.destroy({
-    //         where: {},
-    //     });
-    //     await mongo.User.deleteMany({});
-    //     await mongoose.connection.close();
-    // });
+
+    afterAll(async () => {
+        await postgres.Credential.destroy({
+            where: {},
+        });
+        await postgres.User.destroy({
+            where: {},
+        });
+        await mongo.User.deleteMany({});
+        await mongoose.connection.close();
+    });
 });
