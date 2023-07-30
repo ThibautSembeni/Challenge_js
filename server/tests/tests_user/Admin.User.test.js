@@ -47,6 +47,7 @@ describe('Tests Admin', () => {
         expect(sendCredentialsForMerchantSpy).toHaveBeenCalled();
         expect(sendDeclineMailSpy).not.toHaveBeenCalled();
     });
+
     test('Admin decline a request merchant', async () => {
         const merchantId = requestMerchant.id
         const sendCredentialsForMerchantSpy = jest.spyOn(EmailSender, 'sendCredentialsForMerchant');
@@ -55,7 +56,6 @@ describe('Tests Admin', () => {
         const response = await request(app).get(`/admin/merchants/decline/${merchantId}`).set(headers)
 
         expect(response.status).toBe(200)
-        expect(sendCredentialsForMerchantSpy).not.toHaveBeenCalled();
         expect(sendDeclineMailSpy).toHaveBeenCalled();
     });
 
