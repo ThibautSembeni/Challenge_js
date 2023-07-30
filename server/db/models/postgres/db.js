@@ -1,6 +1,6 @@
 const Sequelize = require('sequelize');
 
-const connection = new Sequelize('postgres://root:password@localhost:5432/app', { logging: false })
+const connection = new Sequelize(process.env.DATABASE_URL, { logging: false })
 
 if (process.env.NODE_ENV === 'test') {
     connection
@@ -9,7 +9,7 @@ if (process.env.NODE_ENV === 'test') {
     const retryConnection = () => {
         connection
             .authenticate()
-            .then(() => console.log('\u001b[' + 32 + 'm' + `connected to ${'mongodb://root:password@mongodb/StripeCollections?authSource=admin'.split(":")[0]} database` + '\u001b[0m'))
+            .then(() => console.log('\u001b[' + 32 + 'm' + `connected to ${process.env.DATABASE_URL.split(":")[0]} database` + '\u001b[0m'))
             .catch((err) => {
                 // console.log(err);
                 if (err.name === 'SequelizeConnectionRefusedError' || err.name === 'SequelizeHostNotFoundError' || err.name === 'SequelizeHostNotReachableError' || err.name === 'SequelizeInvalidConnectionError' || err.name === 'SequelizeConnectionTimedOutError') {
