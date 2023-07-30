@@ -8,7 +8,7 @@ const {
     createAnAdminAccount,
     createRandomUser, getUserBody
 } = require("./users_utils");
-const {generateVerificationToken} = require("../../utils/user");
+const { generateVerificationToken } = require("../../utils/user");
 
 describe('Tests CRUD READ', () => {
     let headers
@@ -18,6 +18,7 @@ describe('Tests CRUD READ', () => {
         const token = await generateVerificationToken(adminAccount)
         headers = {
             'Authorization': `Bearer ${token}`,
+            'Cookie': `token=${token}; httpOnly`
         };
     })
 
@@ -33,4 +34,4 @@ describe('Tests CRUD READ', () => {
         expect(responseForRegister.status).toBe(404)
     });
 })
-;
+    ;

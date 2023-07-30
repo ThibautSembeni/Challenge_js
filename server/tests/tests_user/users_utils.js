@@ -1,9 +1,10 @@
 const app = require("../../server");
 const userService = require("../../services/user");
+const postgres = require("../../db/models/postgres");
 
 const request = require("supertest");
-const {generateRandomString} = require("../tests_utils");
-const {generateVerificationToken} = require("../../utils/user");
+const { generateRandomString } = require("../tests_utils");
+const { generateVerificationToken } = require("../../utils/user");
 
 const target = '/register';
 
@@ -13,12 +14,15 @@ function getUserBody() {
         email: generateRandomString(8) + '@example.com',
         lastname: generateRandomString(8),
         firstname: generateRandomString(6),
+        isActive: true
     }
 
 }
 
 async function registerUser(registrationData) {
     return await request(app).post(target).send(registrationData)
+    // const user = await postgres.User.create(registrationData)
+    return user
 }
 
 
@@ -32,7 +36,8 @@ async function createAnAdminAccount() {
 async function createRandomUser() {
     const userBody = getUserBody()
     const user = await registerUser(userBody)
-    return user.body
+    // return user.body
+    return user
 }
 
 async function createRequestToBeMerchant() {

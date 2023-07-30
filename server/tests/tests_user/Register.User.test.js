@@ -4,12 +4,12 @@ const postgres = require("../../db/models/postgres");
 const mongo = require("../../db/models/mongo");
 const mongoose = require("mongoose");
 const EmailSender = require("../../services/emailSender");
-const {getUserBody, registerUser} = require("./users_utils");
+const { getUserBody, registerUser } = require("./users_utils");
 
 describe('Test register', () => {
     EmailSender.mailjet = {
         post: jest.fn().mockReturnThis(),
-        request: jest.fn().mockResolvedValue({response: {request: {socket: {destroy: jest.fn()}}}})
+        request: jest.fn().mockResolvedValue({ response: { request: { socket: { destroy: jest.fn() } } } })
     };
 
     let userExists
@@ -21,7 +21,6 @@ describe('Test register', () => {
         const registrationData = getUserBody()
         userExists = registrationData
         const response = await registerUser(registrationData)
-
         expect(response.status).toBe(201);
         expect(response.body.firstname).toBe(registrationData.firstname);
         expect(response.body.lastname).toBe(registrationData.lastname);
@@ -67,7 +66,7 @@ describe('Test register', () => {
 
     test('Register with multiple incorrect field', async () => {
         const registrationData = getUserBody()
-        registrationData.firstname ='f'
+        registrationData.firstname = 'f'
         registrationData.password = 'pass'
 
         const response = await registerUser(registrationData)
