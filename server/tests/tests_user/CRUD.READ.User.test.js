@@ -30,7 +30,7 @@ describe('Tests Admin', () => {
     test('Read a user', async () => {
         const user = getUserBody()
         const response = await request(app).post('/register').send(user)
-        const responseForRegister = await request(app).get(`/users/${response.body.id}`).set(headers)
+        const responseForRegister = await request(app).get(`${process.env.API_URL}/users/${response.body.id}`).set(headers)
         expect(responseForRegister.body.id).toBe(response.body.id)
     });
 
