@@ -17,7 +17,6 @@ module.exports = function SecurityController(UserService) {
                 res.cookie('token', token, { httpOnly: true }).json({ token });
 
             } catch (err) {
-                console.error(err);
                 if (err.name === 'UnauthorizedError') {
                     res.status(401).json(err.errors);
                 } else {

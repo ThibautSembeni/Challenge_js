@@ -4,23 +4,22 @@ const postgres = require("../../db/models/postgres");
 const mongo = require("../../db/models/mongo");
 const mongoose = require("mongoose");
 const EmailSender = require("../../services/emailSender");
+const {getUserBody, registerUser} = require("./users_utils");
 
 describe('Test register', () => {
     EmailSender.mailjet = {
         post: jest.fn().mockReturnThis(),
-        request: jest.fn().mockResolvedValue({ response: { request: { socket: { destroy: jest.fn() } } } })
+        request: jest.fn().mockResolvedValue({response: {request: {socket: {destroy: jest.fn()}}}})
     };
+
+    let userExists
 
     const target = '/register';
 
     test('Register User', async () => {
-        const registrationData = {
-            firstname: 'John',
-            lastname: 'Doe',
-            email: 'test@test.com',
-            password: 'password',
-        }
-        const response = await request(app).post(target).send(registrationData);
+        const registrationData = getUserBody()
+        userExists = registrationData
+        const response = await registerUser(registrationData)
 
         expect(response.status).toBe(201);
         expect(response.body.firstname).toBe(registrationData.firstname);
@@ -29,54 +28,20 @@ describe('Test register', () => {
     });
 
     test('User already exists', async () => {
-        const registrationData = {
-            firstname: 'John',
-            lastname: 'Doe',
-            email: 'test@test.com',
-            password: 'password',
-        }
-        const response = await request(app).post(target).send(registrationData);
-
+        const response = await registerUser(userExists);
         expect(response.status).toBe(409);
     });
 
-    test('Register User with customer role', async () => {
-        const registrationData = {
-            firstname: 'John',
-            lastname: 'Doe',
-            email: 'customer@test.com',
-            password: 'password',
-        }
-        const response = await request(app).post(target).send(registrationData);
-
-
-        expect(response.status).toBe(201);
-        expect(response.body.role).toBe('merchant');
-    });
-
-    test('Register User with merchant role', async () => {
-        const registrationData = {
-            firstname: 'John',
-            lastname: 'Doe',
-            email: 'merchant@test.com',
-            password: 'password',
-            kbis: 'kbis',
-        }
-        const response = await request(app).post(target).send(registrationData);
-
+    test('Register User with default role', async () => {
+        const registrationData = getUserBody()
+        const response = await registerUser(registrationData)
         expect(response.status).toBe(201);
         expect(response.body.role).toBe('merchant');
     });
 
     test('Register with incorrect email type', async () => {
-        const registrationData = {
-            firstname: 'John',
-            lastname: 'Doe',
-            email: 'incorrectEmail.com',
-            password: 'password',
-            kbis: 'kbis',
-        }
-
+        const registrationData = getUserBody()
+        registrationData.email = 'inccorectemail'
         const response = await request(app).post(target).send(registrationData);
 
         expect(response.status).toBe(422);
@@ -99,18 +64,27 @@ describe('Test register', () => {
     });
 
     test('Register with multiple incorrect field', async () => {
-        const registrationData = {
-            firstname: 'f',
-            lastname: 'Doe',
-            email: 'incorrect@field.com',
-            password: 'pass'
-        }
-        const response = await request(app).post(target).send(registrationData);
+        const registrationData = getUserBody()
+        registrationData.firstname ='f'
+        registrationData.password = 'pass'
+
+        const response = await registerUser(registrationData)
 
         expect(response.status).toBe(422);
-        expect(response.body).toBeDefined();
         expect(response.body.password).toContain("Validation len on password failed");
         expect(response.body.firstname).toContain("Le prénom doit contenir entre 2 et 50 caractères");
+    });
+
+    test('inject role field & isActive in body', async () => {
+        const registrationData = getUserBody()
+        registrationData.role = 'admin'
+        registrationData.isActive = true
+
+        const response = await registerUser(registrationData)
+
+        expect(response.status).toBe(201);
+        expect(response.body.role).toBe('merchant')
+        expect(response.body.isActive).toBe(false)
     });
 
     afterAll(async () => {
