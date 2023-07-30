@@ -1,10 +1,10 @@
 const Mailjet = require('node-mailjet');
 
 class EmailSender {
-    static apiKey = process.env.MAILJET_PK;
-    static apiSecret = process.env.MAILJET_SK
-    static emailSender = process.env.EMAIL_SENDER
-    static projectName = process.env.PROJECT_NAME
+    static apiKey = '43ab1a6caaa30c840a481ddf1645f3dd';
+    static apiSecret = '8eda4d98c6147572d0c7236292bfa92e'
+    static emailSender = 'oussama.1941@gmail.com'
+    static projectName = 'PROJECT_NAME'
     static mailjet = Mailjet.apiConnect(EmailSender.apiKey, EmailSender.apiSecret);
 
     static validateEmail(email) {

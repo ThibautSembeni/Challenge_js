@@ -8,7 +8,6 @@ module.exports = function (Controller, options = {}) {
     }
 
     if (options.hasOwnProperty("defaultRoutes") && typeof options.defaultRoutes === "boolean" && !options.defaultRoutes) {
-        console.info("Restfull endpoints are not activate ! Because defaultRoutes key in a file route is set to false")
     } else if (options.hasOwnProperty("defaultRoutes") && typeof options.defaultRoutes === "object") {
         Object.entries(options.defaultRoutes).forEach(([handler, route]) => {
             if (Controller.hasOwnProperty(handler)) {

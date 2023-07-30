@@ -4,7 +4,7 @@ const UnauthorizedError = require("./../errors/UnauthorizedError");
 const generateVerificationToken = async (user) => {
     return jwt.sign(
         { id: user.id, role: user.role },
-        process.env.JWT_SECRET,
+        'secret',
         {
             expiresIn: "30m",
         }
@@ -13,7 +13,7 @@ const generateVerificationToken = async (user) => {
 
 const getUserFromJWTToken = (token) => {
     try {
-        return jwt.verify(token, process.env.JWT_SECRET);
+        return jwt.verify(token, 'secret');
     } catch (error) {
         throw new UnauthorizedError({
             token: "Invalid token",

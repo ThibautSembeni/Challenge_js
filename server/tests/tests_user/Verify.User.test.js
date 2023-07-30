@@ -17,7 +17,6 @@ describe('Test register verify account', () => {
     test('Verify a merchant account', async () => {
         const registrationData = getUserBody()
         const registerResponse = await request(app).post(registerUrl).send(registrationData);
-
         const jwtToken = await generateVerificationToken(registerResponse.body);
         const encodedToken = Buffer.from(jwtToken).toString('base64url');
 
