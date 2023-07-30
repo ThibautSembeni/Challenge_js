@@ -8,7 +8,7 @@ const {
     createAnAdminAccount,
     createRandomUser, getUserBody
 } = require("./users_utils");
-const {generateVerificationToken} = require("../../utils/user");
+const { generateVerificationToken } = require("../../utils/user");
 
 describe('Tests Admin', () => {
     let headers
@@ -24,14 +24,15 @@ describe('Tests Admin', () => {
         const token = await generateVerificationToken(adminAccount)
         headers = {
             'Authorization': `Bearer ${token}`,
+            'Cookie': [`token=${token}; httpOnly`]
         };
     })
 
     test('replace user', async () => {
-        const user =  getUserBody()
+        const user = getUserBody()
         const response = await request(app).post('/register').send(user)
         expect(response.status).toBe(201)
-        const updatedUser =  getUserBody()
+        const updatedUser = getUserBody()
         const result = await request(app).put(`/users/${response.body.id}`).send(updatedUser)
         expect(result.status).toBe(200)
         expect(result.body.email).toBe(updatedUser.email)
@@ -40,7 +41,7 @@ describe('Tests Admin', () => {
     });
 
     test('replace not existing user', async () => {
-        const updatedUser =  getUserBody()
+        const updatedUser = getUserBody()
         const result = await request(app).put(`/users/999`).send(updatedUser)
         expect(result.status).toBe(201)
         expect(result.body.email).toBe(updatedUser.email)
@@ -49,20 +50,20 @@ describe('Tests Admin', () => {
     });
 
     test('update parially user', async () => {
-        const user =  getUserBody()
+        const user = getUserBody()
         const response = await request(app).post('/register').send(user)
         expect(response.status).toBe(201)
-        const bodyForUpdateUser =  {email:'update@parially.user'}
+        const bodyForUpdateUser = { email: 'update@parially.user' }
         const result = await request(app).patch(`/users/${response.body.id}`).send(bodyForUpdateUser)
         expect(result.status).toBe(200)
         expect(result.body.email).toBe(bodyForUpdateUser.email)
     });
 
     test('replace user with missing field', async () => {
-        const user =  getUserBody()
+        const user = getUserBody()
         const response = await request(app).post('/register').send(user)
         expect(response.status).toBe(201)
-        const updatedUser =  getUserBody()
+        const updatedUser = getUserBody()
         delete updatedUser.lastname
         const result = await request(app).put(`/users/${response.body.id}`).send(updatedUser)
         expect(result.status).toBe(422)
@@ -70,4 +71,4 @@ describe('Tests Admin', () => {
         expect(result.body.lastname).toContain('Le nom est obligatoire')
     });
 })
-;
+    ;
