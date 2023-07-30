@@ -8,7 +8,6 @@ describe('Test Email', () => {
 
 
     it('Send email with email not defined', async () => {
-
         const user = {name: 'John Doe'};
         const confirmationLink = 'https://example.com/confirm';
 
@@ -32,7 +31,6 @@ describe('Test Email', () => {
 
     it('Send email with confirmation link not defined', async () => {
         const user = {name: 'John Doe', email: 'john@doe.com'};
-
         try {
             await EmailSender.accountValidationEmail(user);
         } catch (error) {
@@ -42,8 +40,11 @@ describe('Test Email', () => {
 
     it('should send the email successfully', async () => {
         const user = {name: 'John Doe', email: 'daoussama.98@gmail.com'};
+        const sendEmailSpy = jest.spyOn(EmailSender, 'sendEmail');
+
         const confirmationLink = 'https://example.com/confirm';
         const result = await EmailSender.accountValidationEmail(user, confirmationLink);
         expect(result).toBe(true)
+        expect(sendEmailSpy).toHaveBeenCalled()
     });
 });

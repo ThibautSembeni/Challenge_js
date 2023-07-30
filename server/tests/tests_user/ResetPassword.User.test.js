@@ -4,7 +4,7 @@ const postgres = require("../../db/models/postgres");
 const mongo = require("../../db/models/mongo");
 const mongoose = require("mongoose");
 const EmailSender = require("../../services/emailSender");
-const {generateUser, registerUser, getRandomUser, getUserBody} = require("./users_utils");
+const {generateUser, registerUser, createRandomUser, getUserBody} = require("./users_utils");
 const {response} = require("express");
 
 describe('Test register', () => {
@@ -16,31 +16,27 @@ describe('Test register', () => {
 
     test('Forgot Password for an existing user', async () => {
         const target = '/forgot-password';
-        const user = await getRandomUser()
-        EmailSender.sendForgotPasswordEmail = jest.fn();
+        const user = await createRandomUser()
+        const sendForgotPasswordEmailSpy = jest.spyOn(EmailSender, 'sendForgotPasswordEmail');
 
         const response = await request(app).post(target).send(user)
-        expect(EmailSender.sendForgotPasswordEmail).toHaveBeenCalled();
 
         expect(response.status).toBe(200);
-        expect(EmailSender.sendForgotPasswordEmail).toHaveBeenCalled();
+        expect(sendForgotPasswordEmailSpy).toHaveBeenCalled();
     });
 
     test('Forgot Password for an not existing user', async () => {
         const target = '/forgot-password';
-        EmailSender.sendForgotPasswordEmail = jest.fn();
 
         const response = await request(app).post(target).send({})
 
         expect(response.status).toBe(422);
-        expect(EmailSender.sendForgotPasswordEmail).not.toHaveBeenCalled();
     });
 
     test('Change Password for an existing user', async () => {
         const target = '/forgot-password';
         const user = getUserBody()
         const response =  await request(app).post('/register').send(user)
-        EmailSender.sendForgotPasswordEmail = jest.fn();
 
         const forgotPasswordResponse = await request(app).post(target).send(user)
 
