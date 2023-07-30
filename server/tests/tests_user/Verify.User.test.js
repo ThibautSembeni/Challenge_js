@@ -15,7 +15,8 @@ describe('Test register verify account', () => {
 
     test('Verify a merchant account', async () => {
         const registerResponse = await createRandomUser()
-        const jwtToken = await generateVerificationToken(registerResponse.body);
+        console.log("res", registerResponse)
+        const jwtToken = await generateVerificationToken(registerResponse);
         const encodedToken = Buffer.from(jwtToken).toString('base64url');
 
         const confirmationBody = {

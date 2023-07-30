@@ -37,7 +37,6 @@ describe('Tests Admin', () => {
 
     test('Create user already exist', async () => {
         const responseRegister = await request(app).post('/register').send(userAlreadyExit)
-        console.log(responseRegister.body)
         expect(responseRegister.status).toBe(409)
     });
 
