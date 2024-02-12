@@ -188,6 +188,8 @@ module.exports = function EventPaymentService() {
                     }
 
                     currentState.reference = transaction.reference;
+                    currentState.createdAt = transaction.createdAt;
+                    currentState.updatedAt = transaction.updatedAt;
 
                     updatedTransactions.push(currentState);
                 }
@@ -209,14 +211,16 @@ module.exports = function EventPaymentService() {
                     throw new ValidationError("No transaction found");
                 }
 
-                data.amount = transaction.currentState.amount;
-
                 const operationsService = new Operation();
                 const isOperationExist = await operationsService.findOne({
                     transaction_reference: data.transaction_reference,
                 });
+
                 if (isOperationExist) data.type = "refund";
-                else data.type = "capture";
+                else {
+                    data.amount = transaction.currentState.amount;
+                    data.type = "capture";
+                }
 
                 const operation = await operationsService.create(data);
 
@@ -226,38 +230,10 @@ module.exports = function EventPaymentService() {
                     type: "OperationCreated",
                     payload: data,
                 });
-                // const test = {
-                //   billing_info: {
-                //     address: "20 Rue des Chaumonts",
-                //     city: "Saulchery",
-                //     postal_code: "02310",
-                //     country: "France",
-                //   },
-                //   shipping_info: {
-                //     address: "20 Rue des Chaumonts",
-                //     city: "Saulchery",
-                //     postal_code: "02310",
-                //     country: "France",
-                //   },
-                //   client_info: {
-                //     name: "qses sqe",
-                //     email: "merchant@user.fr",
-                //     phone_number: null,
-                //   },
-                //   cart: {
-                //     products: [
-                //       { product_id: 1, quantity: 6 },
-                //       { product_id: 2, quantity: 1 },
-                //     ],
-                //   },
-                //   amount: 41,
-                //   currency: "EUR",
-                //   merchant_id: 1,
-                //   status: "created",
-                // };
-                data["operation_id"] = operation.id;
-                try {
 
+                data["operation_id"] = operation.id;
+
+                try {
                     await fetch(`${process.env.API_URL}/psp/confirm`, {
                         method: "POST",
                         headers: {
@@ -352,9 +328,10 @@ module.exports = function EventPaymentService() {
             return currentState;
         },
 
-        getAllOperations: async function () {
+        getAllOperations: async function (reference, type) {
             let _ = require("lodash");
             const operationsService = new Operation();
+
             const operations = await operationsService.findAll();
 
             const updatedOperations = [];
@@ -380,12 +357,18 @@ module.exports = function EventPaymentService() {
                     }
                 }
 
-                currentState.transaction_reference = operation.transaction_reference;
-
                 updatedOperations.push(currentState);
             }
 
-            return updatedOperations;
+            let filteredOperations = updatedOperations;
+            if (reference) {
+                filteredOperations = filteredOperations.filter(operation => operation.transaction_reference === reference);
+            }
+            if (type) {
+                filteredOperations = filteredOperations.filter(operation => operation.type === type);
+            }
+
+            return filteredOperations;
         },
     };
 };

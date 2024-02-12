@@ -126,67 +126,6 @@ module.exports = function CartService() {
     updateCartTotalPrice: updateCartTotalPrice,
     removeProductFromCartAfterTime: removeProductFromCartAfterTime,
     removeExpiredItemsFromAllCarts: removeExpiredItemsFromAllCarts,
-    addItemToCart: async (cartId, productRef, productId, quantity) => {
-      console.log("cartId", cartId)
-      const cart = await Cart.findOne({ where: { id: cartId } });
-      if (!cart) {
-        throw new ValidationError("Le panier n'existe pas1");
-      }
-
-      const product = await fetch('http://localhost:3000/pro')
-
-      if (!product) {
-        throw new ValidationError("Le produit n'existe pas2");
-      }
-
-      if (quantity > product.stock) {
-        throw new ValidationError("Le stock est insuffisant2");
-      }
-
-      const cartItem = await CartItem.findOne({
-        where: { cart_id: cartId, product_id: productId },
-      });
-      if (cartItem) {
-        const newQuantity = cartItem.quantity + quantity;
-
-        if (newQuantity > product.stock) {
-          throw new ValidationError("Le stock est insuffisant");
-        }
-
-        await CartItem.update(
-          { quantity: newQuantity },
-          { where: { cart_id: cartId, product_id: productId } }
-        );
-
-        await updateCartTotalPrice(cartId);
-
-        await cartItem.update({ updatedAt: new Date() });
-
-        await removeProductFromCartAfterTime(cartItem.id);
-
-        const updatedStock = product.stock - quantity;
-        await product.update({ stock: updatedStock });
-
-        return cartItem;
-      } else {
-        const newCartItem = await CartItem.create({
-          cart_id: cartId,
-          product_id: productId,
-          quantity: quantity,
-          price: product.price,
-          updatedAt: new Date(),
-        });
-
-        await updateCartTotalPrice(cartId);
-
-        await removeProductFromCartAfterTime(newCartItem.id);
-
-        const updatedStock = product.stock - quantity;
-        await product.update({ stock: updatedStock });
-
-        return newCartItem;
-      }
-    },
     update: async (filters, newData) => {
       try {
         const [nbUpdated, users] = await CartItem.update(newData, {

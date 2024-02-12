@@ -39,25 +39,4 @@ export default {
         }
         return response.data;
     },
-    async updateOperationEvent(id, operation) {
-        const response = await httpClient.put(`/eventPayment/operation/${id}`, operation);
-        if (response.status !== 200) {
-            throw new Error(`Error: ${response.status} - An error occurred when updating the operation`);
-        }
-        return response.data;
-    },
-    async getOperationEvent(id) {
-        const response = await httpClient.get(`/eventPayment/operation/${id}`);
-        if (response.status !== 200) {
-            throw new Error(`Error: ${response.status} - An error occurred when getting the operation`);
-        }
-        return response.data;
-    },
-    async getAllOperationsEvent() {
-        const response = await httpClient.get(`/eventPayment/operations`);
-        if (response.status !== 200) {
-            throw new Error(`Error: ${response.status} - An error occurred when getting all operations`);
-        }
-        return response.data;
-    },
 };

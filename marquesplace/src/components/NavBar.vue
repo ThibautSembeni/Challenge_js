@@ -4,7 +4,7 @@
       <a href="#" class="flex items-center">
         <img src="https://flowbite.com/docs/images/logo.svg" class="h-8 mr-3" alt="Strape Logo" />
         <span class="self-center text-2xl font-semibold whitespace-nowrap dark:text-white"
-          >Strape</span
+          >MARQUESPLACE</span
         >
       </a>
 
@@ -30,19 +30,24 @@
           id="user-dropdown"
         >
           <div class="px-4 py-3">
-            <span class="block text-sm text-gray-900 dark:text-white">Bonnie Green</span>
-            <span class="block text-sm text-gray-500 truncate dark:text-gray-400"
-              >name@strape.com</span
+            <span class="block text-sm text-gray-900 dark:text-white"
+              >{{ currentUser?.lastname }} {{ currentUser?.firstname }}</span
             >
+            <span class="block text-sm text-gray-500 truncate dark:text-gray-400">{{
+              currentUser?.email
+            }}</span>
           </div>
           <ul class="py-2" aria-labelledby="user-menu-button">
             <li>
-              <router-link :to="{ name: 'profile' }"
+              <router-link
+                :to="{ name: 'profile' }"
                 class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
-                >Profile</router-link>
+                >Profile</router-link
+              >
             </li>
             <li>
-              <router-link :to="{ name: 'logout' }"
+              <router-link
+                :to="{ name: 'logout' }"
                 class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
                 >Déconnexion</router-link
               >
@@ -60,7 +65,9 @@
           <li>
             <router-link
               :to="{ name: 'products' }"
-              :class="`block py-2 pl-3 pr-4 md:p-0 rounded ${ $route.name === 'products' ? 'md:text-blue-700 md:dark:text-blue-500' : 'text-white' }`"
+              :class="`block py-2 pl-3 pr-4 md:p-0 rounded ${
+                $route.name === 'products' ? 'md:text-blue-700 md:dark:text-blue-500' : 'text-white'
+              }`"
               aria-current="page"
               >Produit</router-link
             >
@@ -68,7 +75,9 @@
           <li>
             <router-link
               :to="{ name: 'panier' }"
-              :class="`block py-2 pl-3 pr-4 md:p-0 rounded ${ $route.name === 'panier' ? 'md:text-blue-700 md:dark:text-blue-500' : 'text-white' }`"
+              :class="`block py-2 pl-3 pr-4 md:p-0 rounded ${
+                $route.name === 'panier' ? 'md:text-blue-700 md:dark:text-blue-500' : 'text-white'
+              }`"
               >Panier</router-link
             >
           </li>
@@ -79,16 +88,15 @@
 </template>
 
 <script setup>
-import { onMounted } from 'vue'
+import { onMounted, ref } from 'vue'
 import { initFlowbite } from 'flowbite'
 import '../assets/index.css'
+import { getCurrentUser } from '@/services/auth'
 
+const currentUser = ref({})
 
 onMounted(async () => {
-    initFlowbite()
+  initFlowbite()
+  currentUser.value = await getCurrentUser()
 })
-
 </script>
-
-
-

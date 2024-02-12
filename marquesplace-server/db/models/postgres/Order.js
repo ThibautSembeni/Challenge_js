@@ -4,7 +4,6 @@ module.exports = (connection) => {
     class Order extends Model {
         static associate(models) {
             Order.belongsTo(models.User, { foreignKey: 'user_id', as: 'user' });
-            Order.hasMany(models.OrderItem, { foreignKey: 'order_id', as: 'order_items' });
         }
     }
 
@@ -32,6 +31,10 @@ module.exports = (connection) => {
                         msg: "Le prix total est obligatoire",
                     },
                 },
+            },
+            reference: {
+                type: DataTypes.STRING,
+                allowNull: true,
             },
             status: {
                 type: DataTypes.STRING,

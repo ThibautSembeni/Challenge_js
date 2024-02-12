@@ -16,6 +16,14 @@ export async function login(userCredentials) {
     }
 }
 
+export async function verifyAccount(token) {
+    try {
+
+        return await httpClient.get(`/verify/${token}`)
+    } catch (e) {
+        throw new Error(`Error ${e}`)
+    }
+}
 export async function registerUser(userCredentials) {
     for (let key in userCredentials) {
         if (userCredentials[key] === null || userCredentials[key] === '') {

@@ -1,34 +1,48 @@
 <script setup>
-    import { onMounted, reactive, ref } from 'vue'
-    import { useRoute } from 'vue-router'
-    import SideBar from '@/components/SideBar.vue'
-    import NavBar from '@/components/NavBar.vue'
-    import PaymentDetail from '@/components/Payment/PaymentDetail.vue'
-    import PaymentDetailLine from '@/components/Payment/PaymentDetailLine.vue'
-    import FormatEuro from '@/components/Payment/FormatEuro.vue'
-    import moment from 'moment'
-    import { getTransaction } from '@/services/transactions'
-    import Chronologie from "@/components/Payment/Chronologie.vue";
-    import PaymentStatus from "@/components/Payment/PaymentStatus.vue";
+import { onMounted, reactive, ref } from 'vue'
+import { useRoute } from 'vue-router'
+import SideBar from '@/components/SideBar.vue'
+import NavBar from '@/components/NavBar.vue'
+import PaymentDetail from '@/components/Payment/PaymentDetail.vue'
+import PaymentDetailLine from '@/components/Payment/PaymentDetailLine.vue'
+import FormatEuro from '@/components/Payment/FormatEuro.vue'
+import moment from 'moment'
+import { getTransaction } from '@/services/transactions'
+import Chronologie from '@/components/Payment/Chronologie.vue'
+import PaymentStatus from '@/components/Payment/PaymentStatus.vue'
+import RefundModal from '@/components/Payment/RefundModal.vue'
+import { createOperation } from '@/services/operations'
 
-    const payment = reactive({})
-    const timeline = reactive([])
-    const isLoading = ref(true)
-    const params_reference = useRoute().params.reference
+const payment = reactive({})
+const timeline = reactive([])
+const isLoading = ref(true)
+const params_reference = useRoute().params.reference
 
-    onMounted(async () => {
-        await getTransactionByReference()
-    })
-    async function getTransactionByReference() {
-        const transaction = await getTransaction(params_reference)
-        Object.assign(payment, transaction.currentState)
-        Object.assign(timeline, transaction.timeline)
-        isLoading.value = false
-    }
+const isRefundModalOpen = ref(false)
 
-    const formatEuro = (value, currency) => {
-      return new Intl.NumberFormat('fr-FR', { style: 'currency', currency: currency }).format(value)
-    }
+function openRefundModal() {
+  isRefundModalOpen.value = true
+}
+
+async function closeModal(amount) {
+  await createOperation(payment.reference, amount)
+  isRefundModalOpen.value = false
+  await getTransactionByReference()
+}
+
+onMounted(async () => {
+  await getTransactionByReference()
+})
+async function getTransactionByReference() {
+  const transaction = await getTransaction(params_reference)
+  Object.assign(payment, transaction.currentState)
+  Object.assign(timeline, transaction.timeline)
+  isLoading.value = false
+}
+
+const formatEuro = (value, currency) => {
+  return new Intl.NumberFormat('fr-FR', { style: 'currency', currency: currency }).format(value)
+}
 </script>
 
 <template>
@@ -73,6 +87,7 @@
           <PaymentStatus :payment="payment" class="ml-4" />
         </p>
         <button
+          @click="openRefundModal"
           class="relative inline-flex items-center justify-center p-0.5 mb-2 overflow-hidden text-sm font-medium text-gray-900 rounded-lg group bg-gradient-to-br from-cyan-500 to-blue-500 focus:outline-none"
         >
           <span class="relative px-5 py-2.5 transition-all ease-in duration-75 bg-white rounded-md">
@@ -80,6 +95,7 @@
             <span class="hidden md:inline">Rembourser</span>
           </span>
         </button>
+        <RefundModal v-if="isRefundModalOpen" @close="closeModal" />
       </div>
 
       <div class="flex flex-wrap mb-10">
@@ -107,12 +123,11 @@
         </table>
       </div>
 
-        <PaymentDetail title="Chronologie">
-          <Chronologie :timeline="timeline" />
-        </PaymentDetail>
+      <PaymentDetail title="Chronologie">
+        <Chronologie :timeline="timeline" />
+      </PaymentDetail>
 
-
-        <PaymentDetail title="Détails du paiement">
+      <PaymentDetail title="Détails du paiement">
         <div class="flex flex-wrap justify-between my-4">
           <div class="w-full md:w-1/2">
             <div class="flex flex-wrap">
@@ -149,7 +164,7 @@
           <div class="w-full md:w-1/2">
             <div class="flex flex-wrap">
               <PaymentDetailLine title="Rue" :content="payment.billing_info.address" />
-              <PaymentDetailLine title="Code postal" :content="payment.billing_info.postalCode" />
+              <PaymentDetailLine title="Code postal" :content="payment.billing_info.postal_code" />
               <PaymentDetailLine title="Ville" :content="payment.billing_info.city" />
               <PaymentDetailLine title="Pays" :content="payment.billing_info.country" />
             </div>
@@ -161,10 +176,10 @@
         <div class="flex flex-wrap justify-between my-4">
           <div class="w-full md:w-1/2">
             <div class="flex flex-wrap">
-                <PaymentDetailLine title="Rue" :content="payment.shipping_info.address" />
-                <PaymentDetailLine title="Code postal" :content="payment.shipping_info.postalCode" />
-                <PaymentDetailLine title="Ville" :content="payment.shipping_info.city" />
-                <PaymentDetailLine title="Pays" :content="payment.shipping_info.country" />
+              <PaymentDetailLine title="Rue" :content="payment.shipping_info.address" />
+              <PaymentDetailLine title="Code postal" :content="payment.shipping_info.postal_code" />
+              <PaymentDetailLine title="Ville" :content="payment.shipping_info.city" />
+              <PaymentDetailLine title="Pays" :content="payment.shipping_info.country" />
             </div>
           </div>
         </div>
@@ -172,5 +187,3 @@
     </div>
   </div>
 </template>
-
-

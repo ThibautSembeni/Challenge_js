@@ -11,38 +11,18 @@ module.exports = new genericRouter(
         customRoutes: [
             {
                 method: "post",
-                path: "/",
-                middleware: [],
-                handler: "capture",
-            },
-            {
-                method: "post",
                 path: "/psp-confirmation",
                 middleware: [],
                 handler: "resultFromPsp",
             },
             {
-                method: "post",
-                path: "/refund",
-                middleware: [],
-                handler: "refund",
-            },
-            {
                 method: "get",
-                path: "/transaction/:transaction_ref",
+                path: "/psp-subscribe",
                 middleware: [],
-                handler: "getTransactionOperationsHistory",
-            },
+                handler: "subscribeOperation",
+            }
         ],
-        defaultRoutes: {
-            getOne: {
-                method: "get",
-                path: "/:reference",
-                middleware: [],
-                active: true,
-            },
-            update: {method: "patch", path: "/:id", middleware: [], active: true},
-        },
+        defaultRoutes: {},
     }
 )
-;
+    ;

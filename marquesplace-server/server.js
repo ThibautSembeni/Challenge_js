@@ -13,7 +13,7 @@ const app = express();
 
 app.use(
   cors({
-    origin: 'http://localhost:5175'
+    origin: process.env.ECOMMERCE_URL
   })
 );
 
@@ -30,14 +30,13 @@ app.use("/orders", OrdersRouter);
 
 // TODO : a modifiler l'emplacement
 
-app.get('/transactions', async (req, res, next) => {
+app.get('/transactions', checkAuth, async (req, res, next) => {
   const request = await app.getAllTransaction()
-  res.status(200).json(data)
+  res.status(200).json(request)
 })
 
-app.post('/transactions', async (req, res, next) => {
+app.post('/transactions', checkAuth, async (req, res, next) => {
   const result = await app.createTransaction(req.body)
-  console.log("data", result)
   res.status(200).json(result)
 })
 

@@ -1,6 +1,7 @@
 <script setup>
-import { reactive, ref, watch} from "vue";
+import {reactive, ref, watch} from "vue";
 import Input from "@/components/form/Input.vue";
+import {createDangerToast} from "@/utils/toasts";
 
 const isDisabled = ref(true)
 const editMode = ref(false)
@@ -17,43 +18,51 @@ const defaultValueMerchant = {
   payout_currency: 'EUR',
 }
 
-const merchantValues = reactive({ ...defaultValueMerchant })
+const merchantValues = reactive({...defaultValueMerchant})
 
 const handleCancelClick = () => {
-  isDisabled.value = !isDisabled.value
-  editMode.value = !editMode.value
+  switchMode()
 };
 
 const validateCompany = (value) => {
   const isValid = value.length >= 2 && value.length <= 50
   const message = isValid ? '' : 'Le nom de la société doit contenir entre 2 et 50 caractères'
-  return { isValid, message }
+  return {isValid, message}
 }
 const validateKbis = (value) => {
   const isValid = value.length >= 2 && value.length <= 100
   const message = isValid ? '' : 'Le nom du fichier doit contenir entre 2 et 100 caractères'
-  return { isValid, message }
+  return {isValid, message}
 }
 
 const validatePhone = (value) => {
   const isValid = !isNaN(Number(value)) && value.length === 10
   const message = isValid ? '' : 'Le numéro de téléphone doit contenir 10 chiffres'
-  return { isValid, message }
+  return {isValid, message}
 }
 
-const completeDemand = () => {
+const completeDemand = async () => {
+  switchMode()
+}
+
+const switchMode = () => {
   isDisabled.value = !isDisabled.value
   editMode.value = !editMode.value
 }
 
-watch(merchantValues,()=>{
-  isValidPayload.value = merchantValues.kbis.length !== 0 && merchantValues.phone_number.length !== 0 && merchantValues.company.length !== 0
+watch(merchantValues, () => {
+  isValidPayload.value = merchantValues.kbis.length !== 0 && merchantValues.phone_number.length !== 0 && merchantValues.company.length !== 0 && merchantValues.confirmation_url.length !== 0 && merchantValues.cancellation_url.length !== 0 && merchantValues.merchant_url.length !== 0
 })
 
-const validDemand = () => {
-  console.log("mer",merchantValues)
-  emit('finishEvent', merchantValues)
-  Object.assign(merchantValues, defaultValueMerchant)
+const validDemand = async () => {
+  if (!isValidPayload.value) {
+    createDangerToast('Tous les champs sont required, merci de les remplir')
+    return
+  } else {
+    emit('finishEvent', merchantValues)
+    Object.assign(merchantValues, defaultValueMerchant)
+    switchMode()
+  }
 }
 
 </script>
@@ -73,7 +82,6 @@ const validDemand = () => {
         class="ml-4 px-3 py-2 text-xs font-medium inline-flex rounded-lg hover:bg-green-800 text-white bg-green-700 text-gray-400 bg-gray-300"
         :class="isValidPayload === false ? 'cursor-not-allowed' : ''"
         @click="validDemand"
-        :disabled="!isValidPayload"
     >
       Valider demande
     </button>

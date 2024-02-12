@@ -10,8 +10,6 @@ const httpClient = axios.create({
     }
 });
 
-console.log(import.meta.env.VITE_KAMALPAY_PK)
-
 httpClient.interceptors.request.use(
     (config) => {
         store.commit('setIsLoading', true);

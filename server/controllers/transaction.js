@@ -2,7 +2,7 @@ const EmailSender = require("../services/emailSender");
 const userService = require("../services/user")
 const UserService = new userService()
 module.exports = function transactionController(TransactionService, options = {}) {
-    const {notifyUser, notify} = require("../utils/notify.sse");
+    const { notifyUser, notify } = require("../utils/notify.sse");
     const db = require('../db/models/mongo')
     const eventsSent = [];
     const subscribers = {};
@@ -13,9 +13,11 @@ module.exports = function transactionController(TransactionService, options = {}
         const amountByDay = await getTransactionsVolumeByDays();
         const numberByDays = await getTransactionsNumberByDays();
         const numberByYear = await getTransactionsNumberByYear();
-        notify({id: Math.random(), name: "amountByDay", data: amountByDay}, false, mongoSubscribers, eventsSent);
-        notify({id: Math.random(), name: "numberByDays", data: numberByDays}, false, mongoSubscribers, eventsSent);
-        notify({id: Math.random(), name: "numberByYear", data: numberByYear}, false, mongoSubscribers, eventsSent);
+        const transactionsStatus = await getTransactionsStatus()
+        notify({ id: Math.random(), name: "amountByDay", data: amountByDay }, false, mongoSubscribers, eventsSent);
+        notify({ id: Math.random(), name: "numberByDays", data: numberByDays }, false, mongoSubscribers, eventsSent);
+        notify({ id: Math.random(), name: "numberByYear", data: numberByYear }, false, mongoSubscribers, eventsSent);
+        notify({ id: Math.random(), name: "transactionsStatus", data: transactionsStatus }, false, mongoSubscribers, eventsSent);
     });
 
     async function getTransactionsVolumeByDays(req = null) {
@@ -26,7 +28,7 @@ module.exports = function transactionController(TransactionService, options = {}
 
         const data = {};
         if (req !== null && req.query.hasOwnProperty("date")) {
-            const {date} = req.query;
+            const { date } = req.query;
             const dateParts = date.split("-");
             data.start_date = new Date(dateParts[0], dateParts[1] - 1, dateParts[2]);
             data.end_date = new Date(dateParts[0], dateParts[1] - 1, dateParts[2], 23, 59, 59, 999);
@@ -59,6 +61,9 @@ module.exports = function transactionController(TransactionService, options = {}
         }
         return await TransactionService.getTransactionsNumberByYear(year);
     }
+    async function getTransactionsStatus(req = null) {
+        return await TransactionService.getTransactionsStatus();
+    }
 
     let result = {
         getOne: async function (req, res, next) {
@@ -66,7 +71,7 @@ module.exports = function transactionController(TransactionService, options = {}
                 const reference = req.params.reference;
                 const transactions = await TransactionService.findAll(
                     { merchant_id: req.user.id, reference: reference },
-                    { order: { createdAt: 'DESC' }}
+                    { order: { createdAt: 'DESC' } }
                 );
 
                 if (transactions && transactions.length > 0) {
@@ -83,7 +88,7 @@ module.exports = function transactionController(TransactionService, options = {}
             try {
                 const transactions = await TransactionService.findAll(
                     { merchant_id: req.user.id },
-                    { order: { reference: 'ASC', createdAt: 'DESC' }}
+                    { order: { reference: 'ASC', createdAt: 'DESC' } }
                 );
 
                 if (transactions && transactions.length > 0) {
@@ -112,7 +117,7 @@ module.exports = function transactionController(TransactionService, options = {}
                 if (results) {
                     res.json(results)
                 } else {
-                    res.status(404).json({error: "Transaction not found"})
+                    res.status(404).json({ error: "Transaction not found" })
                 }
             } catch (e) {
                 next(e)
@@ -140,7 +145,7 @@ module.exports = function transactionController(TransactionService, options = {}
                 transaction.merchant_id = req.user.id;
                 const results = await TransactionService.create(transaction);
                 messages.push(results);
-                notify({id: results.id, name: "transaction", data: results}, false, subscribers, eventsSent);
+                notify({ id: results.id, name: "transaction", data: results }, false, subscribers, eventsSent);
                 // const userId = results.user_id
                 // const user = await UserService.findOne({id: userId})
                 // const operationLink = `${process.env.FRONT_URL}/payment/capture/${results.reference}`
@@ -153,9 +158,9 @@ module.exports = function transactionController(TransactionService, options = {}
         },
         cancelTransaction: async (req, res, next) => {
             try {
-                const {reference} = req.params;
+                const { reference } = req.params;
                 const status = "canceled"
-                const transaction = await TransactionService.update({reference}, {status});
+                const transaction = await TransactionService.update({ reference }, { status });
                 res.json(transaction);
             } catch (error) {
                 console.error(error);
@@ -193,6 +198,15 @@ module.exports = function transactionController(TransactionService, options = {}
         getTransactionsNumberByYear: async (req, res, next) => {
             try {
                 const results = await getTransactionsNumberByYear(req);
+                res.json(results);
+            } catch (error) {
+                console.error(error);
+                next(error);
+            }
+        },
+        getTransactionsStatus: async (req, res, next) => {
+            try {
+                const results = await getTransactionsStatus(req);
                 res.json(results);
             } catch (error) {
                 console.error(error);

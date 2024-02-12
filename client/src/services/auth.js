@@ -1,7 +1,7 @@
 import store from '@/stores/store'
 import httpClient from '@/services/httpClient'
 import router from '@/router'
-import { isConnectedByImpersonation } from "@/services/users"
+import {isConnectedByImpersonation} from "@/services/users"
 
 export async function login(userCredentials) {
     const response = await httpClient.post('/login', userCredentials)
@@ -29,17 +29,14 @@ export async function verifyAccount(token) {
 export async function logout() {
     await httpClient.post('/logout', {})
 }
-export async function check() {
-    await httpClient.post('/check', {}).then((res) => {
-        // if (res.status === 401) return router.push({ name: 'login' })
-    })
-}
 
 export async function registerUser(userCredentials) {
     const response = await httpClient.post('/register', userCredentials)
     if (response.status === 422) {
         const errorData = response.data;
-        throw new Error(`Invalid registration data: ${errorData.message}`);
+        const errorArray = Object.keys(errorData).map(field => `${field}: ${errorData[field][0]}`);
+        const errorString = errorArray.join(' ; ');
+        throw new Error(`${errorString}`);
     } else if (response.status === 409) {
         const errorMessage = `L'adresse email ${userCredentials.email} est déjà utilisée.`;
         throw new Error(errorMessage);

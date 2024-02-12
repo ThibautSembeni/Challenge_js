@@ -17,6 +17,7 @@
     "flowbite": "^1.6.6",
     "lodash": "^4.17.21",
     "moment": "^2.29.4",
+    "mosha-vue-toastify": "^1.0.23",
     "vite": "^4.3.9",
     "vue": "^3.3.4",
     "vue-router": "^4.2.2",

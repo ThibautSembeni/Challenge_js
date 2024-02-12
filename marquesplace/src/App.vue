@@ -1,27 +1,14 @@
 <script setup>
 import { RouterView } from 'vue-router'
-import {computed, onMounted} from 'vue'
+import { computed, onMounted } from 'vue'
 import store from '@/stores/store'
 import Spinner from '@/components/Spinner.vue'
-import {initFlowbite} from "flowbite";
-
+import { initFlowbite } from 'flowbite'
 
 const isLoading = computed(() => store.state.isLoading)
 </script>
 
 <template>
-  <!--  <header>
-  <img alt="Vue logo" class="logo" src="@/assets/logo.svg" width="125" height="125" />
-
-  <div class="wrapper">
-    <HelloWorld msg="You did it!" />
-
-    <nav>
-      <RouterLink to="/">Home</RouterLink>
-      <RouterLink to="/about">About</RouterLink>
-    </nav>
-  </div>
-</header>-->
   <Spinner v-if="isLoading" />
 
   <RouterView />
